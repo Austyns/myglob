@@ -10,6 +10,7 @@ import java.util.List;
 
 import net.vexelon.glbclient.exceptions.GLBHttpException;
 import net.vexelon.glbclient.exceptions.GLBInvalidCredentialsException;
+import net.vexelon.myglob.Defs;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -33,6 +34,8 @@ import org.apache.http.params.CoreConnectionPNames;
 import org.apache.http.params.CoreProtocolPNames;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HTTP;
+
+import android.util.Log;
 
 public class GLBHttpClientImpl implements GLBClient {
 	
@@ -73,7 +76,12 @@ public class GLBHttpClientImpl implements GLBClient {
 		qparams.add(new BasicNameValuePair("refid", ""));
 		qparams.add(new BasicNameValuePair("username", username));
 
-		HttpPost httpPost = createPostRequest(HTTP_MYGLOBUL_SITE + GLBRequestType.LOGIN.getPath(), qparams);
+		HttpPost httpPost = createPostRequest("https://my.globul.bg/mg/myglobul.portal", qparams);
+		//HTTP_MYGLOBUL_SITE + GLBRequestType.LOGIN.getPath()
+		
+		for (Header hdr : httpPost.getAllHeaders()) {
+			Log.v(Defs.LOG_TAG, hdr.getName() + "=" + hdr.getValue());
+		}		
 		
 		HttpResponse resp = httpClient.execute(httpPost);
 		StatusLine status = resp.getStatusLine();
