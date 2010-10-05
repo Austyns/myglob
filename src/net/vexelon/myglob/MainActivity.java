@@ -19,7 +19,7 @@ public class MainActivity extends Activity {
     }
     
 	public void test_() {
-		GLBClient client = new GLBHttpClientImpl("0899516879", "bornin83");
+		GLBClient client = new GLBHttpClientImpl("", "");
 		
 		try {
 			client.login();

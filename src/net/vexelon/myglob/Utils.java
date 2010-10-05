@@ -13,6 +13,7 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Random;
 
 import org.apache.http.util.ByteArrayBuffer;
 
@@ -25,6 +26,8 @@ import android.view.KeyEvent;
 public class Utils {
 	
 	private final static String TAG = Defs.LOG_TAG; 
+	
+	private static Random _random = null;
 	
 	public static String scaleNumber(BigDecimal number, int n ) {
 		return number.setScale(n, BigDecimal.ROUND_HALF_UP).toPlainString();
@@ -134,6 +137,19 @@ public class Utils {
 		
 		return ret;
 	}
+	
+	/**
+	 * Get random integer value
+	 * @param max
+	 * @return
+	 */
+	public static int getRandomInt(int max) {
+		if (_random == null )
+			_random = new Random(System.currentTimeMillis());
+		
+		return _random.nextInt(max);
+	}
+	
 //	
 //	/**
 //	 * Display an alert dialog

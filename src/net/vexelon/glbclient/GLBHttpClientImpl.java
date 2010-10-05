@@ -5,12 +5,14 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
 import net.vexelon.glbclient.exceptions.GLBHttpException;
 import net.vexelon.glbclient.exceptions.GLBInvalidCredentialsException;
 import net.vexelon.myglob.Defs;
+import net.vexelon.myglob.Utils;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -26,6 +28,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.cookie.Cookie;
+import org.apache.http.entity.BasicHttpEntity;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
@@ -34,8 +37,11 @@ import org.apache.http.params.CoreConnectionPNames;
 import org.apache.http.params.CoreProtocolPNames;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HTTP;
+import org.apache.http.util.EntityUtils;
+import org.w3c.dom.Entity;
 
 import android.util.Log;
+import android.webkit.URLUtil;
 
 public class GLBHttpClientImpl implements GLBClient {
 	
@@ -69,30 +75,28 @@ public class GLBHttpClientImpl implements GLBClient {
 		
 		List<NameValuePair> qparams = new ArrayList<NameValuePair>();
 		qparams.add(new BasicNameValuePair("action", "loginexec"));
-		qparams.add(new BasicNameValuePair("continuation", "myglobul.portal%3Faction%3Duserhome%26pkey%3D0%26jkey%3D0"));			
-		qparams.add(new BasicNameValuePair("image.x", "24")); //TODO: TOrandom
-		qparams.add(new BasicNameValuePair("image.y", "14"));
+		qparams.add(new BasicNameValuePair("continuation", URLDecoder.decode("myglobul.portal%3Faction%3Duserhome%26pkey%3D0%26jkey%3D0", "UTF-8")));			
+		qparams.add(new BasicNameValuePair("image.x", Integer.toString(Utils.getRandomInt(1024)) ));
+		qparams.add(new BasicNameValuePair("image.y", Integer.toString(Utils.getRandomInt(768)) ));
 		qparams.add(new BasicNameValuePair("password", password));
 		qparams.add(new BasicNameValuePair("refid", ""));
 		qparams.add(new BasicNameValuePair("username", username));
+		HttpPost httpPost = createPostRequest(HTTP_MYGLOBUL_SITE + GLBRequestType.LOGIN.getPath(), qparams);
 
-		HttpPost httpPost = createPostRequest("https://my.globul.bg/mg/myglobul.portal", qparams);
-		//HTTP_MYGLOBUL_SITE + GLBRequestType.LOGIN.getPath()
-		
-		for (Header hdr : httpPost.getAllHeaders()) {
-			Log.v(Defs.LOG_TAG, hdr.getName() + "=" + hdr.getValue());
-		}		
-		
 		HttpResponse resp = httpClient.execute(httpPost);
 		StatusLine status = resp.getStatusLine();
 		
-		//NOTE: kind of a hack, may not work if globul changes impl.
-		if ( status.getStatusCode() != HttpStatus.SC_MOVED_TEMPORARILY )
-			throw new GLBInvalidCredentialsException();
-//		else if ( status.getStatusCode() != HttpStatus.SC_OK )
-//			throw new GLBHttpException(status.getReasonPhrase(), status.getStatusCode());
-		
 		resp.getEntity().consumeContent();
+		
+		if ( status.getStatusCode() == HttpStatus.SC_OK ) {
+			//TODO: need to check for something else to confirm login
+			//throw new GLBInvalidCredentialsException();
+		}
+		else if ( status.getStatusCode() != HttpStatus.SC_MOVED_TEMPORARILY ) {
+			//NOTE: Kind of a hack (sometimes we get 302 from the web serv), 
+			//      May not work if Globul changes impl.
+			throw new GLBHttpException(status.getReasonPhrase(), status.getStatusCode());
+		}
 	}
 	
 	public void logout() 
@@ -144,17 +148,17 @@ public class GLBHttpClientImpl implements GLBClient {
 		params.setParameter(CoreProtocolPNames.PROTOCOL_VERSION, HttpVersion.HTTP_1_1);
 		params.setParameter(CoreProtocolPNames.USE_EXPECT_CONTINUE, Boolean.TRUE);
 		params.setParameter(CoreProtocolPNames.USER_AGENT, HTTP_USER_AGENT);
+		//params.setParameter(CoreProtocolPNames.HTTP_CONTENT_CHARSET, HTTP.UTF_8);
 		httpClient = new DefaultHttpClient(params);
 		
 		httpCookieStore = new BasicCookieStore();
 		httpClient.setCookieStore(httpCookieStore);
 	}
 	
-	private HttpPost createPostRequest(String url, List<NameValuePair> params) 
+	private HttpPost createPostRequest(String url, List<NameValuePair> qparams) 
 		throws UnsupportedEncodingException {
-		HttpEntity entityForm = new UrlEncodedFormEntity(params, HTTP.UTF_8);
 		HttpPost httpPost = new HttpPost(url);
-		httpPost.setEntity(entityForm);
+		httpPost.setEntity(new UrlEncodedFormEntity(qparams, HTTP.UTF_8));
 		return httpPost;
 	}
 	
