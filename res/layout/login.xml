@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  	android:layout_width="fill_parent"
+  	android:layout_height="fill_parent"
+  	android:padding="4sp"
+  	android:orientation="vertical"
+  	android:gravity="center_vertical"
+    >
+    
+<ImageView 
+	android:id="@+id/main_logo"
+	android:src="@drawable/icon"
+	android:layout_width="wrap_content" 
+	android:layout_height="wrap_content" 
+	android:layout_gravity="center_horizontal"
+	/>
+    
+<TextView  
+	android:id="@+id/TextUsername"
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content" 
+    android:text="Username:"
+    />
+<EditText 
+	android:id="@+id/EditTextUsername" 
+	android:layout_width="fill_parent"
+	android:layout_height="wrap_content" 
+	android:maxLength="50" 
+	android:focusable="true" 
+	android:lines="1"
+	android:layout_toRightOf="@+id/TextUsername"
+	/>
+	
+<TextView  
+	android:id="@+id/TextPassword"
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content" 
+    android:text="Password:"
+    />
+<EditText 
+	android:id="@+id/EditTextPassword" 
+	android:layout_width="fill_parent"
+	android:layout_height="wrap_content" 
+	android:maxLength="50" 
+	android:focusable="true" 
+	android:lines="1"
+	android:layout_toRightOf="@+id/TextPassword"
+	android:inputType="textPassword"
+	/>
+	
+<CheckBox 
+	android:text="Remember my login details" 
+	android:id="@+id/CheckBoxRemeberCredentials" 
+	android:layout_width="wrap_content" 
+	android:layout_height="wrap_content"
+	/>
+	 
+<Button 
+	android:text="Login" 
+	android:id="@+id/ButtonLogin" 
+	android:minWidth="140dp" 
+	android:layout_width="wrap_content" 
+	android:layout_height="wrap_content"
+	android:layout_gravity="right"
+	/>
+
+
+</LinearLayout>
