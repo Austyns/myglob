@@ -2,18 +2,18 @@ package net.vexelon.myglob;
 
 public class CryptAESImpl implements Crypto {
 	
-	private static CryptAESImpl _instance = null; 
+	private static CryptAESImpl INSTANCE = null; 
 	
-	protected CryptAESImpl() {
-		
+	private CryptAESImpl() {
 	}
 	
-	public static CryptAESImpl _INSTANCE() {
-		if (_instance == null) {
-			_instance = new CryptAESImpl();
-			_instance.init();
+	public static CryptAESImpl getInstance() {
+		if (INSTANCE == null) {
+			INSTANCE = new CryptAESImpl();
+			
+			INSTANCE.init(); // setup
 		}
-		return _instance;
+		return INSTANCE;
 	}
 	
 	private void init() {
