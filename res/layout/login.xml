@@ -50,7 +50,7 @@
 	
 <CheckBox 
 	android:text="Remember my login details" 
-	android:id="@+id/CheckBoxRemeberCredentials" 
+	android:id="@+id/CheckBoxSaveCredentials" 
 	android:layout_width="wrap_content" 
 	android:layout_height="wrap_content"
 	/>
@@ -63,6 +63,13 @@
 	android:layout_height="wrap_content"
 	android:layout_gravity="right"
 	/>
-
+	
+<TextView  
+	android:id="@+id/TextErrorMsg"
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content"
+    android:gravity="center_horizontal" 
+    android:text="Error" 
+    android:textColor="#FF1F1F"/>
 
 </LinearLayout>
