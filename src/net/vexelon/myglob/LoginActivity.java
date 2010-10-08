@@ -41,7 +41,7 @@ public class LoginActivity extends Activity {
 		etPassword.setText(intent.getStringExtra(Defs.INTENT_EXTRA_PASSWORD));
 		
 		final CheckBox cbSaveCredentials = (CheckBox) findViewById(R.id.CheckBoxSaveCredentials);
-//		cbSaveCredentials.setChecked(intent.getBooleanExtra(Defs.INTENT_EXTRA_SAVECREDENTIALS, false));
+		cbSaveCredentials.setChecked(intent.getBooleanExtra(Defs.INTENT_EXTRA_SAVECREDENTIALS, false));
 		
 		// login button pressed
 		Button btnLogin = (Button) findViewById(R.id.ButtonLogin);
@@ -59,8 +59,10 @@ public class LoginActivity extends Activity {
 					tvErrorMessage.setText("Password's not specified!");
 				}
 				else {
+					Log.v(Defs.LOG_TAG, "Text password: " + etPassword.getText());
+					
 					// (try to) encrypt password, only if it's not the dummy password
-					if ( ! etPassword.getText().equals(Defs.DUMMY_PASSWORD) ) {
+					if ( ! etPassword.getText().toString().equals(Defs.DUMMY_PASSWORD) ) {
 						byte[] rawPassword = etPassword.getText().toString().getBytes();
 						byte[] encryptedPassword = null;
 						
@@ -75,14 +77,16 @@ public class LoginActivity extends Activity {
 							encryptedPassword = rawPassword;
 						}
 						
+						Log.v(Defs.LOG_TAG, "Intent password: " + Base64.encodeBytes(encryptedPassword));
 						intent.putExtra(Defs.INTENT_EXTRA_PASSWORD, Base64.encodeBytes(encryptedPassword));
 					}
 					else {
+						Log.v(Defs.LOG_TAG, "Intent password: " + Defs.DUMMY_PASSWORD);
 						intent.putExtra(Defs.INTENT_EXTRA_PASSWORD, Defs.DUMMY_PASSWORD);
 					}
 
 					// prep results & quit
-					intent.putExtra(Defs.INTENT_EXTRA_USERNAME, etUsername.getText());
+					intent.putExtra(Defs.INTENT_EXTRA_USERNAME, etUsername.getText().toString());
 					intent.putExtra(Defs.INTENT_EXTRA_SAVECREDENTIALS, cbSaveCredentials.isChecked());
 					setResult(RESULT_OK, intent);
 					finish();
