@@ -24,8 +24,6 @@ import android.widget.TextView;
 public class MainActivity extends Activity {
 	
 	private Activity _context = null;
-	private boolean _credentialsAvailable = false;
-	private String _username = "";
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -53,7 +51,7 @@ public class MainActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				
-				if (!_credentialsAvailable) {
+				if (isCredentialsAvailable()) {
 					showSignInWindow();
 				}
 				else {
@@ -80,11 +78,7 @@ public class MainActivity extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     	if ( requestCode == Defs.INTENT_SIGNIN_RQ) {
     		if (resultCode == RESULT_OK) {
-    			Bundle bundle = data.getExtras();
-    			String username = bundle.getString(Defs.INTENT_EXTRA_USERNAME);
-    			String password = bundle.getString(Defs.INTENT_EXTRA_PASSWORD);
-    			boolean saveCredentials = bundle.getBoolean(Defs.INTENT_EXTRA_SAVECREDENTIALS);
-    			//TODO save these
+    			saveSettings(data.getExtras());
     		}
     	}
     }
@@ -118,9 +112,10 @@ public class MainActivity extends Activity {
 	}
 	
 	private void initMenu(Menu menu) {
-
+		menu.clear();
+		
 		//menu.add(0, Defs.MENU_EN_RATES, 0, R.string.menu_en_rates).setIcon(R.drawable.gb);
-		if (!_credentialsAvailable)
+		if (!isCredentialsAvailable())
 			menu.add(0, Defs.MENU_SIGNIN, 0, "Sign In").setIcon(R.drawable.key);
 		else
 			menu.add(0, Defs.MENU_SIGNOUT, 0, "Sign Out").setIcon(R.drawable.door_out);
@@ -128,25 +123,91 @@ public class MainActivity extends Activity {
 		menu.add(1, Defs.MENU_ABOUT, 15, "About").setIcon(R.drawable.help);		
 	}
 	
-	private void loadSettings() {
-		SharedPreferences prefs = this.getSharedPreferences(Defs.PREFS_NAME, 0);
-		//String lastUpdateTime = prefs.getString(Defs.PREFS_KEY_LASTUPDATE_TIME, "");		
-	}
-	
-	private void saveSettings() {
+	private void saveSettings(Bundle bundle) {
 		SharedPreferences prefs = this.getSharedPreferences(Defs.PREFS_NAME, 0);
 		SharedPreferences.Editor editor = prefs.edit();
-		//TODO:
+		
+		boolean save = bundle.getBoolean(Defs.INTENT_EXTRA_SAVECREDENTIALS);
+		if (save) {
+			Log.v(Defs.LOG_TAG, "Saving username -" + bundle.getString(Defs.INTENT_EXTRA_USERNAME));
+			Log.v(Defs.LOG_TAG, "Saving password -" + bundle.getString(Defs.INTENT_EXTRA_PASSWORD));
+			
+//			editor.putString(Defs.INTENT_EXTRA_USERNAME, bundle.getString(Defs.INTENT_EXTRA_USERNAME));
+//			
+//			String password = bundle.getString(Defs.INTENT_EXTRA_PASSWORD);
+//			if ( !password.equals(Defs.DUMMY_PASSWORD) )
+//				editor.putString(Defs.INTENT_EXTRA_PASSWORD, password);
+		}
+
 		editor.commit();		
 	}
 	
-	private void loadPassword() {
+	private void saveKey(byte[] keyData) {
 		SharedPreferences prefs = this.getSharedPreferences(Defs.PREFS_NAME, 0);
+		SharedPreferences.Editor editor = prefs.edit();
 		
+		Log.v(Defs.LOG_TAG, "Saving key -" + Base64.encodeBytes(keyData));
+//		editor.putString(Defs.INTENT_EXTRA_KEY, Base64.encodeBytes(keyData));
+		
+		editor.commit();		
+	}	
+	
+	private byte[] loadKey() {
+		
+		byte[] ret = null;
+		SharedPreferences prefs = this.getSharedPreferences(Defs.PREFS_NAME, 0);
+		String key = prefs.getString(Defs.INTENT_EXTRA_KEY, "");
+		
+		try {
+			ret = TextUtils.isEmpty(key) ? null : Base64.decode(key);
+		}
+		catch (Exception e) {
+			Log.e(Defs.LOG_TAG, "Failed to load key!");
+		}
+		
+		return ret;
+	}
+	
+	private String loadUsername() {
+		SharedPreferences prefs = this.getSharedPreferences(Defs.PREFS_NAME, 0);
+		return prefs.getString(Defs.INTENT_EXTRA_USERNAME, "");
+	}	
+	
+	private String loadPassword() {
+		SharedPreferences prefs = this.getSharedPreferences(Defs.PREFS_NAME, 0);
+		return prefs.getString(Defs.INTENT_EXTRA_PASSWORD, "");
+	}
+	
+	private boolean isCredentialsAvailable() {
+//		SharedPreferences prefs = this.getSharedPreferences(Defs.PREFS_NAME, 0);
+//		return prefs.getBoolean(Defs.INTENT_EXTRA_SAVECREDENTIALS, false);
+		return !TextUtils.isEmpty(loadUsername()) && !TextUtils.isEmpty(loadPassword());
 	}
 	
 	private void showSignInWindow() {
+		
+		// try to load key from preferences
+		byte[] keyData = loadKey();
+		if (keyData == null) {
+			// generate new key
+			Crypto crypto = CryptAESImpl.getInstance();
+			try {
+				keyData = crypto.createSecretKey();
+				saveKey(keyData); // save the key only once!
+			}
+			catch (Exception e) {
+				Log.e(Defs.LOG_TAG, "Key could not be created!");
+				// TODO: tell user key could not be created
+			}
+		}
+		
+		// prep login activity
 		Intent intent = new Intent(this, LoginActivity.class);
+		intent.putExtra(Defs.INTENT_EXTRA_KEY, keyData);
+		intent.putExtra(Defs.INTENT_EXTRA_USERNAME, loadUsername());
+		String password = loadPassword();
+		intent.putExtra(Defs.INTENT_EXTRA_PASSWORD, TextUtils.isEmpty(password) ? password : Defs.DUMMY_PASSWORD );
+		intent.putExtra(Defs.INTENT_EXTRA_SAVECREDENTIALS, isCredentialsAvailable());
 		startActivityForResult(intent, Defs.INTENT_SIGNIN_RQ);
 	}
     

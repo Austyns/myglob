@@ -12,7 +12,11 @@ public class Defs {
 	
 	final static int INTENT_SIGNIN_RQ = 100;
 	
+	final static String INTENT_EXTRA_KEY = "_SK";
 	final static String INTENT_EXTRA_USERNAME = "_USERNAME";
 	final static String INTENT_EXTRA_PASSWORD = "_PASSWORD";
 	final static String INTENT_EXTRA_SAVECREDENTIALS = "_SAVECREDENTIALS";
+	
+	final static String DUMMY_PASSWORD = "$_DUMMY_PASSWORD_^";
+	
 }

@@ -1,9 +1,15 @@
 package net.vexelon.myglob;
 
+import java.security.NoSuchAlgorithmException;
+
 public interface Crypto {
 	
-	public byte[] encrypt(byte[] input);
+	public byte[] createSecretKey() throws NoSuchAlgorithmException;	
 	
-	public byte[] decrypt(byte[] input);
+	public byte[] encrypt(byte[] input, byte[] secretKey)
+		throws Exception;
+	
+	public byte[] decrypt(byte[] input, byte[] secretKey)
+		throws Exception;
 
 }

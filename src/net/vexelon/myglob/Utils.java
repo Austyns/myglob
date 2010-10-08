@@ -150,31 +150,31 @@ public class Utils {
 		return _random.nextInt(max);
 	}
 	
-//	
-//	/**
-//	 * Display an alert dialog
-//	 * @param context
-//	 * @param messageResId
-//	 * @param titleResId
-//	 */
-//	public static void showAlertDialog(Context context, int messageResId, int titleResId) {
-//
-//		AlertDialog.Builder alertBuilder = new AlertDialog.Builder(context);
-//		alertBuilder.setTitle(
-//				context.getResources().getString(
-//						titleResId)).setMessage(
-//								context.getResources().getString(messageResId)).setIcon(
-//				R.drawable.alert).setOnKeyListener(
-//				new DialogInterface.OnKeyListener() {
-//
-//					@Override
-//					public boolean onKey(DialogInterface dialog,
-//							int keyCode, KeyEvent event) {
-//						dialog.dismiss();
-//						return false;
-//					}
-//				}).create().show();				
-//	}
+	
+	/**
+	 * Display an alert dialog
+	 * @param context
+	 * @param messageResId
+	 * @param titleResId
+	 */
+	public static void showAlertDialog(Context context, int messageResId, int titleResId) {
+
+		AlertDialog.Builder alertBuilder = new AlertDialog.Builder(context);
+		alertBuilder.setTitle(
+				context.getResources().getString(
+						titleResId)).setMessage(
+								context.getResources().getString(messageResId)).setIcon(
+				R.drawable.alert).setOnKeyListener(
+				new DialogInterface.OnKeyListener() {
+
+					@Override
+					public boolean onKey(DialogInterface dialog,
+							int keyCode, KeyEvent event) {
+						dialog.dismiss();
+						return false;
+					}
+				}).create().show();				
+	}
 	
 	
 }
