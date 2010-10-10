@@ -12,7 +12,7 @@ import org.apache.http.client.ClientProtocolException;
 public interface GLBClient {
 
 	public void login()
-		throws UnsupportedEncodingException, URISyntaxException, IOException, ClientProtocolException, GLBHttpException, GLBInvalidCredentialsException;
+		throws Exception;
 	
 	public void logout()
 		throws IOException, ClientProtocolException, GLBHttpException;

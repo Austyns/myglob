@@ -2,11 +2,16 @@ package net.vexelon.myglob;
 
 import net.vexelon.glbclient.GLBClient;
 import net.vexelon.glbclient.GLBHttpClientImpl;
+import net.vexelon.glbclient.exceptions.GLBHttpException;
+import net.vexelon.glbclient.exceptions.GLBSecureCodeRequiredException;
+import net.vexelon.glbclient.exceptions.GLBInvalidCredentialsException;
 import net.vexelon.myglob.R;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.Spanned;
@@ -18,24 +23,47 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CursorAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 public class MainActivity extends Activity {
 	
-	enum Operations {
-		CHECK_CURRENT_BALANCE,
-		CHECK_AVAIL_MINUTES,
-		CHECK_AVAIL_DATA,
-		CHECK_SMS_PACKAGE,
-		CHECK_CREDIT_LIMIT
+	/*
+	 * TODO:
+	 * 1. Complete Spinner actions
+	 * 2. Test securecode image occurance
+	 * 3. Test saving/loading of options
+	 * 4. Add/Finish About activity
+	 * 5. Add Progress dialog(s)
+	 * 6. Add strings to resources
+	 * 7. Add images
+	 */
+	
+	public enum Operations {
+		CHECK_CURRENT_BALANCE(R.string.operation_check_balance),
+		CHECK_AVAIL_MINUTES(R.string.operation_check_avail_minutes),
+		CHECK_AVAIL_DATA(R.string.operation_check_avail_data),
+		CHECK_SMS_PACKAGE(R.string.operation_check_sms_pack),
+		CHECK_CREDIT_LIMIT(R.string.operation_check_credit_limit);
+		
+		private int resId = -1;
+		private long spinnerId = -1;
+		
+		Operations(int resourceId) {
+			this.resId = resourceId;
+		}
+		
+		public String getName(Context context) {
+			return context.getString(this.resId);
+		}
 	};
 	
 	private Activity _context = null;
-	
 	private String _username = "";
 	private String _password = "";
 	private boolean _saveCredentials = false;
+	private boolean _updateAfterSignIn = false;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -49,37 +77,22 @@ public class MainActivity extends Activity {
         // initialize items
         
         Spinner spinnerOptions = (Spinner) findViewById(R.id.SpinnerOptions);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, 
-        		new String[] {"Проверка на текуща сметка и задължения за минал период", 
-        					  "Проверка на пакет минути *",
-        					  "Проверка на пакет данни (МВ) * ",
-        					  "Проверка на пакет SMS/MMS * ",
-        					  "Проверка на кредитен лимит "
-        					  });
+        ArrayAdapter<Operations> adapter = new ArrayAdapter<Operations>(this, 
+        		android.R.layout.simple_spinner_item, new Operations[]{
+        		Operations.CHECK_CURRENT_BALANCE, 
+				Operations.CHECK_AVAIL_MINUTES,
+				Operations.CHECK_AVAIL_DATA,
+				Operations.CHECK_SMS_PACKAGE,
+				Operations.CHECK_CREDIT_LIMIT        		
+        });
         spinnerOptions.setAdapter(adapter);
         
         // create update button
         Button btnUpdate = (Button) findViewById(R.id.ButtonUpdate);
         btnUpdate.setOnClickListener(new OnClickListener() {
-			
 			@Override
 			public void onClick(View v) {
-				
-				if (!isCredentialsAvailable()) {
-					showSignInWindow();
-				}
-				else {
-					// sign in and show requested data
-					String data = getAccountStatus(Operations.CHECK_CURRENT_BALANCE);
-					TextView tx = (TextView) _context.findViewById(R.id.TextContent);
-					data = data.replaceAll("(<.[^>]*>)|(</.[^>]*>)", "");
-					data = data.replaceAll("\\t|\\n|\\r", "");	
-					tx.setText(data);
-					//tx.setText(Html.fromHtml(data));
-	
-					//WebView wv = (WebView) _context.findViewById(R.id.TextContent);
-					//wv.loadData(data, "text/html", "utf-8");
-				}
+				updateSelectedStatus();
 			}
 		});
 
@@ -92,6 +105,12 @@ public class MainActivity extends Activity {
     	if ( requestCode == Defs.INTENT_SIGNIN_RQ) {
     		if (resultCode == RESULT_OK) {
     			saveSettings(data.getExtras());
+    			
+    			// Update button was clicked
+    			if ( _updateAfterSignIn ) {
+    				updateSelectedStatus();
+    				_updateAfterSignIn = false;
+    			}
     		}
     	}
     }
@@ -272,8 +291,39 @@ public class MainActivity extends Activity {
 		intent.putExtra(Defs.INTENT_EXTRA_SAVECREDENTIALS, _saveCredentials);
 		startActivityForResult(intent, Defs.INTENT_SIGNIN_RQ);
 	}
+	
+	/**
+	 * Get selected spinner option and update view
+	 */
+	private void updateSelectedStatus() {
+		if (!isCredentialsAvailable()) {
+			_updateAfterSignIn = true;
+			showSignInWindow();
+		}
+		else {
+			Spinner spinnerOptions = (Spinner) findViewById(R.id.SpinnerOptions);
+			final Operations operation = (Operations) spinnerOptions.getSelectedItem();
+			final TextView tx = (TextView) _context.findViewById(R.id.TextContent);
+			tx.post(new Runnable() {
+				
+				@Override
+				public void run() {
+					// sign in and show requested data
+					String data = getAccountStatus(operation);
+					data = data.replaceAll("(<.[^>]*>)|(</.[^>]*>)", "");
+					data = data.replaceAll("\\t|\\n|\\r", "");	
+					data = data.trim();
+					tx.setText(data);
+					//tx.setText(Html.fromHtml(data));
+
+					//WebView wv = (WebView) _context.findViewById(R.id.TextContent);
+					//wv.loadData(data, "text/html", "utf-8");					
+				}
+			});
+		}		
+	}
     
-	public String getAccountStatus(Operations operation) {
+	private String getAccountStatus(Operations operation) {
 		
 //		String ret = "<td class=\"txt_order_SMS\">" +
 //        		 "<p>Вашата текуща сметка:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> 1,45 лв.</span> без ДДС</p>" +
@@ -310,8 +360,17 @@ public class MainActivity extends Activity {
 
 			client.logout();
 		}
-		catch(Exception e) {
+		catch(GLBSecureCodeRequiredException e) {
+			Log.e(Defs.LOG_TAG, "Secure image exception", e);
+		}
+		catch(GLBInvalidCredentialsException e) {
 			Log.e(Defs.LOG_TAG, "Failed to login!", e);
+		}
+		catch(GLBHttpException e) {
+			Log.e(Defs.LOG_TAG, "Login HTTP exception!", e);
+		}
+		catch(Exception e) {
+			Log.e(Defs.LOG_TAG, "Login exception!", e);
 		}
 		finally {
 			client.close();

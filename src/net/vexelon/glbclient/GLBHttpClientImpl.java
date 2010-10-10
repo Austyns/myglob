@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.vexelon.glbclient.exceptions.GLBHttpException;
+import net.vexelon.glbclient.exceptions.GLBSecureCodeRequiredException;
 import net.vexelon.glbclient.exceptions.GLBInvalidCredentialsException;
 import net.vexelon.myglob.Defs;
 import net.vexelon.myglob.Utils;
@@ -71,8 +72,7 @@ public class GLBHttpClientImpl implements GLBClient {
 	 * Perform login into the web system using the specified user and password
 	 */
 	public void login() 
-		throws UnsupportedEncodingException, URISyntaxException, IOException, ClientProtocolException,
-				GLBHttpException, GLBInvalidCredentialsException {
+		throws Exception {
 		
 		List<NameValuePair> qparams = new ArrayList<NameValuePair>();
 		qparams.add(new BasicNameValuePair("action", "loginexec"));
@@ -80,24 +80,10 @@ public class GLBHttpClientImpl implements GLBClient {
 		qparams.add(new BasicNameValuePair("image.x", Integer.toString(Utils.getRandomInt(1024)) ));
 		qparams.add(new BasicNameValuePair("image.y", Integer.toString(Utils.getRandomInt(768)) ));
 		qparams.add(new BasicNameValuePair("password", password));
-		qparams.add(new BasicNameValuePair("refid", ""));
+		//qparams.add(new BasicNameValuePair("refid", ""));
 		qparams.add(new BasicNameValuePair("username", username));
-		HttpPost httpPost = createPostRequest(HTTP_MYGLOBUL_SITE + GLBRequestType.LOGIN.getPath(), qparams);
-
-		HttpResponse resp = httpClient.execute(httpPost);
-		StatusLine status = resp.getStatusLine();
 		
-		resp.getEntity().consumeContent();
-		
-		if ( status.getStatusCode() == HttpStatus.SC_OK ) {
-			//TODO: need to check for something else to confirm login
-			//throw new GLBInvalidCredentialsException();
-		}
-		else if ( status.getStatusCode() != HttpStatus.SC_MOVED_TEMPORARILY ) {
-			//NOTE: Kind of a hack (sometimes we get 302 from the web serv), 
-			//      May not work if Globul changes impl.
-			throw new GLBHttpException(status.getReasonPhrase(), status.getStatusCode());
-		}
+		handleLogin(qparams);
 	}
 	
 	public void logout() 
@@ -154,6 +140,60 @@ public class GLBHttpClientImpl implements GLBClient {
 		
 		httpCookieStore = new BasicCookieStore();
 		httpClient.setCookieStore(httpCookieStore);
+	}
+	
+	/**
+	 * Login logic
+	 * @param qparams
+	 */
+	private void handleLogin(List<NameValuePair> qparams) 
+		throws Exception {
+		
+		HttpPost httpPost = createPostRequest(HTTP_MYGLOBUL_SITE + GLBRequestType.LOGIN.getPath(), qparams);
+		
+//		rametersapplication/x-www-form-urlencoded
+//		action	
+//		continuation	myglobul.portal%3Faction%3Duserhome%26pkey%3D0%26jkey%3D0
+//		image.x	0
+//		image.y	0
+//		imglogin	JFNH
+//		password	mypassword
+//		refid		0a7b8fa558b46142e2d400ae0f2548f2f
+//		username	0899123456		
+
+		HttpResponse resp = httpClient.execute(httpPost);
+		StatusLine status = resp.getStatusLine();
+		
+		if ( status.getStatusCode() == HttpStatus.SC_OK ) {
+			
+			// retrieve contents of the reply
+			HttpEntity entity = resp.getEntity();
+			ByteArrayOutputStream baos = new ByteArrayOutputStream(DEFAULT_BUFFER_SIZE);
+			entity.writeTo(baos);
+			baos.close();
+			
+			String content = baos.toString();
+			
+			// if the username is not present in the content, then we're obviously not logged in
+			if ( content.indexOf("action=pdetails") == -1 || content.indexOf("action=chpass") == -1 ) {
+				//check if secure code image is sent
+				if ( content.indexOf("/mg/my/GetImage?refid=") != -1 ) {
+					//TODO: retrieve image url
+					//<img class="code" alt="Ако се затруднявате с разчитането на кода от картинката, моля кликнете върху нея за да я смените." src="/mg/my/GetImage?refid=b7b8fa558b461f1e2d400ae0f3348f2f">
+					throw new GLBSecureCodeRequiredException("");
+				}
+				
+				throw new GLBInvalidCredentialsException();
+			}
+		}
+		else if ( status.getStatusCode() != HttpStatus.SC_MOVED_TEMPORARILY ) {
+			
+			resp.getEntity().consumeContent();
+			
+			//NOTE: Kind of a hack (sometimes we get 302 from the web serv), 
+			//      May not work if Globul changes impl.
+			throw new GLBHttpException(status.getReasonPhrase(), status.getStatusCode());
+		}		
 	}
 	
 	private HttpPost createPostRequest(String url, List<NameValuePair> qparams) 
