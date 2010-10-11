@@ -22,9 +22,9 @@ public class LoginActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.login);
 		
-		//requestWindowFeature(Window.FEATURE_LEFT_ICON);
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		setContentView(R.layout.login);
 		
 		setResult(RESULT_CANCELED); // default
 		

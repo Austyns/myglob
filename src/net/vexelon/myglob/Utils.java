@@ -158,12 +158,15 @@ public class Utils {
 	 * @param titleResId
 	 */
 	public static void showAlertDialog(Context context, int messageResId, int titleResId) {
+		showAlertDialog(context, context.getResources().getString(messageResId), titleResId);
+	}
+	
+	public static void showAlertDialog(Context context, String message, int titleResId) {
 
 		AlertDialog.Builder alertBuilder = new AlertDialog.Builder(context);
 		alertBuilder.setTitle(
 				context.getResources().getString(
-						titleResId)).setMessage(
-								context.getResources().getString(messageResId)).setIcon(
+						titleResId)).setMessage(message).setIcon(
 				R.drawable.alert).setOnKeyListener(
 				new DialogInterface.OnKeyListener() {
 
@@ -174,7 +177,7 @@ public class Utils {
 						return false;
 					}
 				}).create().show();				
-	}
+	}	
 	
 	
 }

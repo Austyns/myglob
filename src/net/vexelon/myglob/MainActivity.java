@@ -2,28 +2,24 @@ package net.vexelon.myglob;
 
 import net.vexelon.glbclient.GLBClient;
 import net.vexelon.glbclient.GLBHttpClientImpl;
-import net.vexelon.glbclient.exceptions.GLBHttpException;
 import net.vexelon.glbclient.exceptions.GLBSecureCodeRequiredException;
 import net.vexelon.glbclient.exceptions.GLBInvalidCredentialsException;
 import net.vexelon.myglob.R;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
+import android.graphics.PorterDuff.Mode;
 import android.os.Bundle;
-import android.text.Html;
-import android.text.Spanned;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CursorAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -31,13 +27,14 @@ public class MainActivity extends Activity {
 	
 	/*
 	 * TODO:
-	 * 1. Complete Spinner actions
-	 * 2. Test securecode image occurance
+	 * 1. [DONE] Complete Spinner actions
+	 * 2. Test secure code image occurence
 	 * 3. Test saving/loading of options
-	 * 4. Add/Finish About activity
-	 * 5. Add Progress dialog(s)
+	 * 4. [DONE] Add/Finish About activity
+	 * 5. [DONE] Add Progress dialog(s)
 	 * 6. Add strings to resources
 	 * 7. Add images
+	 * 8. Remove log tags
 	 */
 	
 	public enum Operations {
@@ -48,7 +45,6 @@ public class MainActivity extends Activity {
 		CHECK_CREDIT_LIMIT(R.string.operation_check_credit_limit);
 		
 		private int resId = -1;
-		private long spinnerId = -1;
 		
 		Operations(int resourceId) {
 			this.resId = resourceId;
@@ -77,8 +73,8 @@ public class MainActivity extends Activity {
         // initialize items
         
         Spinner spinnerOptions = (Spinner) findViewById(R.id.SpinnerOptions);
-        ArrayAdapter<Operations> adapter = new ArrayAdapter<Operations>(this, 
-        		android.R.layout.simple_spinner_item, new Operations[]{
+        OperationsArrayAdapter adapter = new OperationsArrayAdapter(this, android.R.layout.simple_spinner_item, 
+        		new Operations[]{
         		Operations.CHECK_CURRENT_BALANCE, 
 				Operations.CHECK_AVAIL_MINUTES,
 				Operations.CHECK_AVAIL_DATA,
@@ -96,8 +92,8 @@ public class MainActivity extends Activity {
 			}
 		});
 
-        //Button btn = (Button)findViewById(R.id.ButtonLogin);
-        //btn.getBackground().setColorFilter(0x4F00FF00, Mode.MULTIPLY);
+        //btnUpdate.getBackground().setColorFilter(0x2212FF00, Mode.LIGHTEN);
+        btnUpdate.getBackground().setColorFilter(0xFF25EE25, Mode.MULTIPLY);
     }
     
     @Override
@@ -149,11 +145,11 @@ public class MainActivity extends Activity {
 		
 		//menu.add(0, Defs.MENU_EN_RATES, 0, R.string.menu_en_rates).setIcon(R.drawable.gb);
 		if (!isCredentialsAvailable())
-			menu.add(0, Defs.MENU_SIGNIN, 0, "Sign In").setIcon(R.drawable.key);
+			menu.add(0, Defs.MENU_SIGNIN, 0, getResString(R.string.menu_signin) ).setIcon(R.drawable.key);
 		else
-			menu.add(0, Defs.MENU_SIGNOUT, 0, "Sign Out").setIcon(R.drawable.door_out);
+			menu.add(0, Defs.MENU_SIGNOUT, 0, getResString(R.string.menu_signout)).setIcon(R.drawable.door_out);
 		
-		menu.add(1, Defs.MENU_ABOUT, 15, "About").setIcon(R.drawable.help);		
+		menu.add(1, Defs.MENU_ABOUT, 15, getResString(R.string.menu_about)).setIcon(R.drawable.help);		
 	}
 	
 	private String getDecryptedPassword(String encodedPassword) {
@@ -304,26 +300,74 @@ public class MainActivity extends Activity {
 			Spinner spinnerOptions = (Spinner) findViewById(R.id.SpinnerOptions);
 			final Operations operation = (Operations) spinnerOptions.getSelectedItem();
 			final TextView tx = (TextView) _context.findViewById(R.id.TextContent);
-			tx.post(new Runnable() {
-				
-				@Override
-				public void run() {
-					// sign in and show requested data
-					String data = getAccountStatus(operation);
-					data = data.replaceAll("(<.[^>]*>)|(</.[^>]*>)", "");
-					data = data.replaceAll("\\t|\\n|\\r", "");	
-					data = data.trim();
-					tx.setText(data);
-					//tx.setText(Html.fromHtml(data));
+			
+			// show progress
+			final ProgressDialog myProgress = ProgressDialog.show(this, getResString(R.string.dlg_progress_title), getResString(R.string.dlg_progress_message), true);
 
-					//WebView wv = (WebView) _context.findViewById(R.id.TextContent);
-					//wv.loadData(data, "text/html", "utf-8");					
-				}
-			});
-		}		
+			// do work
+			new Thread() {
+				public void run() {
+					
+					try {
+						final String data = getAccountStatus(operation);
+						// update text field
+						tx.post(new Runnable() {
+							
+							@Override
+							public void run() {
+								tx.setText(data);
+								//tx.setText(Html.fromHtml(data));
+								//WebView wv = (WebView) _context.findViewById(R.id.TextContent);
+								//wv.loadData(data, "text/html", "utf-8");							
+							}
+						});						
+					}
+					catch (GLBInvalidCredentialsException e) {
+						// ERROR
+						tx.post(new Runnable() {
+							
+							@Override
+							public void run() {
+								Utils.showAlertDialog(_context, R.string.dlg_error_msg_invalid_credentials, R.string.dlg_error_msg_title);
+							}
+						});
+					}
+					catch (GLBSecureCodeRequiredException e) {
+						// ERROR
+						tx.post(new Runnable() {
+							
+							@Override
+							public void run() {
+								Utils.showAlertDialog(_context, R.string.dlg_error_msg_securecode, R.string.dlg_error_msg_title);
+							}
+						});						
+					}
+					catch (Exception e) {
+						// ERROR
+						final String msg = e.getMessage();
+						tx.post(new Runnable() {
+							
+							@Override
+							public void run() {
+								Utils.showAlertDialog(_context, msg, R.string.dlg_error_msg_title);
+							}
+						});
+					}
+					
+					// close progress bar dialog
+					tx.post(new Runnable() {
+						@Override
+						public void run() {
+							myProgress.dismiss();
+						}
+					});						
+				};
+			}.start();
+
+		} // end if		
 	}
     
-	private String getAccountStatus(Operations operation) {
+	private String getAccountStatus(Operations operation) throws Exception {
 		
 //		String ret = "<td class=\"txt_order_SMS\">" +
 //        		 "<p>Вашата текуща сметка:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> 1,45 лв.</span> без ДДС</p>" +
@@ -359,18 +403,25 @@ public class MainActivity extends Activity {
 			}
 
 			client.logout();
+			
+			result = result.replaceAll("(<.[^>]*>)|(</.[^>]*>)", "");
+			result = result.replaceAll("\\t|\\n|\\r", "");	
+			result = result.trim();			
 		}
-		catch(GLBSecureCodeRequiredException e) {
-			Log.e(Defs.LOG_TAG, "Secure image exception", e);
-		}
-		catch(GLBInvalidCredentialsException e) {
-			Log.e(Defs.LOG_TAG, "Failed to login!", e);
-		}
-		catch(GLBHttpException e) {
-			Log.e(Defs.LOG_TAG, "Login HTTP exception!", e);
-		}
+//		catch(GLBSecureCodeRequiredException e) {
+//			Log.e(Defs.LOG_TAG, "Secure image exception", e);
+//			throw e;
+//		}
+//		catch(GLBInvalidCredentialsException e) {
+//			Log.e(Defs.LOG_TAG, "Failed to login!", e);
+//			throw e;
+//		}
+//		catch(GLBHttpException e) {
+//			Log.e(Defs.LOG_TAG, "Login HTTP exception!", e);
+//		}
 		catch(Exception e) {
 			Log.e(Defs.LOG_TAG, "Login exception!", e);
+			throw e;
 		}
 		finally {
 			client.close();
@@ -378,4 +429,8 @@ public class MainActivity extends Activity {
 		
 		return result;
 	}    
+	
+	private String getResString(int id) {
+		return this.getResources().getString(id);
+	}	
 }
