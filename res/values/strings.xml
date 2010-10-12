@@ -23,4 +23,9 @@
 <string name="menu_about">Относно</string>
 <string name="dlg_progress_title">Моля изчакайте</string>
 <string name="dlg_progress_message">Изпращане на заявка към сървъра...</string>
+<string name="err_msg_username_missing">Празно или невалидно потребителско име!</string>
+<string name="err_msg_password_missing">Празна или невалидна парола!</string>
+<string name="dlg_error_msg_encrypt_failed">Невъзможно криптиране на паролата! Паролата, която сте въвели ще бъде съхранена некриптирана на устройството!</string>
+<string name="dlg_error_msg_decrypt_failed">Неуспешно декриптиране на запазената парола!</string>
+<string name="dlg_error_msg_create_key_failed">Невъзможно създаването на ключ за криптиране!</string>
 </resources>

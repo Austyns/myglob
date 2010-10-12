@@ -5,6 +5,7 @@ import java.security.NoSuchAlgorithmException;
 import org.apache.http.util.EncodingUtils;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -43,6 +44,8 @@ public class LoginActivity extends Activity {
 		final CheckBox cbSaveCredentials = (CheckBox) findViewById(R.id.CheckBoxSaveCredentials);
 		cbSaveCredentials.setChecked(intent.getBooleanExtra(Defs.INTENT_EXTRA_SAVECREDENTIALS, false));
 		
+		final Context context = this;
+		
 		// login button pressed
 		Button btnLogin = (Button) findViewById(R.id.ButtonLogin);
 		btnLogin.setOnClickListener(new OnClickListener() {
@@ -53,14 +56,12 @@ public class LoginActivity extends Activity {
 				Intent intent = new Intent();
 				
 				if (TextUtils.isEmpty(etUsername.getText())) {
-					tvErrorMessage.setText("Username is not specified!");
+					tvErrorMessage.setText(getResString(R.string.err_msg_username_missing));
 				}
 				else if (TextUtils.isEmpty(etPassword.getText())) {
-					tvErrorMessage.setText("Password's not specified!");
+					tvErrorMessage.setText(getResString(R.string.err_msg_password_missing));
 				}
 				else {
-					Log.v(Defs.LOG_TAG, "Text password: " + etPassword.getText());
-					
 					// (try to) encrypt password, only if it's not the dummy password
 					if ( ! etPassword.getText().toString().equals(Defs.DUMMY_PASSWORD) ) {
 						byte[] rawPassword = etPassword.getText().toString().getBytes();
@@ -70,18 +71,28 @@ public class LoginActivity extends Activity {
 						
 						try {
 							encryptedPassword = crypto.encrypt(rawPassword, keyData);
+							throw new Exception("ERROR necrrypt");
 						}
 						catch (Exception e) {
-							Log.e(Defs.LOG_TAG, "Password could not be encrypted!", e);
-							//TODO: tell user that password was not encrypted
+							//Log.e(Defs.LOG_TAG, "Password could not be encrypted!", e);
+							
+							// show error msg
+							tvErrorMessage.post(new Runnable() {
+								
+								@Override
+								public void run() {
+									Utils.showAlertDialog(context, R.string.dlg_error_msg_encrypt_failed, R.string.dlg_error_msg_title);
+								}
+							});
+							
 							encryptedPassword = rawPassword;
 						}
 						
-						Log.v(Defs.LOG_TAG, "Intent password: " + Base64.encodeBytes(encryptedPassword));
+						//Log.v(Defs.LOG_TAG, "Intent password: " + Base64.encodeBytes(encryptedPassword));
 						intent.putExtra(Defs.INTENT_EXTRA_PASSWORD, Base64.encodeBytes(encryptedPassword));
 					}
 					else {
-						Log.v(Defs.LOG_TAG, "Intent password: " + Defs.DUMMY_PASSWORD);
+						//Log.v(Defs.LOG_TAG, "Intent password: " + Defs.DUMMY_PASSWORD);
 						intent.putExtra(Defs.INTENT_EXTRA_PASSWORD, Defs.DUMMY_PASSWORD);
 					}
 
@@ -96,4 +107,7 @@ public class LoginActivity extends Activity {
 		 
 	}
 
+	private String getResString(int id) {
+		return this.getResources().getString(id);
+	}		
 }

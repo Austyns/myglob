@@ -28,13 +28,14 @@ public class MainActivity extends Activity {
 	/*
 	 * TODO:
 	 * 1. [DONE] Complete Spinner actions
-	 * 2. Test secure code image occurence
+	 * 2. Test secure code image occurance
 	 * 3. Test saving/loading of options
 	 * 4. [DONE] Add/Finish About activity
 	 * 5. [DONE] Add Progress dialog(s)
-	 * 6. Add strings to resources
-	 * 7. Add images
-	 * 8. Remove log tags
+	 * 6. [DONE] Add strings to resources
+	 * 7. Test error message screens
+	 * 8. Add images
+	 * 9. Remove log tags
 	 */
 	
 	public enum Operations {
@@ -111,11 +112,15 @@ public class MainActivity extends Activity {
     	}
     }
     
+//	@Override
+//	public boolean onCreateOptionsMenu(Menu menu) {
+//		return initMenu(menu);
+//	}
+	
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		initMenu(menu);
-		return true;
-	} 
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		return initMenu(menu);
+	}
 	
 	@Override
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
@@ -140,7 +145,8 @@ public class MainActivity extends Activity {
 		return true;
 	}
 	
-	private void initMenu(Menu menu) {
+	private boolean initMenu(Menu menu) {
+		Log.v(Defs.LOG_TAG, "MENU TO Idvaa");
 		menu.clear();
 		
 		//menu.add(0, Defs.MENU_EN_RATES, 0, R.string.menu_en_rates).setIcon(R.drawable.gb);
@@ -149,7 +155,9 @@ public class MainActivity extends Activity {
 		else
 			menu.add(0, Defs.MENU_SIGNOUT, 0, getResString(R.string.menu_signout)).setIcon(R.drawable.door_out);
 		
-		menu.add(1, Defs.MENU_ABOUT, 15, getResString(R.string.menu_about)).setIcon(R.drawable.help);		
+		menu.add(1, Defs.MENU_ABOUT, 15, getResString(R.string.menu_about)).setIcon(R.drawable.help);
+		
+		return true;
 	}
 	
 	private String getDecryptedPassword(String encodedPassword) {
@@ -164,8 +172,8 @@ public class MainActivity extends Activity {
 				result = new String(decryptedPassword);
 			}
 			catch (Exception e) {
-				Log.e(Defs.LOG_TAG, "Password could not be decrypted!", e);
-				//TODO: tell user that password was not decrypted
+				//Log.e(Defs.LOG_TAG, "Password could not be decrypted!", e);
+				Utils.showAlertDialog(this, R.string.dlg_error_msg_decrypt_failed, R.string.dlg_error_msg_title);
 			}
 		}
 		
@@ -180,7 +188,8 @@ public class MainActivity extends Activity {
 		bundle.putString(Defs.INTENT_EXTRA_USERNAME, "");
 		bundle.putString(Defs.INTENT_EXTRA_PASSWORD, "");
 		bundle.putBoolean(Defs.INTENT_EXTRA_SAVECREDENTIALS, true);
-		saveSettings(bundle);		
+		saveSettings(bundle);
+		
 	}
 	
 	/**
@@ -274,8 +283,8 @@ public class MainActivity extends Activity {
 				saveKey(keyData); // save the key only once!
 			}
 			catch (Exception e) {
-				Log.e(Defs.LOG_TAG, "Key could not be created!");
-				// TODO: tell user key could not be created
+				//Log.e(Defs.LOG_TAG, "Key could not be created!");
+				Utils.showAlertDialog(this, R.string.dlg_error_msg_create_key_failed, R.string.dlg_error_msg_title);
 			}
 		}
 		
