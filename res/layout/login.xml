@@ -19,7 +19,7 @@
 	android:id="@+id/TextUsername"
     android:layout_width="fill_parent" 
     android:layout_height="wrap_content" 
-    android:text="Username:"
+    android:text="@string/text_username"
     />
 <EditText 
 	android:id="@+id/EditTextUsername" 
@@ -35,7 +35,7 @@
 	android:id="@+id/TextPassword"
     android:layout_width="fill_parent" 
     android:layout_height="wrap_content" 
-    android:text="Password:"
+    android:text="@string/text_password"
     />
 <EditText 
 	android:id="@+id/EditTextPassword" 
@@ -49,7 +49,7 @@
 	/>
 	
 <CheckBox 
-	android:text="Remember my login details" 
+	android:text="@string/text_rememberme" 
 	android:id="@+id/CheckBoxSaveCredentials" 
 	android:layout_width="wrap_content" 
 	android:layout_height="wrap_content"
@@ -64,7 +64,7 @@
 	/>	
 	 
 <Button 
-	android:text="Login" 
+	android:text="@string/btn_msg_login" 
 	android:id="@+id/ButtonLogin" 
 	android:minWidth="140dp" 
 	android:layout_width="wrap_content" 

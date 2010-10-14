@@ -16,7 +16,7 @@
 
 
 <string name="dlg_error_msg_invalid_credentials">Грешно потребителско име или парола.</string>
-<string name="dlg_error_msg_securecode">Операторът изисква да се въведе код за сигурност! За съжаление текущата версия на тази програма не поддържа тази възможност. Моля, опитайте пак след няколко минути.</string>
+<string name="dlg_error_msg_securecode">Операторът изисква да се въведе код за сигурност! За съжаление текущата версия на тази програма не поддържа тази възможност. Моля, опитайте да обновите пак след няколко минути.</string>
 <string name="menu_signin">Вписване</string>
 <string name="menu_signout">Отписване</string>
 
@@ -25,7 +25,14 @@
 <string name="dlg_progress_message">Изпращане на заявка към сървъра...</string>
 <string name="err_msg_username_missing">Празно или невалидно потребителско име!</string>
 <string name="err_msg_password_missing">Празна или невалидна парола!</string>
-<string name="dlg_error_msg_encrypt_failed">Невъзможно криптиране на паролата! Паролата, която сте въвели ще бъде съхранена некриптирана на устройството!</string>
+<string name="dlg_error_msg_encrypt_failed">Невъзможно криптиране на паролата! Паролата, която сте въвели ще бъде съхранена некриптирана на устройството. Искате ли да продължите ?</string>
 <string name="dlg_error_msg_decrypt_failed">Неуспешно декриптиране на запазената парола!</string>
 <string name="dlg_error_msg_create_key_failed">Невъзможно създаването на ключ за криптиране!</string>
+<string name="dlg_msg_yes">Да</string>
+<string name="dlg_msg_no">Не</string>
+<string name="btn_msg_update">Обнови</string>
+<string name="btn_msg_login">Влизане</string>
+<string name="text_username">Потребителско име/номер:</string>
+<string name="text_password">Парола:</string>
+<string name="text_rememberme">Запомни името и паролата</string>
 </resources>

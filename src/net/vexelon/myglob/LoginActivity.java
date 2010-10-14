@@ -1,15 +1,13 @@
 package net.vexelon.myglob;
 
-import java.security.NoSuchAlgorithmException;
-
-import org.apache.http.util.EncodingUtils;
-
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.DialogInterface.OnDismissListener;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.View.OnClickListener;
@@ -19,6 +17,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 public class LoginActivity extends Activity {
+	
+	private AlertDialog _alert = null;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +44,7 @@ public class LoginActivity extends Activity {
 		final CheckBox cbSaveCredentials = (CheckBox) findViewById(R.id.CheckBoxSaveCredentials);
 		cbSaveCredentials.setChecked(intent.getBooleanExtra(Defs.INTENT_EXTRA_SAVECREDENTIALS, false));
 		
+		final Activity activity = this;
 		final Context context = this;
 		
 		// login button pressed
@@ -70,22 +71,45 @@ public class LoginActivity extends Activity {
 						Crypto crypto = CryptAESImpl.getInstance();
 						
 						try {
+							//throw new Exception("ERROR necrrypt"); //TODO: remove this line
 							encryptedPassword = crypto.encrypt(rawPassword, keyData);
-							throw new Exception("ERROR necrrypt");
 						}
 						catch (Exception e) {
 							//Log.e(Defs.LOG_TAG, "Password could not be encrypted!", e);
+							encryptedPassword = rawPassword;
 							
 							// show error msg
-							tvErrorMessage.post(new Runnable() {
+							activity.runOnUiThread(new Runnable() {
 								
 								@Override
 								public void run() {
-									Utils.showAlertDialog(context, R.string.dlg_error_msg_encrypt_failed, R.string.dlg_error_msg_title);
+									_alert = Utils.createAlertDialog(context, R.string.dlg_error_msg_encrypt_failed, R.string.dlg_error_msg_title);
+									_alert.setOnDismissListener(new OnDismissListener() {
+										@Override
+										public void onDismiss(DialogInterface dialog) {
+											activity.finish();
+										}
+									});
+									
+									_alert.setButton(AlertDialog.BUTTON_NEGATIVE, getResString(R.string.dlg_msg_no), new DialogInterface.OnClickListener() {
+									
+										@Override
+										public void onClick(DialogInterface dialog, int which) {
+											activity.setResult(RESULT_CANCELED);
+											//_alert.dismiss();
+										}
+									});
+									_alert.setButton(AlertDialog.BUTTON_POSITIVE, getResString(R.string.dlg_msg_yes), new DialogInterface.OnClickListener() {
+										
+										@Override
+										public void onClick(DialogInterface dialog, int which) {
+											//_alert.dismiss();
+										}
+									});									
+									
+									_alert.show();
 								}
 							});
-							
-							encryptedPassword = rawPassword;
 						}
 						
 						//Log.v(Defs.LOG_TAG, "Intent password: " + Base64.encodeBytes(encryptedPassword));
@@ -100,13 +124,16 @@ public class LoginActivity extends Activity {
 					intent.putExtra(Defs.INTENT_EXTRA_USERNAME, etUsername.getText().toString());
 					intent.putExtra(Defs.INTENT_EXTRA_SAVECREDENTIALS, cbSaveCredentials.isChecked());
 					setResult(RESULT_OK, intent);
-					finish();
+					
+					// if there are no alert dialogs on screen
+					if ( _alert == null )
+						finish();
 				}
 			}
 		});
 		 
 	}
-
+	
 	private String getResString(int id) {
 		return this.getResources().getString(id);
 	}		

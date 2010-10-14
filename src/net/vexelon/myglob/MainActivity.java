@@ -26,16 +26,18 @@ import android.widget.TextView;
 public class MainActivity extends Activity {
 	
 	/*
-	 * TODO:
+	 * TODO list
 	 * 1. [DONE] Complete Spinner actions
-	 * 2. Test secure code image occurance
-	 * 3. Test saving/loading of options
+	 * 2. [DONE] Test secure code image occurrence
+	 * 3. [DONE] Test saving/loading of options
 	 * 4. [DONE] Add/Finish About activity
 	 * 5. [DONE] Add Progress dialog(s)
 	 * 6. [DONE] Add strings to resources
-	 * 7. Test error message screens
-	 * 8. Add images
-	 * 9. Remove log tags
+	 * 7. [DONE] Test error message screens
+	 * 8. Add images and fix layout
+	 * 9. [DONE] What to do if key-create fails ??
+	 * 10. Protect IV
+	 * 11. Remove log tags
 	 */
 	
 	public enum Operations {
@@ -56,7 +58,7 @@ public class MainActivity extends Activity {
 		}
 	};
 	
-	private Activity _context = null;
+	private Activity _activity = null;
 	private String _username = "";
 	private String _password = "";
 	private boolean _saveCredentials = false;
@@ -67,7 +69,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
-        _context = this;
+        _activity = this;
         
         loadSettings();
         
@@ -146,7 +148,6 @@ public class MainActivity extends Activity {
 	}
 	
 	private boolean initMenu(Menu menu) {
-		Log.v(Defs.LOG_TAG, "MENU TO Idvaa");
 		menu.clear();
 		
 		//menu.add(0, Defs.MENU_EN_RATES, 0, R.string.menu_en_rates).setIcon(R.drawable.gb);
@@ -160,20 +161,21 @@ public class MainActivity extends Activity {
 		return true;
 	}
 	
-	private String getDecryptedPassword(String encodedPassword) {
-		String result = encodedPassword;
+	private String getDecryptedPassword(String encodedPassword) throws Exception {
+		
+		byte[] rawPassword = Base64.decode(encodedPassword);
+		String result = new String(rawPassword);
 		byte[] keyData = loadKey();
 		
 		if (!TextUtils.isEmpty(encodedPassword) && keyData != null) {
 			Crypto crypto = CryptAESImpl.getInstance();
 			try {
-				byte[] rawPassword = Base64.decode(encodedPassword);
 				byte[] decryptedPassword = crypto.decrypt(rawPassword, keyData);
 				result = new String(decryptedPassword);
 			}
 			catch (Exception e) {
-				//Log.e(Defs.LOG_TAG, "Password could not be decrypted!", e);
-				Utils.showAlertDialog(this, R.string.dlg_error_msg_decrypt_failed, R.string.dlg_error_msg_title);
+//				Log.e(Defs.LOG_TAG, "Password could not be decrypted!", e);
+//				Utils.showAlertDialog(this, R.string.dlg_error_msg_decrypt_failed, R.string.dlg_error_msg_title);
 			}
 		}
 		
@@ -279,12 +281,14 @@ public class MainActivity extends Activity {
 			// generate new key
 			Crypto crypto = CryptAESImpl.getInstance();
 			try {
+//				throw new Exception("Key failed!"); //TODO: remove this test line
 				keyData = crypto.createSecretKey();
 				saveKey(keyData); // save the key only once!
 			}
 			catch (Exception e) {
 				//Log.e(Defs.LOG_TAG, "Key could not be created!");
-				Utils.showAlertDialog(this, R.string.dlg_error_msg_create_key_failed, R.string.dlg_error_msg_title);
+//				AlertDialog alert = Utils.createAlertDialog(this, R.string.dlg_error_msg_create_key_failed, R.string.dlg_error_msg_title);
+//				alert.show();
 			}
 		}
 		
@@ -308,11 +312,12 @@ public class MainActivity extends Activity {
 		else {
 			Spinner spinnerOptions = (Spinner) findViewById(R.id.SpinnerOptions);
 			final Operations operation = (Operations) spinnerOptions.getSelectedItem();
-			final TextView tx = (TextView) _context.findViewById(R.id.TextContent);
+			final TextView tx = (TextView) _activity.findViewById(R.id.TextContent);
 			
 			// show progress
 			final ProgressDialog myProgress = ProgressDialog.show(this, getResString(R.string.dlg_progress_title), getResString(R.string.dlg_progress_message), true);
 
+			Log.v(Defs.LOG_TAG, "create thread...");
 			// do work
 			new Thread() {
 				public void run() {
@@ -320,51 +325,63 @@ public class MainActivity extends Activity {
 					try {
 						final String data = getAccountStatus(operation);
 						// update text field
-						tx.post(new Runnable() {
-							
-							@Override
-							public void run() {
-								tx.setText(data);
-								//tx.setText(Html.fromHtml(data));
-								//WebView wv = (WebView) _context.findViewById(R.id.TextContent);
-								//wv.loadData(data, "text/html", "utf-8");							
-							}
-						});						
+						
+						tx.setText(data);
+						//tx.setText(Html.fromHtml(data));
+						//WebView wv = (WebView) _activity.findViewById(R.id.TextContent);
+						//wv.loadData(data, "text/html", "utf-8");							
+						
+//						_activity.runOnUiThread(new Runnable() {
+//							
+//							@Override
+//							public void run() {
+//								tx.setText(data);
+//								//tx.setText(Html.fromHtml(data));
+//								//WebView wv = (WebView) _activity.findViewById(R.id.TextContent);
+//								//wv.loadData(data, "text/html", "utf-8");							
+//							}
+//						});						
 					}
 					catch (GLBInvalidCredentialsException e) {
 						// ERROR
-						tx.post(new Runnable() {
-							
-							@Override
-							public void run() {
-								Utils.showAlertDialog(_context, R.string.dlg_error_msg_invalid_credentials, R.string.dlg_error_msg_title);
-							}
-						});
+						Utils.showAlertDialog(_activity, R.string.dlg_error_msg_invalid_credentials, R.string.dlg_error_msg_title);
+						
+//						_activity.runOnUiThread(new Runnable() {
+//							
+//							@Override
+//							public void run() {
+//								Utils.showAlertDialog(_activity, R.string.dlg_error_msg_invalid_credentials, R.string.dlg_error_msg_title);
+//							}
+//						});
 					}
 					catch (GLBSecureCodeRequiredException e) {
+						Utils.showAlertDialog(_activity, R.string.dlg_error_msg_securecode, R.string.dlg_error_msg_title);
+						
 						// ERROR
-						tx.post(new Runnable() {
-							
-							@Override
-							public void run() {
-								Utils.showAlertDialog(_context, R.string.dlg_error_msg_securecode, R.string.dlg_error_msg_title);
-							}
-						});						
+//						_activity.runOnUiThread(new Runnable() {
+//							
+//							@Override
+//							public void run() {
+//								Utils.showAlertDialog(_activity, R.string.dlg_error_msg_securecode, R.string.dlg_error_msg_title);
+//							}
+//						});						
 					}
 					catch (Exception e) {
 						// ERROR
 						final String msg = e.getMessage();
-						tx.post(new Runnable() {
-							
-							@Override
-							public void run() {
-								Utils.showAlertDialog(_context, msg, R.string.dlg_error_msg_title);
-							}
-						});
+						Utils.showAlertDialog(_activity, msg, getResString(R.string.dlg_error_msg_title));
+						
+//						_activity.runOnUiThread(new Runnable() {
+//							
+//							@Override
+//							public void run() {
+//								Utils.showAlertDialog(_activity, msg, getResString(R.string.dlg_error_msg_title));
+//							}
+//						});
 					}
 					
 					// close progress bar dialog
-					tx.post(new Runnable() {
+					_activity.runOnUiThread(new Runnable() {
 						@Override
 						public void run() {
 							myProgress.dismiss();
@@ -386,9 +403,10 @@ public class MainActivity extends Activity {
 //		
 //		return ret;
     
+		Log.v(Defs.LOG_TAG, "GetAcc...");
 		String result = "";
 		GLBClient client = new GLBHttpClientImpl(_username, getDecryptedPassword(_password));
-		Log.v(Defs.LOG_TAG, "Loging in using " + _username + " and pass: " + getDecryptedPassword(_password));
+		Log.v(Defs.LOG_TAG, "Logging in using " + _username + " and pass: " + getDecryptedPassword(_password));
 		
 		try {
 			client.login();

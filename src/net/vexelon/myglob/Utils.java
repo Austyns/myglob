@@ -17,6 +17,7 @@ import java.util.Random;
 
 import org.apache.http.util.ByteArrayBuffer;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -24,8 +25,6 @@ import android.view.KeyEvent;
 
 
 public class Utils {
-	
-	private final static String TAG = Defs.LOG_TAG; 
 	
 	private static Random _random = null;
 	
@@ -152,21 +151,59 @@ public class Utils {
 	
 	
 	/**
-	 * Display an alert dialog
+	 * Display an alert dialog using resource IDs
 	 * @param context
 	 * @param messageResId
 	 * @param titleResId
 	 */
-	public static void showAlertDialog(Context context, int messageResId, int titleResId) {
-		showAlertDialog(context, context.getResources().getString(messageResId), titleResId);
+	public static void showAlertDialog(Activity activity, int messageResId, int titleResId) {
+		showAlertDialog(activity, activity.getResources().getString(messageResId), 
+				activity.getResources().getString(titleResId));
+	}
+
+	/**
+	 * Display alert dialog using string message
+	 * @param context
+	 * @param message
+	 * @param titleResId
+	 */
+	public static void showAlertDialog(Activity activity, String message, String title) {
+		final Activity act = activity;
+		final String s1 = message, s2 = title;
+		activity.runOnUiThread(new Runnable() {
+			
+			@Override
+			public void run() {
+				AlertDialog alert = createAlertDialog(act, s1, s2);
+				alert.show();
+			}
+		});
+	}	
+	
+	/**
+	 * Create alert dialog using resource IDs
+	 * @param context
+	 * @param messageResId
+	 * @param titleResId
+	 * @return
+	 */
+	public static AlertDialog createAlertDialog(Context context, int messageResId, int titleResId) {
+		return createAlertDialog(context, context.getResources().getString(messageResId), 
+				context.getResources().getString(titleResId));
 	}
 	
-	public static void showAlertDialog(Context context, String message, int titleResId) {
-
+	/**
+	 * Create an alert dialog without showing it on screen
+	 * @param context
+	 * @param message
+	 * @param titleResId
+	 * @return
+	 */
+	public static AlertDialog createAlertDialog(Context context, String message, String title) {
+		
 		AlertDialog.Builder alertBuilder = new AlertDialog.Builder(context);
-		alertBuilder.setTitle(
-				context.getResources().getString(
-						titleResId)).setMessage(message).setIcon(
+		
+		return alertBuilder.setTitle(title).setMessage(message).setIcon(
 				R.drawable.alert).setOnKeyListener(
 				new DialogInterface.OnKeyListener() {
 
@@ -176,8 +213,7 @@ public class Utils {
 						dialog.dismiss();
 						return false;
 					}
-				}).create().show();				
-	}	
-	
+				}).create();
+	}
 	
 }

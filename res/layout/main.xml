@@ -58,7 +58,7 @@
     android:paddingRight="2dip">
 	
 <Button 
-	android:text="Update" 
+	android:text="@string/btn_msg_update" 
 	android:id="@+id/ButtonUpdate" 
 	android:minWidth="140dp" 
 	android:layout_width="wrap_content" 
