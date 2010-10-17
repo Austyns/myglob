@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     
-    <string name="app_name">MyGlob - Проверка на сметка Globul</string>
+    <string name="app_name">MyGlob</string>
 <string name="operation_check_balance">Проверка на текуща сметка и задължения за минал период</string>
 <string name="operation_check_avail_minutes">Проверка на пакет минути</string>
 <string name="operation_check_avail_data">Проверка на пакет данни (МВ)</string>
 
 <string name="operation_check_sms_pack">Проверка на пакет SMS/MMS</string>
 <string name="operation_check_credit_limit">Проверка на кредитен лимит</string>
-<string name="about_tagline">Проверете сметката си</string>
+<string name="about_tagline">Проверете сметката си към Globul</string>
 <string name="about_version">Версия: </string>
 <string name="about_author">Автор - Petar Petrov</string>
-<string name="about_icons_info">Безплатни икони от:</string>
+<string name="about_icons_info">Безплатни икони от</string>
 <string name="dlg_error_msg_title">Възникна грешка</string>
 
 

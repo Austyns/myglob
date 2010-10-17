@@ -1,5 +1,8 @@
 package net.vexelon.myglob;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import net.vexelon.glbclient.GLBClient;
 import net.vexelon.glbclient.GLBHttpClientImpl;
 import net.vexelon.glbclient.exceptions.GLBSecureCodeRequiredException;
@@ -13,6 +16,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.PorterDuff.Mode;
 import android.os.Bundle;
+import android.text.Html;
+import android.text.Layout;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
@@ -21,6 +26,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -35,10 +41,10 @@ public class MainActivity extends Activity {
 	 * 5. [DONE] Add Progress dialog(s)
 	 * 6. [DONE] Add strings to resources
 	 * 7. [DONE] Test error message screens
-	 * 8. Add images and fix layout
+	 * 8. [DONE] Add images and fix/adjust layout
 	 * 9. [DONE] What to do if key-create fails ??
 	 * 10. Protect IV
-	 * 11. Remove log tags
+	 * 11. [DONE] Remove log tags
 	 */
 	
 	public enum Operations {
@@ -70,6 +76,9 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
+        // set title
+        this.setTitle(getResString(R.string.app_name) + " - " + getResString(R.string.about_tagline));
+        
         _activity = this;
         
         loadSettings();
@@ -99,9 +108,8 @@ public class MainActivity extends Activity {
         //btnUpdate.getBackground().setColorFilter(0x2212FF00, Mode.LIGHTEN);
         btnUpdate.getBackground().setColorFilter(0xFF25EE25, Mode.MULTIPLY);
         
-        // position frame
-//        FrameLayout frame = (FrameLayout) findViewById(R.id.FrameBottomOptions);
-        
+        // position logged in frame
+        updateLoggedInFlag();
     }
     
     @Override
@@ -196,7 +204,6 @@ public class MainActivity extends Activity {
 		bundle.putString(Defs.INTENT_EXTRA_PASSWORD, "");
 		bundle.putBoolean(Defs.INTENT_EXTRA_SAVECREDENTIALS, true);
 		saveSettings(bundle);
-		
 	}
 	
 	/**
@@ -214,18 +221,18 @@ public class MainActivity extends Activity {
 	 * @param bundle
 	 */
 	private void saveSettings(Bundle bundle) {
-		Log.v(Defs.LOG_TAG, "Saving username: " + bundle.getString(Defs.INTENT_EXTRA_USERNAME));
+//		Log.v(Defs.LOG_TAG, "Saving username: " + bundle.getString(Defs.INTENT_EXTRA_USERNAME));
 		
 		_username = bundle.getString(Defs.INTENT_EXTRA_USERNAME);
 		String password = bundle.getString(Defs.INTENT_EXTRA_PASSWORD);
 		if ( !password.equals(Defs.DUMMY_PASSWORD) ) {
 			_password = password;
-			Log.v(Defs.LOG_TAG, "Saving password: " + bundle.getString(Defs.INTENT_EXTRA_PASSWORD));
+//			Log.v(Defs.LOG_TAG, "Saving password: " + bundle.getString(Defs.INTENT_EXTRA_PASSWORD));
 		}
 		
 		boolean save = bundle.getBoolean(Defs.INTENT_EXTRA_SAVECREDENTIALS);
 		if (save) {
-			Log.v(Defs.LOG_TAG, "Saving to prefs ...");
+//			Log.v(Defs.LOG_TAG, "Saving to prefs ...");
 			//_saveCredentials = save;
 			SharedPreferences prefs = this.getSharedPreferences(Defs.PREFS_NAME, 0);
 			SharedPreferences.Editor editor = prefs.edit();
@@ -235,6 +242,9 @@ public class MainActivity extends Activity {
 			
 			editor.commit();
 		}
+		
+        // position logged in frame
+        updateLoggedInFlag();		
 	}
 	
 	/**
@@ -245,7 +255,7 @@ public class MainActivity extends Activity {
 		SharedPreferences prefs = this.getSharedPreferences(Defs.PREFS_NAME, 0);
 		SharedPreferences.Editor editor = prefs.edit();
 		
-		Log.v(Defs.LOG_TAG, "Saving key -" + Base64.encodeBytes(keyData));
+//		Log.v(Defs.LOG_TAG, "Saving key -" + Base64.encodeBytes(keyData));
 		editor.putString(Defs.INTENT_EXTRA_KEY, Base64.encodeBytes(keyData));
 		
 		editor.commit();		
@@ -265,7 +275,7 @@ public class MainActivity extends Activity {
 			ret = TextUtils.isEmpty(key) ? null : Base64.decode(key);
 		}
 		catch (Exception e) {
-			Log.e(Defs.LOG_TAG, "Failed to load key!");
+//			Log.e(Defs.LOG_TAG, "Failed to load key!");
 		}
 		
 		return ret;
@@ -307,6 +317,22 @@ public class MainActivity extends Activity {
 	}
 	
 	/**
+	 * Show user and icon if credentials available
+	 */
+	private void updateLoggedInFlag() {
+        // position logged in frame
+        RelativeLayout frame = (RelativeLayout) findViewById(R.id.LayoutLoggedInFlag);
+        if ( isCredentialsAvailable() ) {
+        	TextView tv = (TextView) this.findViewById(R.id.TextUserLoggedIn);
+        	tv.setText(_username);
+        	frame.setVisibility(RelativeLayout.VISIBLE);
+        }
+        else {
+        	frame.setVisibility(RelativeLayout.INVISIBLE);
+        }
+	}
+	
+	/**
 	 * Get selected spinner option and update view
 	 */
 	private void updateSelectedStatus() {
@@ -314,7 +340,8 @@ public class MainActivity extends Activity {
 			_updateAfterSignIn = true;
 			showSignInWindow();
 		}
-		else {
+		else 
+		{
 			Spinner spinnerOptions = (Spinner) findViewById(R.id.SpinnerOptions);
 			final Operations operation = (Operations) spinnerOptions.getSelectedItem();
 			final TextView tx = (TextView) _activity.findViewById(R.id.TextContent);
@@ -334,8 +361,8 @@ public class MainActivity extends Activity {
 							
 							@Override
 							public void run() {
-								tx.setText(data);
-								//tx.setText(Html.fromHtml(data));
+								//tx.setText(data);
+								tx.setText(Html.fromHtml(data));
 								//WebView wv = (WebView) _activity.findViewById(R.id.TextContent);
 								//wv.loadData(data, "text/html", "utf-8");							
 							}
@@ -368,80 +395,94 @@ public class MainActivity extends Activity {
 		} // end if		
 	}
 	
-	private String getAccountStatus(Operations operation) throws Exception {
-		String ret = "<td class=\"txt_order_SMS\">" +
-        		 "<p>Вашата текуща сметка:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> 1,45 лв.</span> без ДДС</p>" +
-                 "<p>Задължения по ф-ра за периода 18.08-17.09.2010г:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> -0,23 лв.</span> с ДДС</p>" +
-                 "<p>Данните са актуални към:<span style=\"font-weight: bold;\"> 07 Октомври, 21:15ч.</span>" +
-                 "</p></td>" +
-                 "<td class=\"txt_order_SMS\">" +
-        		 "<p>Вашата текуща сметка:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> 1,45 лв.</span> без ДДС</p>" +
-                 "<p>Задължения по ф-ра за периода 18.08-17.09.2010г:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> -0,23 лв.</span> с ДДС</p>" +
-                 "<p>Данните са актуални към:<span style=\"font-weight: bold;\"> 07 Октомври, 21:15ч.</span>" +
-                 "</p></td>" +
-                 "<td class=\"txt_order_SMS\">" +
-        		 "<p>Вашата текуща сметка:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> 1,45 лв.</span> без ДДС</p>" +
-                 "<p>Задължения по ф-ра за периода 18.08-17.09.2010г:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> -0,23 лв.</span> с ДДС</p>" +
-                 "<p>Данните са актуални към:<span style=\"font-weight: bold;\"> 07 Октомври, 21:15ч.</span>" +
-                 "</p></td>";                 
-		
-		return ret;
-	}
-    
 //	private String getAccountStatus(Operations operation) throws Exception {
-//    
-//		String result = "";
-//		GLBClient client = new GLBHttpClientImpl(_username, getDecryptedPassword(_password));
+//		String result = "<td class=\"txt_order_SMS\">" +
+//        		 "<p>Вашата текуща сметка:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> 1,45 лв.</span> без ДДС</p>" +
+//                 "<p>Задължения по ф-ра за периода 18.08-17.09.2010г:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> -0,23 лв.</span> с ДДС</p>" +
+//                 "<p>Данните са актуални към:<span style=\"font-weight: bold;\"> 07 Октомври, 21:15ч.</span>" +
+//                 "</p></td>" +
+//                 "<td class=\"txt_order_SMS\">" +
+//        		 "<p>Вашата текуща сметка:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> 1,45 лв.</span> без ДДС</p>" +
+//                 "<p>Задължения по ф-ра за периода 18.08-17.09.2010г:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> -0,23 лв.</span> с ДДС</p>" +
+//                 "<p>Данните са актуални към:<span style=\"font-weight: bold;\"> 07 Октомври, 21:15ч.</span>" +
+//                 "</p></td>" +
+//                 "<td class=\"txt_order_SMS\">" +
+//        		 "<p>Вашата текуща сметка:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> 1,45лв.</span> без ДДС</p>" +
+//                 "<p>Задължения по ф-ра за периода 18.08-17.09.2010г:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> -0,23 лв.</span> с ДДС</p>" +
+//                 "<p>Данните са актуални към:<span style=\"font-weight: bold;\"> 07 Октомври, 21:15ч.</span>" +
+//                 "</p></td>";  
+//		
+//		result = result.replaceAll("(<.[^>]*>)|(</.[^>]*>)", "");
+//		result = result.replaceAll("\\t|\\n|\\r", "");	
+//		result = result.trim();
+//		
+//		Pattern p = Pattern.compile("(-*\\d+,\\d+\\s*лв\\.*)", Pattern.CASE_INSENSITIVE);
+//		Matcher m = p.matcher(result);
+//		StringBuffer sb = new StringBuffer();
+//		while (m.find()) {
+//			m.appendReplacement(sb, "<b><font color=\"#1FAF1F\">" + m.group() + "</font></b>");
+//			//Log.v(Defs.LOG_TAG, "GR: " + sb.toString());
+//		}
+//		m.appendTail(sb);
+//		//Log.v(Defs.LOG_TAG, "GR: " + sb.toString());
+//		
+//		return sb.toString();
+//	}
+    
+	private String getAccountStatus(Operations operation) throws Exception {
+    
+		String result = "";
+		GLBClient client = new GLBHttpClientImpl(_username, getDecryptedPassword(_password));
 //		Log.v(Defs.LOG_TAG, "Logging in using " + _username + " and pass: " + getDecryptedPassword(_password));
-//		
-//		try {
-//			client.login();
-//			
-//			switch(operation) {
-//			case CHECK_CURRENT_BALANCE:
-//				result = client.getCurrentBalance();
-//				break;
-//			case CHECK_AVAIL_MINUTES:
-//				result = client.getAvailableMinutes();
-//				break;
-//			case CHECK_CREDIT_LIMIT:
-//				result = client.getCreditLimit();
-//				break;
-//			case CHECK_AVAIL_DATA:
-//				result = client.getAvailableInternetBandwidth();
-//				break;
-//			case CHECK_SMS_PACKAGE:
-//				result = client.getAvailableMSPackage();
-//				break;
-//			}
-//
-//			result = result.replaceAll("(<.[^>]*>)|(</.[^>]*>)", "");
-//			result = result.replaceAll("\\t|\\n|\\r", "");	
-//			result = result.trim();	
-//			
-//			client.logout();
-//		}
-////		catch(GLBSecureCodeRequiredException e) {
-////			Log.e(Defs.LOG_TAG, "Secure image exception", e);
-////			throw e;
-////		}
-////		catch(GLBInvalidCredentialsException e) {
-////			Log.e(Defs.LOG_TAG, "Failed to login!", e);
-////			throw e;
-////		}
-////		catch(GLBHttpException e) {
-////			Log.e(Defs.LOG_TAG, "Login HTTP exception!", e);
-////		}
-//		catch(Exception e) {
-//			//Log.e(Defs.LOG_TAG, "Login exception!", e);
-//			throw e;
-//		}
-//		finally {
-//			client.close();
-//		}  		
-//		
-//		return result;
-//	}    
+		
+		try {
+			client.login();
+			
+			switch(operation) {
+			case CHECK_CURRENT_BALANCE:
+				result = client.getCurrentBalance();
+				break;
+			case CHECK_AVAIL_MINUTES:
+				result = client.getAvailableMinutes();
+				break;
+			case CHECK_CREDIT_LIMIT:
+				result = client.getCreditLimit();
+				break;
+			case CHECK_AVAIL_DATA:
+				result = client.getAvailableInternetBandwidth();
+				break;
+			case CHECK_SMS_PACKAGE:
+				result = client.getAvailableMSPackage();
+				break;
+			}
+
+			result = result.replaceAll("(<.[^>]*>)|(</.[^>]*>)", "");
+			result = result.replaceAll("\\t|\\n|\\r", "");	
+			result = result.trim();	
+
+			// colorfy money values
+			Pattern p = Pattern.compile("(-*\\d+(,\\d+)*\\s*лв\\.*)|(\\d+:\\d+\\s*(ч\\.*|мин\\.*))", Pattern.CASE_INSENSITIVE);
+			Matcher m = p.matcher(result);
+			StringBuffer sb = new StringBuffer(result.length() + result.length());
+			while (m.find()) {
+				m.appendReplacement(sb, "<b><font color=\"#1FAF1F\">" + m.group() + "</font></b>");
+				//Log.v(Defs.LOG_TAG, "GR: " + sb.toString());
+			}
+			m.appendTail(sb);	
+			result = sb.toString();
+			
+			client.logout();
+		}
+		catch(Exception e) {
+			//Log.e(Defs.LOG_TAG, "Login exception!", e);
+			throw e;
+		}
+		finally {
+			client.close();
+		}  		
+		
+		return result;
+	}    
 	
 	private String getResString(int id) {
 		return this.getResources().getString(id);

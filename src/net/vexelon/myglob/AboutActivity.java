@@ -33,8 +33,8 @@ public class AboutActivity extends Activity {
 		StringBuffer sb = new StringBuffer(500);
 		sb.append(getResString(R.string.app_name));
 		sb.append("\n");
-//		sb.append(getResString(R.string.about_tagline));
-//		sb.append("\n");
+		sb.append(getResString(R.string.about_tagline));
+		sb.append("\n");
 		if ( pinfo != null ) {
 			sb.append(getResString(R.string.about_version));
 			sb.append(" ");
