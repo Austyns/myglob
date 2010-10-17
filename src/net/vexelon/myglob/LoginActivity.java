@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class LoginActivity extends Activity {
 	
@@ -46,6 +47,16 @@ public class LoginActivity extends Activity {
 		
 		final Activity activity = this;
 		final Context context = this;
+		
+		// SSL pressed
+		final TextView tvSSL = (TextView) findViewById(R.id.TextSSL);
+		tvSSL.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Toast.makeText(context, R.string.dlg_msg_ssl, 5000).show();
+			}
+		});		
 		
 		// login button pressed
 		Button btnLogin = (Button) findViewById(R.id.ButtonLogin);

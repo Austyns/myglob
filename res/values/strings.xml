@@ -23,7 +23,7 @@
 <string name="menu_about">Относно</string>
 <string name="dlg_progress_title">Моля изчакайте</string>
 <string name="dlg_progress_message">Изпращане на заявка към сървъра...</string>
-<string name="err_msg_username_missing">Празно или невалидно потребителско име!</string>
+<string name="err_msg_username_missing">Празно или невалидно потребителско име! (Пример: 0896123456)</string>
 <string name="err_msg_password_missing">Празна или невалидна парола!</string>
 <string name="dlg_error_msg_encrypt_failed">Невъзможно криптиране на паролата! Паролата, която сте въвели ще бъде съхранена некриптирана на устройството. Искате ли да продължите ?</string>
 <string name="dlg_error_msg_decrypt_failed">Неуспешно декриптиране на запазената парола!</string>
@@ -35,4 +35,13 @@
 <string name="text_username">Потребителско име/номер:</string>
 <string name="text_password">Парола:</string>
 <string name="text_rememberme">Запомни името и паролата</string>
+<string name="text_ssl_secured">SSL сигурност</string>
+    <style parent="@android:style/TextAppearance" name="FontLogin"><item name="android:textColor">#D3D3D3</item><item name="android:textSize">16sp</item>
+
+
+
+
+</style>
+<style name="FontLoginError"><item name="android:textColor">#FF1F1F</item><item name="android:textSize">16sp</item><item name="android:textStyle">bold</item></style>
+<string name="dlg_msg_ssl">Връзката към сайта на оператора е защитена през SSL канал за сигурност.</string>
 </resources>

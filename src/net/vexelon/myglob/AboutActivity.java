@@ -33,8 +33,8 @@ public class AboutActivity extends Activity {
 		StringBuffer sb = new StringBuffer(500);
 		sb.append(getResString(R.string.app_name));
 		sb.append("\n");
-		sb.append(getResString(R.string.about_tagline));
-		sb.append("\n");
+//		sb.append(getResString(R.string.about_tagline));
+//		sb.append("\n");
 		if ( pinfo != null ) {
 			sb.append(getResString(R.string.about_version));
 			sb.append(" ");
@@ -43,8 +43,8 @@ public class AboutActivity extends Activity {
 		}
 		sb.append(getResString(R.string.about_author));
 		sb.append("\n");
-		sb.append("http://code.google.com/p/myglob");
-		sb.append("\n");
+//		sb.append("http://code.google.com/p/myglob");
+//		sb.append("\n");
 //		sb.append(getResString(R.string.about_bnb_info));
 //		sb.append("\n");
 //		sb.append("http://www.bnb.bg");

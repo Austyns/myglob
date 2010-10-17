@@ -24,6 +24,8 @@
 	</Spinner>
 	
 </FrameLayout>
+<!-- Update frame -->
+
 
 <!--  Content -->
 <ScrollView 
@@ -45,7 +47,6 @@
     </LinearLayout>
 </ScrollView> 
 
-<!-- Update frame -->
 <FrameLayout 
 	android:id="@+id/FrameBottomOptions" 
 	android:layout_width="fill_parent" 
@@ -67,4 +68,5 @@
 	/>
 	
 </FrameLayout>
+
 </LinearLayout>

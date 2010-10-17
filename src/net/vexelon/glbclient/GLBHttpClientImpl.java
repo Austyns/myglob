@@ -101,27 +101,33 @@ public class GLBHttpClientImpl implements GLBClient {
 	}
 	
 	public String getCurrentBalance() 
-		throws UnsupportedEncodingException, IOException, ClientProtocolException, GLBHttpException {
+		throws Exception {
 		
 		return doPostRequest(GLBRequestType.GET_BALANCE);
 	}
 	
 	public String getAvailableMinutes()
-		throws UnsupportedEncodingException, IOException, ClientProtocolException, GLBHttpException {
+		throws Exception {
 		
 		return doPostRequest(GLBRequestType.GET_MINUTES);
 	}
 	
 	public String getAvailableInternetBandwidth()
-		throws UnsupportedEncodingException, IOException, ClientProtocolException, GLBHttpException {
+		throws Exception {
 		
 		return doPostRequest(GLBRequestType.GET_BANDWIDTH);	
 	}
 	
 	public String getCreditLimit()
-		throws UnsupportedEncodingException, IOException, ClientProtocolException, GLBHttpException {
+		throws Exception {
 		
 		return doPostRequest(GLBRequestType.GET_CREDITLIMIT);		
+	}
+	
+	public String getAvailableMSPackage()
+		throws Exception {
+		
+		return doPostRequest(GLBRequestType.GET_MSPACKAGE);
 	}
 	
 	// ---

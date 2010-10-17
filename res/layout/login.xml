@@ -13,13 +13,16 @@
 	android:layout_width="wrap_content" 
 	android:layout_height="wrap_content" 
 	android:layout_gravity="center_horizontal"
+	android:layout_marginBottom="8dp"
 	/>
-    
+
+<!-- Username -->
 <TextView  
 	android:id="@+id/TextUsername"
     android:layout_width="fill_parent" 
     android:layout_height="wrap_content" 
     android:text="@string/text_username"
+    android:textAppearance="@style/FontLogin"
     />
 <EditText 
 	android:id="@+id/EditTextUsername" 
@@ -29,13 +32,16 @@
 	android:focusable="true" 
 	android:lines="1"
 	android:layout_toRightOf="@+id/TextUsername"
+	android:inputType="text"
 	/>
 	
+<!-- Password -->
 <TextView  
 	android:id="@+id/TextPassword"
     android:layout_width="fill_parent" 
     android:layout_height="wrap_content" 
     android:text="@string/text_password"
+    android:textAppearance="@style/FontLogin"
     />
 <EditText 
 	android:id="@+id/EditTextPassword" 
@@ -48,21 +54,16 @@
 	android:inputType="textPassword"
 	/>
 	
+<!-- Save credentials -->	
 <CheckBox 
 	android:text="@string/text_rememberme" 
 	android:id="@+id/CheckBoxSaveCredentials" 
 	android:layout_width="wrap_content" 
 	android:layout_height="wrap_content"
+	android:textAppearance="@style/FontLogin"
 	/>
 	
-<ImageView 
-	android:id="@+id/ssl_icon"
-	android:src="@drawable/lock"
-	android:layout_width="wrap_content" 
-	android:layout_height="wrap_content" 
-	android:layout_gravity="left"
-	/>	
-	 
+<!-- LOGIN Button -->
 <Button 
 	android:text="@string/btn_msg_login" 
 	android:id="@+id/ButtonLogin" 
@@ -72,12 +73,41 @@
 	android:layout_gravity="right"
 	/>
 	
+<!--  SSL Info -->
+<RelativeLayout
+  	android:layout_width="fill_parent"
+  	android:layout_height="wrap_content"
+  	android:gravity="right" 
+  	android:paddingRight="6sp"
+  	android:paddingTop="2sp"
+    >
+<ImageView 
+	android:id="@+id/ssl_icon"
+	android:src="@drawable/lock"
+	android:layout_width="wrap_content" 
+	android:layout_height="wrap_content" 
+	/>	
+<TextView  
+	android:id="@+id/TextSSL"
+    android:layout_width="wrap_content" 
+    android:layout_height="wrap_content"
+    android:layout_toRightOf="@+id/ssl_icon"
+    android:text="@string/text_ssl_secured" 
+    android:layout_marginLeft="4dp"
+    android:padding="2dp"
+    android:background="#FFFFFF"
+    android:textColor="#1F1FFF"
+    android:clickable="true" />	 
+</RelativeLayout>	
+	
+<!-- Error message -->	
 <TextView  
 	android:id="@+id/TextErrorMsg"
     android:layout_width="fill_parent" 
     android:layout_height="wrap_content"
     android:gravity="center_horizontal" 
     android:text="Error" 
-    android:textColor="#FF1F1F"/>
+    android:textAppearance="@style/FontLoginError"
+    />
 
 </LinearLayout>

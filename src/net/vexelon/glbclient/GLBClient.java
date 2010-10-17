@@ -18,16 +18,19 @@ public interface GLBClient {
 		throws IOException, ClientProtocolException, GLBHttpException;
 	
 	public String getCurrentBalance() 
-		throws UnsupportedEncodingException, IOException, ClientProtocolException, GLBHttpException;
+		throws Exception;
 	
 	public String getAvailableMinutes()
-		throws UnsupportedEncodingException, IOException, ClientProtocolException, GLBHttpException;
+		throws Exception;
 	
 	public String getAvailableInternetBandwidth()
-		throws UnsupportedEncodingException, IOException, ClientProtocolException, GLBHttpException;
+		throws Exception;
 	
 	public String getCreditLimit()
-		throws UnsupportedEncodingException, IOException, ClientProtocolException, GLBHttpException;
+		throws Exception;
+
+	public String getAvailableMSPackage()
+		throws Exception;
 	
 	public void close();
 }

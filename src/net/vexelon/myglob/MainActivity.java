@@ -20,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -94,9 +95,13 @@ public class MainActivity extends Activity {
 				updateSelectedStatus();
 			}
 		});
-
+        
         //btnUpdate.getBackground().setColorFilter(0x2212FF00, Mode.LIGHTEN);
         btnUpdate.getBackground().setColorFilter(0xFF25EE25, Mode.MULTIPLY);
+        
+        // position frame
+//        FrameLayout frame = (FrameLayout) findViewById(R.id.FrameBottomOptions);
+        
     }
     
     @Override
@@ -317,67 +322,37 @@ public class MainActivity extends Activity {
 			// show progress
 			final ProgressDialog myProgress = ProgressDialog.show(this, getResString(R.string.dlg_progress_title), getResString(R.string.dlg_progress_message), true);
 
-			Log.v(Defs.LOG_TAG, "create thread...");
 			// do work
 			new Thread() {
 				public void run() {
 					
 					try {
 						final String data = getAccountStatus(operation);
+
 						// update text field
-						
-						tx.setText(data);
-						//tx.setText(Html.fromHtml(data));
-						//WebView wv = (WebView) _activity.findViewById(R.id.TextContent);
-						//wv.loadData(data, "text/html", "utf-8");							
-						
-//						_activity.runOnUiThread(new Runnable() {
-//							
-//							@Override
-//							public void run() {
-//								tx.setText(data);
-//								//tx.setText(Html.fromHtml(data));
-//								//WebView wv = (WebView) _activity.findViewById(R.id.TextContent);
-//								//wv.loadData(data, "text/html", "utf-8");							
-//							}
-//						});						
+						_activity.runOnUiThread(new Runnable() {
+							
+							@Override
+							public void run() {
+								tx.setText(data);
+								//tx.setText(Html.fromHtml(data));
+								//WebView wv = (WebView) _activity.findViewById(R.id.TextContent);
+								//wv.loadData(data, "text/html", "utf-8");							
+							}
+						});						
 					}
 					catch (GLBInvalidCredentialsException e) {
-						// ERROR
+						// Show error dialog
 						Utils.showAlertDialog(_activity, R.string.dlg_error_msg_invalid_credentials, R.string.dlg_error_msg_title);
-						
-//						_activity.runOnUiThread(new Runnable() {
-//							
-//							@Override
-//							public void run() {
-//								Utils.showAlertDialog(_activity, R.string.dlg_error_msg_invalid_credentials, R.string.dlg_error_msg_title);
-//							}
-//						});
 					}
 					catch (GLBSecureCodeRequiredException e) {
+						// Show error dialog						
 						Utils.showAlertDialog(_activity, R.string.dlg_error_msg_securecode, R.string.dlg_error_msg_title);
-						
-						// ERROR
-//						_activity.runOnUiThread(new Runnable() {
-//							
-//							@Override
-//							public void run() {
-//								Utils.showAlertDialog(_activity, R.string.dlg_error_msg_securecode, R.string.dlg_error_msg_title);
-//							}
-//						});						
 					}
 					catch (Exception e) {
-						// ERROR
+						// Show error dialog						
 						final String msg = e.getMessage();
 						Utils.showAlertDialog(_activity, msg, getResString(R.string.dlg_error_msg_title));
-						
-//						_activity.runOnUiThread(new Runnable() {
-//							
-//							@Override
-//							public void run() {
-//								Utils.showAlertDialog(_activity, msg, getResString(R.string.dlg_error_msg_title));
-//							}
-//						});
 					}
 					
 					// close progress bar dialog
@@ -392,70 +367,81 @@ public class MainActivity extends Activity {
 
 		} // end if		
 	}
-    
+	
 	private String getAccountStatus(Operations operation) throws Exception {
+		String ret = "<td class=\"txt_order_SMS\">" +
+        		 "<p>Вашата текуща сметка:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> 1,45 лв.</span> без ДДС</p>" +
+                 "<p>Задължения по ф-ра за периода 18.08-17.09.2010г:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> -0,23 лв.</span> с ДДС</p>" +
+                 "<p>Данните са актуални към:<span style=\"font-weight: bold;\"> 07 Октомври, 21:15ч.</span>" +
+                 "</p></td>" +
+                 "<td class=\"txt_order_SMS\">" +
+        		 "<p>Вашата текуща сметка:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> 1,45 лв.</span> без ДДС</p>" +
+                 "<p>Задължения по ф-ра за периода 18.08-17.09.2010г:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> -0,23 лв.</span> с ДДС</p>" +
+                 "<p>Данните са актуални към:<span style=\"font-weight: bold;\"> 07 Октомври, 21:15ч.</span>" +
+                 "</p></td>" +
+                 "<td class=\"txt_order_SMS\">" +
+        		 "<p>Вашата текуща сметка:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> 1,45 лв.</span> без ДДС</p>" +
+                 "<p>Задължения по ф-ра за периода 18.08-17.09.2010г:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> -0,23 лв.</span> с ДДС</p>" +
+                 "<p>Данните са актуални към:<span style=\"font-weight: bold;\"> 07 Октомври, 21:15ч.</span>" +
+                 "</p></td>";                 
 		
-//		String ret = "<td class=\"txt_order_SMS\">" +
-//        		 "<p>Вашата текуща сметка:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> 1,45 лв.</span> без ДДС</p>" +
-//                 "<p>Задължения по ф-ра за периода 18.08-17.09.2010г:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> -0,23 лв.</span> с ДДС</p>" +
-//                 "<p>Данните са актуални към:<span style=\"font-weight: bold;\"> 07 Октомври, 21:15ч.</span>" +
-//                 "</p></td>";
-//		
-//		return ret;
+		return ret;
+	}
     
-		Log.v(Defs.LOG_TAG, "GetAcc...");
-		String result = "";
-		GLBClient client = new GLBHttpClientImpl(_username, getDecryptedPassword(_password));
-		Log.v(Defs.LOG_TAG, "Logging in using " + _username + " and pass: " + getDecryptedPassword(_password));
-		
-		try {
-			client.login();
-			
-			switch(operation) {
-			case CHECK_CURRENT_BALANCE:
-				result = client.getCurrentBalance();
-				break;
-			case CHECK_AVAIL_MINUTES:
-				result = client.getAvailableMinutes();
-				break;
-			case CHECK_CREDIT_LIMIT:
-				result = client.getCreditLimit();
-				break;
-			case CHECK_AVAIL_DATA:
-				result = client.getAvailableInternetBandwidth();
-				break;
-			case CHECK_SMS_PACKAGE:
-				result = "NOT AVAIL!";
-				break;
-			}
-
-			client.logout();
-			
-			result = result.replaceAll("(<.[^>]*>)|(</.[^>]*>)", "");
-			result = result.replaceAll("\\t|\\n|\\r", "");	
-			result = result.trim();			
-		}
-//		catch(GLBSecureCodeRequiredException e) {
-//			Log.e(Defs.LOG_TAG, "Secure image exception", e);
+//	private String getAccountStatus(Operations operation) throws Exception {
+//    
+//		String result = "";
+//		GLBClient client = new GLBHttpClientImpl(_username, getDecryptedPassword(_password));
+//		Log.v(Defs.LOG_TAG, "Logging in using " + _username + " and pass: " + getDecryptedPassword(_password));
+//		
+//		try {
+//			client.login();
+//			
+//			switch(operation) {
+//			case CHECK_CURRENT_BALANCE:
+//				result = client.getCurrentBalance();
+//				break;
+//			case CHECK_AVAIL_MINUTES:
+//				result = client.getAvailableMinutes();
+//				break;
+//			case CHECK_CREDIT_LIMIT:
+//				result = client.getCreditLimit();
+//				break;
+//			case CHECK_AVAIL_DATA:
+//				result = client.getAvailableInternetBandwidth();
+//				break;
+//			case CHECK_SMS_PACKAGE:
+//				result = client.getAvailableMSPackage();
+//				break;
+//			}
+//
+//			result = result.replaceAll("(<.[^>]*>)|(</.[^>]*>)", "");
+//			result = result.replaceAll("\\t|\\n|\\r", "");	
+//			result = result.trim();	
+//			
+//			client.logout();
+//		}
+////		catch(GLBSecureCodeRequiredException e) {
+////			Log.e(Defs.LOG_TAG, "Secure image exception", e);
+////			throw e;
+////		}
+////		catch(GLBInvalidCredentialsException e) {
+////			Log.e(Defs.LOG_TAG, "Failed to login!", e);
+////			throw e;
+////		}
+////		catch(GLBHttpException e) {
+////			Log.e(Defs.LOG_TAG, "Login HTTP exception!", e);
+////		}
+//		catch(Exception e) {
+//			//Log.e(Defs.LOG_TAG, "Login exception!", e);
 //			throw e;
 //		}
-//		catch(GLBInvalidCredentialsException e) {
-//			Log.e(Defs.LOG_TAG, "Failed to login!", e);
-//			throw e;
-//		}
-//		catch(GLBHttpException e) {
-//			Log.e(Defs.LOG_TAG, "Login HTTP exception!", e);
-//		}
-		catch(Exception e) {
-			Log.e(Defs.LOG_TAG, "Login exception!", e);
-			throw e;
-		}
-		finally {
-			client.close();
-		}  		
-		
-		return result;
-	}    
+//		finally {
+//			client.close();
+//		}  		
+//		
+//		return result;
+//	}    
 	
 	private String getResString(int id) {
 		return this.getResources().getString(id);
