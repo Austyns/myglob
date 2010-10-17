@@ -97,6 +97,7 @@
     android:padding="2dp"
     android:background="#FFFFFF"
     android:textColor="#1F1FFF"
+    android:textStyle="bold"
     android:clickable="true" />	 
 </RelativeLayout>	
 	

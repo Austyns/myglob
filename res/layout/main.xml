@@ -44,6 +44,8 @@
 	android:layout_width="wrap_content" 
 	android:layout_height="wrap_content"
 	android:layout_gravity="left"
+	android:textStyle="bold"
+	android:textColor="#FFFFFFFF"
 	/>
 	
 <!--  Logged in info -->
@@ -88,9 +90,10 @@
   		
             <TextView
                 android:id="@+id/TextContent"
-                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textAppearance="@style/FontContent"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:text="@string/text_no_data" />
     </LinearLayout>
 </ScrollView> 
 

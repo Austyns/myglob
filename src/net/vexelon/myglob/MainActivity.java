@@ -106,7 +106,7 @@ public class MainActivity extends Activity {
 		});
         
         //btnUpdate.getBackground().setColorFilter(0x2212FF00, Mode.LIGHTEN);
-        btnUpdate.getBackground().setColorFilter(0xFF25EE25, Mode.MULTIPLY);
+        btnUpdate.getBackground().setColorFilter(Defs.CLR_BUTTON_UPDATE, Mode.MULTIPLY);
         
         // position logged in frame
         updateLoggedInFlag();
@@ -465,7 +465,7 @@ public class MainActivity extends Activity {
 			Matcher m = p.matcher(result);
 			StringBuffer sb = new StringBuffer(result.length() + result.length());
 			while (m.find()) {
-				m.appendReplacement(sb, "<b><font color=\"#1FAF1F\">" + m.group() + "</font></b>");
+				m.appendReplacement(sb, "<b><font color=\"" + Defs.CLR_TEXT_HIGHLIGHT + "\">" + m.group() + "</font></b>");
 				//Log.v(Defs.LOG_TAG, "GR: " + sb.toString());
 			}
 			m.appendTail(sb);	

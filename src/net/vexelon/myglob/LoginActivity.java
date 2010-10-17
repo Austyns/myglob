@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.DialogInterface.OnDismissListener;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.text.InputFilter.LengthFilter;
 import android.view.View;
 import android.view.Window;
 import android.view.View.OnClickListener;
@@ -54,7 +55,7 @@ public class LoginActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				Toast.makeText(context, R.string.dlg_msg_ssl, 5000).show();
+				Toast.makeText(context, R.string.dlg_msg_ssl, Toast.LENGTH_LONG).show();
 			}
 		});		
 		
