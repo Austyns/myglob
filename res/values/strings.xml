@@ -1,5 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="hello">Hello World, MainActivity!</string>
-    <string name="app_name">Globul Bill Check</string>
+    
+    <string name="app_name">MyGlob</string>
+<string name="operation_check_balance">Проверка на текуща сметка и задължения за минал период</string>
+<string name="operation_check_avail_minutes">Проверка на пакет минути</string>
+<string name="operation_check_avail_data">Проверка на пакет данни (МВ)</string>
+
+<string name="operation_check_sms_pack">Проверка на пакет SMS/MMS</string>
+<string name="operation_check_credit_limit">Проверка на кредитен лимит</string>
+<string name="about_tagline">Проверете сметката си към мобилния оператор.</string>
+<string name="about_version">Версия: </string>
+<string name="about_author">Автор - Petar Petrov</string>
+<string name="about_icons_info">Безплатни икони от</string>
+<string name="dlg_error_msg_title">Възникна грешка</string>
+
+
+<string name="dlg_error_msg_invalid_credentials">Грешно потребителско име или парола.</string>
+<string name="dlg_error_msg_securecode">Операторът изисква да се въведе код за сигурност! За съжаление текущата версия на тази програма не поддържа тази възможност. Моля, опитайте да обновите пак след няколко минути.</string>
+<string name="menu_signin">Вписване</string>
+<string name="menu_signout">Отписване</string>
+
+<string name="menu_about">Относно</string>
+<string name="dlg_progress_title">Моля изчакайте</string>
+<string name="dlg_progress_message">Изпращане на заявка към сървъра...</string>
+<string name="err_msg_username_missing">Празно или невалидно потребителско име! (Пример: 0896123456)</string>
+<string name="err_msg_password_missing">Празна или невалидна парола!</string>
+<string name="dlg_error_msg_encrypt_failed">Невъзможно криптиране на паролата! Паролата, която сте въвели ще бъде съхранена некриптирана на устройството. Искате ли да продължите ?</string>
+<string name="dlg_error_msg_decrypt_failed">Неуспешно декриптиране на запазената парола!</string>
+<string name="dlg_error_msg_create_key_failed">Невъзможно създаването на ключ за криптиране!</string>
+<string name="dlg_msg_yes">Да</string>
+<string name="dlg_msg_no">Не</string>
+<string name="btn_msg_update">Обнови</string>
+<string name="btn_msg_login">Влизане</string>
+<string name="text_username">Потребителско име/номер:</string>
+<string name="text_password">Парола:</string>
+<string name="text_rememberme">Запомни името и паролата</string>
+<string name="text_ssl_secured">SSL сигурност</string>
+<style parent="@android:style/TextAppearance" name="FontLogin"><item name="android:textColor">#D3D3D3</item><item name="android:textSize">16sp</item></style>
+<style name="FontLoginError" parent="@android:style/TextAppearance"><item name="android:textColor">#FF1F1F</item><item name="android:textSize">16sp</item><item name="android:textStyle">bold</item></style>
+<string name="dlg_msg_ssl">Връзката към сайта на оператора е защитена през SSL канал за сигурност.</string><style parent="@android:style/TextAppearance" name="FontContent"><item name="android:textColor">#D3D3D3</item><item name="android:textSize">16sp</item>
+
+
+
+
+</style>
+<string name="text_no_data">Няма заредени данни. Моля обновете!</string>
 </resources>

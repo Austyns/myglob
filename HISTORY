@@ -1,4 +1,11 @@
+#summary History of project releases and bugfixes
+
 =MyGlob HISTORY file=
+
+==V1.0.1==
+
+  * Changed - All application icons updated.
+  * Fixed - Issue 1 - Application failed to run on Froyo (API 2.1 and 2.2).
 
 ==V1.0.0==
 
