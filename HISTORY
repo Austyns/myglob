@@ -2,6 +2,12 @@
 
 =MyGlob HISTORY file=
 
+==V1.1.0=
+
+  * Fixed - Issue 2 - Fixed a bug where application used to crash if orientation was changed during account update. 
+  * Added - Issue 6 - All available checks can now be performed by a single selection available in the menu.
+  * Changed - Texts in the dropdown menu were changed to enhance the look & feel of the UI.  
+
 ==V1.0.1==
 
   * Changed - All application icons updated.

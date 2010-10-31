@@ -45,13 +45,6 @@ public class AboutActivity extends Activity {
 		sb.append("\n");
 //		sb.append("http://code.google.com/p/myglob");
 //		sb.append("\n");
-//		sb.append(getResString(R.string.about_bnb_info));
-//		sb.append("\n");
-//		sb.append("http://www.bnb.bg");
-//		sb.append("\n");
-//		sb.append("\n");
-//		sb.append(getResString(R.string.about_bnb_info_2));
-		sb.append("\n");
 		sb.append("\n");
 		sb.append(getResString(R.string.about_icons_info));
 		sb.append("\n");

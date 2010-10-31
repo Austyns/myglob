@@ -48,6 +48,7 @@ public class GLBHttpClientImpl implements GLBClient {
 	
 	private final String HTTP_MYGLOBUL_SITE = "https://my.globul.bg";
 	private final String HTTP_USER_AGENT = "Mozilla/5.0 (Windows; U; Windows NT 5.1; ro; rv:1.9.2.8) Gecko/20100722 Firefox/3.6.8";
+	//private final String HTTP_USER_AGENT = "Mozilla/5.0 (Windows; U; Windows NT 5.1; ro; rv:2.1.0.8) Gecko/20090122 Firefox/3.5.2";
 	private final int DEFAULT_BUFFER_SIZE = 1024;
 	private final String RESPONSE_ENCODING = "Windows-1251";
 	

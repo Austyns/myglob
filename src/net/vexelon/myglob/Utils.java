@@ -36,6 +36,18 @@ public class Utils {
 		return number.round(new MathContext(n, RoundingMode.HALF_UP)).toPlainString();
 	}
 	
+	public static String stripHtml(String html, boolean stripWhiteSpace) {
+		html = html.replaceAll("(<.[^>]*>)|(</.[^>]*>)", "");
+		if ( stripWhiteSpace )
+			html = html.replaceAll("\\t|\\n|\\r", "");	
+		html = html.trim();	
+		return html;
+	}
+	
+	public static String stripHtml(String html) {
+		return stripHtml(html, true);
+	}
+	
 	/**
 	 * Downloads a file given URL to specified destination
 	 * @param url

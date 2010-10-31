@@ -17,7 +17,6 @@ import android.content.SharedPreferences;
 import android.graphics.PorterDuff.Mode;
 import android.os.Bundle;
 import android.text.Html;
-import android.text.Layout;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
@@ -25,7 +24,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -52,7 +50,8 @@ public class MainActivity extends Activity {
 		CHECK_AVAIL_MINUTES(R.string.operation_check_avail_minutes),
 		CHECK_AVAIL_DATA(R.string.operation_check_avail_data),
 		CHECK_SMS_PACKAGE(R.string.operation_check_sms_pack),
-		CHECK_CREDIT_LIMIT(R.string.operation_check_credit_limit);
+		CHECK_CREDIT_LIMIT(R.string.operation_check_credit_limit),
+		CHECK_ALL(R.string.operation_check_all);
 		
 		private int resId = -1;
 		
@@ -86,14 +85,16 @@ public class MainActivity extends Activity {
         // initialize items
         
         Spinner spinnerOptions = (Spinner) findViewById(R.id.SpinnerOptions);
-        OperationsArrayAdapter adapter = new OperationsArrayAdapter(this, android.R.layout.simple_spinner_item, 
+        OperationsArrayAdapter adapter = new OperationsArrayAdapter(this, android.R.layout.simple_list_item_single_choice, 
         		new Operations[]{
         		Operations.CHECK_CURRENT_BALANCE, 
 				Operations.CHECK_AVAIL_MINUTES,
 				Operations.CHECK_AVAIL_DATA,
 				Operations.CHECK_SMS_PACKAGE,
-				Operations.CHECK_CREDIT_LIMIT        		
+				Operations.CHECK_CREDIT_LIMIT,
+				Operations.CHECK_ALL,
         });
+        adapter.setDropDownViewResource(android.R.layout.simple_list_item_checked);
         spinnerOptions.setAdapter(adapter);
         
         // create update button
@@ -110,6 +111,13 @@ public class MainActivity extends Activity {
         
         // position logged in frame
         updateLoggedInFlag();
+        
+//        // reload last saved results
+//        String lastResult = loadLastResult();
+//        if ( ! TextUtils.isEmpty(lastResult) ) {
+//        	final TextView tx = (TextView) _activity.findViewById(R.id.TextContent);
+//        	tx.setText(Html.fromHtml(lastResult));
+//        }
     }
     
     @Override
@@ -204,6 +212,7 @@ public class MainActivity extends Activity {
 		bundle.putString(Defs.INTENT_EXTRA_PASSWORD, "");
 		bundle.putBoolean(Defs.INTENT_EXTRA_SAVECREDENTIALS, true);
 		saveSettings(bundle);
+//		saveLastResult(""); // clean up last saved results
 	}
 	
 	/**
@@ -246,6 +255,26 @@ public class MainActivity extends Activity {
         // position logged in frame
         updateLoggedInFlag();		
 	}
+	
+//	/**
+//	 * Save last check info
+//	 */
+//	private void saveLastResult(String result) {
+//		SharedPreferences prefs = this.getSharedPreferences(Defs.PREFS_NAME, 0);
+//		SharedPreferences.Editor editor = prefs.edit();
+//		editor.putString(Defs.INTENT_EXTRA_LASTRESULT, result);
+//		editor.commit();		
+//	}
+//	
+//	/**
+//	 * Load last check info
+//	 * @return 
+//	 */
+//	private String loadLastResult() {
+//		SharedPreferences prefs = this.getSharedPreferences(Defs.PREFS_NAME, 0);
+//		String result = prefs.getString(Defs.INTENT_EXTRA_LASTRESULT, "");
+//		return result;
+//	}
 	
 	/**
 	 * Saves secret key into preferences
@@ -355,6 +384,7 @@ public class MainActivity extends Activity {
 					
 					try {
 						final String data = getAccountStatus(operation);
+//						saveLastResult(data); // keep in storage
 
 						// update text field
 						_activity.runOnUiThread(new Runnable() {
@@ -441,24 +471,38 @@ public class MainActivity extends Activity {
 			switch(operation) {
 			case CHECK_CURRENT_BALANCE:
 				result = client.getCurrentBalance();
+				result = Utils.stripHtml(result);
 				break;
 			case CHECK_AVAIL_MINUTES:
 				result = client.getAvailableMinutes();
+				result = Utils.stripHtml(result);
 				break;
 			case CHECK_CREDIT_LIMIT:
 				result = client.getCreditLimit();
+				result = Utils.stripHtml(result);
 				break;
 			case CHECK_AVAIL_DATA:
 				result = client.getAvailableInternetBandwidth();
+				result = Utils.stripHtml(result);
 				break;
 			case CHECK_SMS_PACKAGE:
 				result = client.getAvailableMSPackage();
+				result = Utils.stripHtml(result);
+				break;
+			case CHECK_ALL:
+				StringBuffer sb = new StringBuffer(500);
+				sb.append(Utils.stripHtml(client.getCurrentBalance()));
+				sb.append("<br><br>");
+				sb.append(Utils.stripHtml(client.getAvailableMinutes()));
+				sb.append("<br><br>");
+				sb.append(Utils.stripHtml(client.getCreditLimit()));
+				sb.append("<br><br>");
+				sb.append(Utils.stripHtml(client.getAvailableInternetBandwidth()));
+				sb.append("<br><br>");
+				sb.append(Utils.stripHtml(client.getAvailableMSPackage()));
+				result = sb.toString();
 				break;
 			}
-
-			result = result.replaceAll("(<.[^>]*>)|(</.[^>]*>)", "");
-			result = result.replaceAll("\\t|\\n|\\r", "");	
-			result = result.trim();	
 
 			// colorfy money values
 			Pattern p = Pattern.compile("(-*\\d+(,\\d+)*\\s*лв\\.*)|(\\d+:\\d+\\s*(ч\\.*|мин\\.*))", Pattern.CASE_INSENSITIVE);

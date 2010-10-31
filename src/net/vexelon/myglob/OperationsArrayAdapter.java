@@ -19,7 +19,7 @@ public class OperationsArrayAdapter extends ArrayAdapter<Operations> {
 	
 	private Operations[] _items;
 	public OperationsArrayAdapter(Context context, int textViewResId, Operations[] items) {
-		super(context, android.R.layout.simple_spinner_item, items);
+		super(context, textViewResId, items);
 		this._items = items;
 	}	
 	
