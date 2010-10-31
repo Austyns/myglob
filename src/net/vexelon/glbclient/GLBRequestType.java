@@ -13,6 +13,7 @@ public enum GLBRequestType {
 	GET_MINUTES("/mg/myglobul.bch", "action=bundlecheckperform"),
 	GET_BANDWIDTH("/mg/myglobul.bch", "action=gprscheckperform"),
 	GET_CREDITLIMIT("/mg/myglobul.bch", "action=creditlimitcheckperform"),
+	GET_MSPACKAGE("/mg/myglobul.bch", "action=smsmmsCheckPerform"),
 	LOGOUT("/mg/myglobul.portal", "action=logout");
 
 	private final String path;
