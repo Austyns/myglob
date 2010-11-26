@@ -53,8 +53,17 @@ import android.widget.TextView;
 
 public class MainActivity extends Activity {
 	
-	/*
-	 * TODO list
+	/* Milestones TODO list
+	 * 
+	 * Milestone 02
+	 * 1. Add spinner for user accounts
+	 * 2. Add user account class and move methods for handling account info
+	 * 3. Refactor LoginActivity - NewAccountActivity 
+	 * 4. Add AccountManagement menu button for general account management (Spinner of accounts + sepearet Activity for options)
+	 * 5. Refactor MainActivity class with proper actions for updating account info
+	 * 6. Solve problem with security codes on GLB site 
+	 * 
+	 * Milestone 01
 	 * 1. [DONE] Complete Spinner actions
 	 * 2. [DONE] Test secure code image occurrence
 	 * 3. [DONE] Test saving/loading of options
@@ -108,7 +117,7 @@ public class MainActivity extends Activity {
         // initialize items
         
         Spinner spinnerOptions = (Spinner) findViewById(R.id.SpinnerOptions);
-        OperationsArrayAdapter adapter = new OperationsArrayAdapter(this, android.R.layout.simple_list_item_single_choice, 
+        OperationsArrayAdapter adapter = new OperationsArrayAdapter(this, android.R.layout.simple_spinner_item, 
         		new Operations[]{
         		Operations.CHECK_CURRENT_BALANCE, 
 				Operations.CHECK_AVAIL_MINUTES,
@@ -117,8 +126,11 @@ public class MainActivity extends Activity {
 				Operations.CHECK_CREDIT_LIMIT,
 				Operations.CHECK_ALL,
         });
-        adapter.setDropDownViewResource(android.R.layout.simple_list_item_checked);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerOptions.setAdapter(adapter);
+        
+        Spinner spinnerAccounts = (Spinner) findViewById(R.id.SpinnerUserAccounts);
+        //TODO: add accounts to spinner
         
         // create update button
         Button btnUpdate = (Button) findViewById(R.id.ButtonUpdate);

@@ -2,6 +2,8 @@
 
 =MyGlob HISTORY file=
 
+==V2.0.0=
+
 ==V1.1.0=
 
   * Fixed - Issue 2 - Fixed a bug where application used to crash if orientation was changed during account update. 
