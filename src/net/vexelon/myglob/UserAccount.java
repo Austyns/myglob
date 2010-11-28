@@ -23,13 +23,25 @@
  */
 package net.vexelon.myglob;
 
+import android.content.SharedPreferences;
+
 public class UserAccount {
 	
 	private String _phoneNumber;
 	private String _accountName;
 
-	public UserAccount() {
+	public UserAccount(SharedPreferences prefs) {
+		//TODO: load user details
+	}
 		
+	public void save() {
+		//TODO: save in app context
+	}
+	
+	public String getPassword() {
+		//TODO: return app context saved pass
+		
+		return null;
 	}
 	
 	public String get_phoneNumber() {
