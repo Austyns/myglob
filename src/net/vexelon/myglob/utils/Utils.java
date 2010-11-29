@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package net.vexelon.myglob;
+package net.vexelon.myglob.utils;
 
 
 import java.io.BufferedInputStream;
@@ -37,6 +37,9 @@ import java.math.RoundingMode;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Random;
+
+import net.vexelon.myglob.R;
+import net.vexelon.myglob.R.drawable;
 
 import org.apache.http.util.ByteArrayBuffer;
 

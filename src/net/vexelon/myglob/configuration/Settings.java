@@ -21,18 +21,38 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package net.vexelon.myglob;
+package net.vexelon.myglob.configuration;
 
-import java.security.NoSuchAlgorithmException;
+import android.content.SharedPreferences;
 
-public interface Crypto {
+public class Settings {
 	
-	public byte[] createSecretKey() throws NoSuchAlgorithmException;	
+	private static Settings _INSTANCE = null;
 	
-	public byte[] encrypt(byte[] input, byte[] secretKey)
-		throws Exception;
+	public static Settings getInstance() {
+		if (_INSTANCE == null)
+			_INSTANCE = new Settings();
+		
+		return _INSTANCE;
+	}
 	
-	public byte[] decrypt(byte[] input, byte[] secretKey)
-		throws Exception;
+	private SharedPreferences _prefs = null;
+	
+	public Settings() {
+		
+	}
+	
+	public void init(SharedPreferences prefs) {
+		_prefs = prefs;
+	}
+	
+	public String getLastSelectedAccount() {
+		return _prefs.getString(Defs.PREFS_LAST_SELECTED_ACCOUNT, "");
+	}
+	
+	public void putLastSelectedAccount(String value) {
+		_prefs.edit().putString(Defs.PREFS_LAST_SELECTED_ACCOUNT, value);
+		_prefs.edit().commit();
+	}
 
 }

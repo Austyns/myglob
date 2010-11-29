@@ -21,43 +21,65 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package net.vexelon.myglob;
+package net.vexelon.myglob.users;
 
+import net.vexelon.myglob.configuration.Defs;
+import net.vexelon.myglob.crypto.CryptAESImpl;
+import net.vexelon.myglob.crypto.Crypto;
+import net.vexelon.myglob.utils.Base64;
 import android.content.SharedPreferences;
+import android.text.TextUtils;
 
-public class UserAccount {
+public class User {
 	
-	private String _phoneNumber;
 	private String _accountName;
-
-	public UserAccount(SharedPreferences prefs) {
-		//TODO: load user details
-	}
-		
-	public void save() {
-		//TODO: save in app context
+	private AccountType _accountType;
+	private String _phoneNumber;
+	private String _encodedPassword;
+	
+	public User() {
 	}
 	
-	public String getPassword() {
-		//TODO: return app context saved pass
-		
-		return null;
+	public User load(int id, SharedPreferences prefs) {
+		_accountName = prefs.getString(Defs.PREFS_USER_NAME + id, "");
+		_phoneNumber = prefs.getString(Defs.PREFS_USER_PHONENUMBER + id, "");
+		_encodedPassword = prefs.getString(Defs.PREFS_USER_PHONENUMBER + id, "");
+		return this;
 	}
 	
-	public String get_phoneNumber() {
+	public User save(int id, SharedPreferences.Editor editor) {
+		editor.putString(Defs.PREFS_USER_NAME + id, _accountName);
+		editor.putString(Defs.PREFS_USER_PHONENUMBER + id, _phoneNumber);
+		editor.putString(Defs.PREFS_USER_PASSWORD + id, _encodedPassword);
+		return this;
+	}
+	
+	public String getEncodedPassword() {
+		return _encodedPassword;
+	}
+	
+	public String getPhoneNumber() {
 		return _phoneNumber;
 	}
-	public void set_phoneNumber(String phoneNumber) {
+	
+	public void setPhoneNumber(String phoneNumber) {
 		_phoneNumber = phoneNumber;
 	}
 	
-	public String get_accountName() {
+	public String getAccountName() {
 		return _accountName;
 	}
-	public void set_accountName(String accountName) {
+	
+	public void setAccountName(String accountName) {
 		_accountName = accountName;
 	}
 	
-	
+	public AccountType getAccountType() {
+		return _accountType;
+	}
+
+	public void setAccountType(AccountType accountType) {
+		_accountType = accountType;
+	}	
 
 }

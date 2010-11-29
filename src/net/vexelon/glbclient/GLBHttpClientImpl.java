@@ -35,8 +35,8 @@ import java.util.List;
 import net.vexelon.glbclient.exceptions.GLBHttpException;
 import net.vexelon.glbclient.exceptions.GLBSecureCodeRequiredException;
 import net.vexelon.glbclient.exceptions.GLBInvalidCredentialsException;
-import net.vexelon.myglob.Defs;
-import net.vexelon.myglob.Utils;
+import net.vexelon.myglob.configuration.Defs;
+import net.vexelon.myglob.utils.Utils;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;

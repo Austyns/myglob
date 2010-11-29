@@ -23,6 +23,11 @@
  */
 package net.vexelon.myglob;
 
+import net.vexelon.myglob.configuration.Defs;
+import net.vexelon.myglob.crypto.CryptAESImpl;
+import net.vexelon.myglob.crypto.Crypto;
+import net.vexelon.myglob.utils.Base64;
+import net.vexelon.myglob.utils.Utils;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;

@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package net.vexelon.myglob;
+package net.vexelon.myglob.crypto;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
