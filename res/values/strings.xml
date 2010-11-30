@@ -47,4 +47,7 @@
 <string name="text_no_data">Няма заредени данни. Моля обновете!</string>
 <string name="text_selectitem">Проверка на:</string>
 <string name="operation_check_all">Всички</string>
+<string-array name="array_available_operators"><item>Globul</item>
+<item>M-Tel</item>
+</string-array>
 </resources>

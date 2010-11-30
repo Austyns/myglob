@@ -32,6 +32,7 @@ import net.vexelon.glbclient.exceptions.GLBSecureCodeRequiredException;
 import net.vexelon.glbclient.exceptions.GLBInvalidCredentialsException;
 import net.vexelon.myglob.R;
 import net.vexelon.myglob.configuration.Defs;
+import net.vexelon.myglob.configuration.Preferences;
 import net.vexelon.myglob.configuration.Settings;
 import net.vexelon.myglob.users.UsersManager;
 import net.vexelon.myglob.utils.Utils;
@@ -43,6 +44,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.PorterDuff.Mode;
 import android.os.Bundle;
+import android.preference.PreferenceActivity;
 import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
@@ -193,6 +195,11 @@ public class MainActivity extends Activity {
 //		case Defs.MENU_SIGNOUT:
 //			clearSettings();
 //			break;
+		
+		case Defs.MENU_ADD_ACCOUNT:
+			intent = new Intent(this, Preferences.class);
+			startActivity(intent);
+			break;
 			
 		case Defs.MENU_ABOUT:
 			intent = new Intent(this, AboutActivity.class);

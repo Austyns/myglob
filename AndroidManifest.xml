@@ -11,6 +11,8 @@
 
     <activity android:name="LoginActivity" android:label="@string/app_name" android:theme="@android:style/Theme.Dialog"></activity>
 <activity android:name="AboutActivity" android:theme="@android:style/Theme.Dialog" android:label="@string/app_name"></activity>
+
+<activity android:label="Preferences1" android:name=".configuration.Preferences"></activity>
 </application>
     <uses-sdk android:minSdkVersion="3"/>
 
