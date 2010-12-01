@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen
   xmlns:android="http://schemas.android.com/apk/res/android">
-<PreferenceCategory android:key="account_preferences"><EditTextPreference android:title="Account Name" android:key="account" android:summary="Enter account name"></EditTextPreference>
-<EditTextPreference android:title="Phone Number" android:key="number" android:summary="Enter phone number name"></EditTextPreference>
-<ListPreference android:entries="@array/array_available_operators" android:entryValues="@array/array_available_operators" android:key="operators" android:title="Operator" android:summary="Choose mobile operator"></ListPreference>
+<PreferenceCategory android:key="account_preferences"><EditTextPreference android:title="Account Name" android:summary="Enter account name" android:key="@string/pref_account_name"></EditTextPreference>
+<EditTextPreference android:title="Phone Number" android:summary="Enter phone number name" android:key="@string/pref_account_phonenumber"></EditTextPreference>
+<ListPreference android:entries="@array/array_available_operators" android:entryValues="@array/array_available_operators" android:title="Operator" android:summary="Choose mobile operator" android:key="@string/pref_account_operator"></ListPreference>
 </PreferenceCategory>
 </PreferenceScreen>

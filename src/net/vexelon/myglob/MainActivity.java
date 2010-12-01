@@ -32,14 +32,16 @@ import net.vexelon.glbclient.exceptions.GLBSecureCodeRequiredException;
 import net.vexelon.glbclient.exceptions.GLBInvalidCredentialsException;
 import net.vexelon.myglob.R;
 import net.vexelon.myglob.configuration.Defs;
-import net.vexelon.myglob.configuration.Preferences;
-import net.vexelon.myglob.configuration.Settings;
+import net.vexelon.myglob.configuration.AccountPreferencesActivity;
+import net.vexelon.myglob.configuration.GlobalSettings;
 import net.vexelon.myglob.users.UsersManager;
 import net.vexelon.myglob.utils.Utils;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.PorterDuff.Mode;
@@ -56,6 +58,7 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends Activity {
 	
@@ -118,7 +121,7 @@ public class MainActivity extends Activity {
         UsersManager.getInstance().reloadUsers(prefs);
         
         SharedPreferences prefsGeneral = this.getSharedPreferences(Defs.PREFS_ALL_PREFS, 0);
-        Settings.getInstance().init(prefsGeneral);
+        GlobalSettings.getInstance().init(prefsGeneral);
 
         /**
          * initialize UI
@@ -159,16 +162,15 @@ public class MainActivity extends Activity {
     
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    	if ( requestCode == Defs.INTENT_SIGNIN_RQ) {
-//    		if (resultCode == RESULT_OK) {
-//    			saveSettings(data.getExtras());
-//    			
-//    			// Update button was clicked
-//    			if ( _updateAfterSignIn ) {
-//    				updateSelectedStatus();
-//    				_updateAfterSignIn = false;
-//    			}
-//    		}
+    	if (requestCode == Defs.INTENT_ACCOUNT_ADD_RQ) {
+    		if (resultCode == RESULT_OK) {
+    			Toast.makeText(getApplicationContext(), "Account saved.", Toast.LENGTH_SHORT).show();
+    		}
+    	}
+    	else if (requestCode == Defs.INTENT_ACCOUNT_EDIT_RQ) {
+    		if (resultCode == RESULT_OK) {
+    			Toast.makeText(getApplicationContext(), "Account saved.", Toast.LENGTH_SHORT).show();
+    		}    		
     	}
     }
     
@@ -188,17 +190,15 @@ public class MainActivity extends Activity {
 		Intent intent = null;
 		
 		switch(item.getItemId()) {
-//		case Defs.MENU_SIGNIN:
-//			showSignInWindow();
-//			break;
-//			
-//		case Defs.MENU_SIGNOUT:
-//			clearSettings();
-//			break;
 		
 		case Defs.MENU_ADD_ACCOUNT:
-			intent = new Intent(this, Preferences.class);
-			startActivity(intent);
+			intent = new Intent(this, AccountPreferencesActivity.class);
+			intent.putExtra(Defs.INTENT_ACCOUNT_ADD, true);
+			startActivityForResult(intent, Defs.INTENT_ACCOUNT_ADD_RQ);
+			break;
+			
+		case Defs.MENU_MANAGE_ACCOUNTS:
+			showAccountsList();
 			break;
 			
 		case Defs.MENU_ABOUT:
@@ -212,17 +212,37 @@ public class MainActivity extends Activity {
 	
 	private boolean initMenu(Menu menu) {
 		menu.clear();
-		
-//		if (!isCredentialsAvailable())
-//			menu.add(0, Defs.MENU_SIGNIN, 0, getResString(R.string.menu_signin) ).setIcon(R.drawable.key);
-//		else
-//			menu.add(0, Defs.MENU_SIGNOUT, 0, getResString(R.string.menu_signout)).setIcon(R.drawable.door_out);
-		
 		menu.add(1, Defs.MENU_ADD_ACCOUNT, 0, "Add account");
 		menu.add(1, Defs.MENU_MANAGE_ACCOUNTS, 0, "Manage accounts");
 		menu.add(1, Defs.MENU_ABOUT, 15, getResString(R.string.menu_about)).setIcon(R.drawable.help);
-		
 		return true;
+	}
+	
+	/**
+	 * Show a list of user accounts
+	 */
+	private void showAccountsList() {
+		
+		final String[] items = UsersManager.getInstance().getUsersPhoneNumbersList();
+		if (items != null) {
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle("Select User");
+			builder.setSingleChoiceItems(items, -1, new DialogInterface.OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					Intent intent = new Intent(getApplicationContext(), AccountPreferencesActivity.class);
+					intent.putExtra(Defs.INTENT_ACCOUNT_EDIT, true);
+					intent.putExtra(Defs.INTENT_ACCOUNT_PHONENUMBER, items[which]);
+					startActivityForResult(intent, Defs.INTENT_ACCOUNT_EDIT_RQ);
+					
+					dialog.dismiss();
+				}
+			});
+			
+			AlertDialog alert = builder.create();
+			alert.show();
+		}
 	}
 	
 	/**

@@ -25,20 +25,20 @@ package net.vexelon.myglob.configuration;
 
 import android.content.SharedPreferences;
 
-public class Settings {
+public class GlobalSettings {
 	
-	private static Settings _INSTANCE = null;
+	private static GlobalSettings _INSTANCE = null;
 	
-	public static Settings getInstance() {
+	public static GlobalSettings getInstance() {
 		if (_INSTANCE == null)
-			_INSTANCE = new Settings();
+			_INSTANCE = new GlobalSettings();
 		
 		return _INSTANCE;
 	}
 	
 	private SharedPreferences _prefs = null;
 	
-	public Settings() {
+	public GlobalSettings() {
 		
 	}
 	

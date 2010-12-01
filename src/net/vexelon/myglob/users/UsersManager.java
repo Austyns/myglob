@@ -46,7 +46,7 @@ public class UsersManager {
 		return _INSTANCE;
 	}
 	
-	private ArrayList<User> _users = null;
+	private ArrayList<User> _users = new ArrayList<User>();
 
 	public UsersManager() {
 		
@@ -60,7 +60,7 @@ public class UsersManager {
 		// clear previous list
 		if (_users != null) {
 			_users.clear();
-			_users = null;
+			//_users = null;
 		}
 
 		// read num of users and load in list
@@ -89,26 +89,33 @@ public class UsersManager {
 	}
 	
 	public void addUser(User user) {
-		if (_users != null)
-			_users.add(user);
+		_users.add(user);
 	}
 	
 	public User getUserByPhoneNumber(String phoneNumber) {
-		if (_users != null) {
-			for (User user : _users) {
-				if (user.getPhoneNumber().equals(phoneNumber)) {
-					return user;
-				}
+		for (User user : _users) {
+			if (user.getPhoneNumber().equals(phoneNumber)) {
+				return user;
 			}
 		}
 		
 		return null;
 	}
 	
-	public void removeUser(String phoneNumber) {
-		if (_users != null) {
-			_users.remove(getUserByPhoneNumber(phoneNumber));
+	public String[] getUsersPhoneNumbersList() {
+		String items[] = null;
+		
+		if (_users.size() > 0) {
+			items = new String[_users.size()];
+			for(int i = 0; i < _users.size(); i++)
+				items[i] = _users.get(i).getPhoneNumber();
 		}
+		
+		return items;
+	}
+	
+	public void removeUser(String phoneNumber) {
+		_users.remove(getUserByPhoneNumber(phoneNumber));
 	}
 	
 	public String getUserPassword(User user) throws Exception {

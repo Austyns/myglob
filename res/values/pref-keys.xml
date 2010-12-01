@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<string name="pref_account_name">pref_account_name</string>
+<string name="pref_account_phonenumber">pref_account_phonenumber</string>
+<string name="pref_account_operator">pref_account_operator</string>
+</resources>

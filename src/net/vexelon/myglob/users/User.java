@@ -43,7 +43,7 @@ public class User {
 	public User load(int id, SharedPreferences prefs) {
 		_accountName = prefs.getString(Defs.PREFS_USER_NAME + id, "");
 		_phoneNumber = prefs.getString(Defs.PREFS_USER_PHONENUMBER + id, "");
-		_encodedPassword = prefs.getString(Defs.PREFS_USER_PHONENUMBER + id, "");
+		_encodedPassword = prefs.getString(Defs.PREFS_USER_PASSWORD + id, "");
 		return this;
 	}
 	
@@ -62,24 +62,27 @@ public class User {
 		return _phoneNumber;
 	}
 	
-	public void setPhoneNumber(String phoneNumber) {
+	public User setPhoneNumber(String phoneNumber) {
 		_phoneNumber = phoneNumber;
+		return this;
 	}
 	
 	public String getAccountName() {
 		return _accountName;
 	}
 	
-	public void setAccountName(String accountName) {
+	public User setAccountName(String accountName) {
 		_accountName = accountName;
+		return this;
 	}
 	
 	public AccountType getAccountType() {
 		return _accountType;
 	}
 
-	public void setAccountType(AccountType accountType) {
+	public User setAccountType(AccountType accountType) {
 		_accountType = accountType;
+		return this;
 	}	
 
 }

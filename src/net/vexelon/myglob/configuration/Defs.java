@@ -30,14 +30,9 @@ public class Defs {
 	public final static int CLR_BUTTON_UPDATE = 0xFFA6D060;
 	public final static String CLR_TEXT_HIGHLIGHT = "#FF7F00"; //0xFFFF7F00;
 
-	
-//	public final static int MENU_SIGNIN = 10;
-//	public final static int MENU_SIGNOUT = 12;
 	public final static int MENU_ADD_ACCOUNT = 20;
 	public final static int MENU_MANAGE_ACCOUNTS = 30;
 	public final static int MENU_ABOUT = 100;
-	
-	public final static int INTENT_SIGNIN_RQ = 100;
 	
 	// save/load keys
 	public final static String PREFS_ALL_PREFS = "MyGlobAppPreferences";
@@ -45,13 +40,19 @@ public class Defs {
 	public final static String PREFS_LAST_SELECTED_ACCOUNT = "_LAST_SELECTED_ACCOUNT_";
 	
 	public final static String PREFS_USER_PREFS = "MyGlobAppPreferences.UserPrefs";
-	public final static String PREFS_USER_COUNT = "_USERCOUNT_";
-	public final static String PREFS_USER_NAME = "_USERNAME_";
-	public final static String PREFS_USER_PHONENUMBER = "_USERNAME_";
-	public final static String PREFS_USER_PASSWORD = "_PASSWORD_";
+	public final static String PREFS_USER_COUNT = "_USER_COUNT";
+	public final static String PREFS_USER_NAME = "_USER_NAME";
+	public final static String PREFS_USER_PHONENUMBER = "_USER_PHONENUMBER";
+	public final static String PREFS_USER_PASSWORD = "_PASSWORD";
 	
+	public final static int INTENT_ACCOUNT_ADD_RQ = 200;
+	public final static int INTENT_ACCOUNT_EDIT_RQ = 210;
+	public final static String INTENT_ACCOUNT_ADD = "_ACCOUNT_ADD";
+	public final static String INTENT_ACCOUNT_EDIT = "_ACCOUNT_EDIT";
+	public final static String INTENT_ACCOUNT_PHONENUMBER = "_ACCOUNT_PHONENUMBER";
 	
 	// OBSOLETE
+	public final static int INTENT_SIGNIN_RQ = 100;
 	public final static String INTENT_EXTRA_KEY = "_SK";
 	public final static String INTENT_EXTRA_USERNAME = "_USERNAME";
 	public final static String INTENT_EXTRA_PASSWORD = "_PASSWORD";
