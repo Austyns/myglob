@@ -24,7 +24,7 @@
 package net.vexelon.myglob;
 
 import net.vexelon.myglob.configuration.Defs;
-import net.vexelon.myglob.crypto.CryptAESImpl;
+import net.vexelon.myglob.crypto.CryptoAES256;
 import net.vexelon.myglob.crypto.Crypto;
 import net.vexelon.myglob.utils.Base64;
 import net.vexelon.myglob.utils.Utils;
@@ -108,7 +108,7 @@ public class LoginActivity extends Activity {
 						byte[] rawPassword = etPassword.getText().toString().getBytes();
 						byte[] encryptedPassword = null;
 						
-						Crypto crypto = CryptAESImpl.getInstance();
+						Crypto crypto = CryptoAES256.getInstance();
 						
 						try {
 							//throw new Exception("ERROR necrrypt"); //TODO: remove this line

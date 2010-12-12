@@ -47,6 +47,7 @@ public class Defs {
 	
 	public final static int INTENT_ACCOUNT_ADD_RQ = 200;
 	public final static int INTENT_ACCOUNT_EDIT_RQ = 210;
+	public final static int INTENT_RESULT_ACCOUT_DELETED = 100;
 	public final static String INTENT_ACCOUNT_ADD = "_ACCOUNT_ADD";
 	public final static String INTENT_ACCOUNT_EDIT = "_ACCOUNT_EDIT";
 	public final static String INTENT_ACCOUNT_PHONENUMBER = "_ACCOUNT_PHONENUMBER";

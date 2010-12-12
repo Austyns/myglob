@@ -32,21 +32,21 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
-public class CryptAESImpl implements Crypto {
+public class CryptoAES256 implements Crypto {
 	
-	private static CryptAESImpl INSTANCE = null; 
+	private static CryptoAES256 INSTANCE = null; 
 	
 	private final static byte[] IV = { 0x28, 0x1A, 0x03, 0x78, 0x4F, 0x12, 0x62, 0x04, 0x55, 0x07, 0x3A, 0x6F, 0x1B, 0x12, 0x0B, 0x01 };
 	private final static String ALGORITHM = "AES";
 	private final static String TRANSFORM = "AES/CBC/PKCS5Padding";
-	private final static int KEY_SIZE = 128;
+	private final static int KEY_SIZE = 256;
 	
-	private CryptAESImpl() {
+	private CryptoAES256() {
 	}
 	
 	public static Crypto getInstance() {
 		if (INSTANCE == null) {
-			INSTANCE = new CryptAESImpl();
+			INSTANCE = new CryptoAES256();
 			
 			//INSTANCE.init(); // setup
 		}

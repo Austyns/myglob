@@ -54,6 +54,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
@@ -65,12 +66,13 @@ public class MainActivity extends Activity {
 	/* Milestones TODO list
 	 * 
 	 * Milestone 02
-	 * 1. Add spinner for user accounts
-	 * 2. Add user account class and move methods for handling account info
-	 * 3. Refactor LoginActivity - NewAccountActivity 
-	 * 4. Add AccountManagement menu button for general account management (Spinner of accounts + sepearet Activity for options)
+	 * 1. [DONE] Add spinner for user accounts
+	 * 2. [DONE] Add user account class and move methods for handling account info
+	 * 3. [DONE] Refactor LoginActivity - NewAccountActivity 
+	 * 4. [DONE] Add AccountManagement menu button for general account management (Spinner of accounts + sepearet Activity for options)
 	 * 5. Refactor MainActivity class with proper actions for updating account info
-	 * 6. Solve problem with security codes on GLB site 
+	 * 6. Make previous account preferences work
+	 * 7. Solve problem with security codes on GLB site 
 	 * 
 	 * Milestone 01
 	 * 1. [DONE] Complete Spinner actions
@@ -128,6 +130,9 @@ public class MainActivity extends Activity {
          */
         
         this.setTitle(getResString(R.string.app_name) + " - " + getResString(R.string.about_tagline));
+        
+        // populate available accounts
+        updateAccountsSpinner();
 
         // init options spinner
         Spinner spinnerOptions = (Spinner) findViewById(R.id.SpinnerOptions);
@@ -143,9 +148,6 @@ public class MainActivity extends Activity {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerOptions.setAdapter(adapter);
         
-        // init accounts spinner
-        Spinner spinnerAccounts = (Spinner) findViewById(R.id.SpinnerUserAccounts);
-        //TODO: add accounts to spinner
         
         // create update button
         Button btnUpdate = (Button) findViewById(R.id.ButtonUpdate);
@@ -162,16 +164,24 @@ public class MainActivity extends Activity {
     
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    	if (requestCode == Defs.INTENT_ACCOUNT_ADD_RQ) {
+    	switch(requestCode) {
+    	case Defs.INTENT_ACCOUNT_ADD_RQ:
+    		if (resultCode == RESULT_OK) {
+    			Toast.makeText(getApplicationContext(), "Account created.", Toast.LENGTH_SHORT).show();
+    		}    		
+    		break;
+    		
+    	case Defs.INTENT_ACCOUNT_EDIT_RQ:
     		if (resultCode == RESULT_OK) {
     			Toast.makeText(getApplicationContext(), "Account saved.", Toast.LENGTH_SHORT).show();
     		}
+    		else if (resultCode == Defs.INTENT_RESULT_ACCOUT_DELETED) {
+    			Toast.makeText(getApplicationContext(), "Account removed.", Toast.LENGTH_SHORT).show();
+    		}
+    		break;
     	}
-    	else if (requestCode == Defs.INTENT_ACCOUNT_EDIT_RQ) {
-    		if (resultCode == RESULT_OK) {
-    			Toast.makeText(getApplicationContext(), "Account saved.", Toast.LENGTH_SHORT).show();
-    		}    		
-    	}
+    	
+    	updateAccountsSpinner();
     }
     
 //	@Override
@@ -227,6 +237,7 @@ public class MainActivity extends Activity {
 		if (items != null) {
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			builder.setTitle("Select User");
+			builder.setCancelable(true);
 			builder.setSingleChoiceItems(items, -1, new DialogInterface.OnClickListener() {
 				
 				@Override
@@ -242,6 +253,22 @@ public class MainActivity extends Activity {
 			
 			AlertDialog alert = builder.create();
 			alert.show();
+		}
+		else {
+			Toast.makeText(getApplicationContext(), "No accounts to manage.", Toast.LENGTH_SHORT).show();
+		}
+	}
+	
+	/**
+	 * Prefill accounts data in spinner
+	 */
+	private void updateAccountsSpinner() {
+		final String[] items = UsersManager.getInstance().getUsersPhoneNumbersList();
+		if (items != null) {
+			Spinner spinnerAccounts = (Spinner) findViewById(R.id.SpinnerUserAccounts);
+			ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, items);
+	        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+	        spinnerAccounts.setAdapter(adapter);
 		}
 	}
 	

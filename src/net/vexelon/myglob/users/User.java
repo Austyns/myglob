@@ -24,7 +24,7 @@
 package net.vexelon.myglob.users;
 
 import net.vexelon.myglob.configuration.Defs;
-import net.vexelon.myglob.crypto.CryptAESImpl;
+import net.vexelon.myglob.crypto.CryptoAES256;
 import net.vexelon.myglob.crypto.Crypto;
 import net.vexelon.myglob.utils.Base64;
 import android.content.SharedPreferences;
@@ -56,6 +56,11 @@ public class User {
 	
 	public String getEncodedPassword() {
 		return _encodedPassword;
+	}
+	
+	public User setEncodedPassword(String encodedPassword) {
+		_encodedPassword = encodedPassword;
+		return this;
 	}
 	
 	public String getPhoneNumber() {

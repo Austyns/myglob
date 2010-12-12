@@ -3,4 +3,7 @@
 <string name="pref_account_name">pref_account_name</string>
 <string name="pref_account_phonenumber">pref_account_phonenumber</string>
 <string name="pref_account_operator">pref_account_operator</string>
+<string name="pref_account_delete">pref_account_delete</string>
+<string name="pref_account_password">pref_account_password</string>
+<string name="pref_account_save_password">pref_account_save_password</string>
 </resources>
