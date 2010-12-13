@@ -32,21 +32,20 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
-public class CryptoAES256 implements Crypto {
+public class CryptoAES implements Crypto {
 	
-	private static CryptoAES256 INSTANCE = null; 
+	private static CryptoAES INSTANCE = null; 
 	
-	private final static byte[] IV = { 0x28, 0x1A, 0x03, 0x78, 0x4F, 0x12, 0x62, 0x04, 0x55, 0x07, 0x3A, 0x6F, 0x1B, 0x12, 0x0B, 0x01 };
 	private final static String ALGORITHM = "AES";
 	private final static String TRANSFORM = "AES/CBC/PKCS5Padding";
-	private final static int KEY_SIZE = 256;
+	//private final static int KEY_SIZE = 256;
 	
-	private CryptoAES256() {
+	private CryptoAES() {
 	}
 	
 	public static Crypto getInstance() {
 		if (INSTANCE == null) {
-			INSTANCE = new CryptoAES256();
+			INSTANCE = new CryptoAES();
 			
 			//INSTANCE.init(); // setup
 		}
@@ -57,11 +56,11 @@ public class CryptoAES256 implements Crypto {
 	 * Creates a secret key
 	 * @return encoded data of the created key
 	 */
-	public byte[] createSecretKey() 
+	public byte[] createSecretKey(int keysize) 
 		throws NoSuchAlgorithmException {
 		
 		KeyGenerator kg = KeyGenerator.getInstance(ALGORITHM);
-		kg.init(KEY_SIZE, new SecureRandom(
+		kg.init(keysize, new SecureRandom(
 				String.valueOf(System.currentTimeMillis()).getBytes())
 				);
 		SecretKey key = kg.generateKey();
@@ -70,23 +69,23 @@ public class CryptoAES256 implements Crypto {
 	}
 
 	@Override
-	public byte[] decrypt(byte[] input, byte[] secretKey)
+	public byte[] decrypt(byte[] input, byte[] secretKey, byte[] iv)
 		throws Exception {
 		
 		SecretKey key = new SecretKeySpec(secretKey, ALGORITHM);
 		Cipher cipher = Cipher.getInstance(TRANSFORM);
-		IvParameterSpec ips = new IvParameterSpec(IV);
+		IvParameterSpec ips = new IvParameterSpec(iv);
 		cipher.init(Cipher.DECRYPT_MODE, key, ips);
 		return cipher.doFinal(input);
 	}
 
 	@Override
-	public byte[] encrypt(byte[] input, byte[] secretKey) 
+	public byte[] encrypt(byte[] input, byte[] secretKey, byte[] iv) 
 		throws Exception {
 		
 		SecretKey key = new SecretKeySpec(secretKey, ALGORITHM);
 		Cipher cipher = Cipher.getInstance(TRANSFORM);
-		IvParameterSpec ips = new IvParameterSpec(IV);
+		IvParameterSpec ips = new IvParameterSpec(iv);
 		cipher.init(Cipher.ENCRYPT_MODE, key, ips);
 		return cipher.doFinal(input);		
 	}

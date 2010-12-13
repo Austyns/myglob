@@ -28,7 +28,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.vexelon.myglob.configuration.Defs;
-import net.vexelon.myglob.crypto.CryptoAES256;
+import net.vexelon.myglob.crypto.CryptoAES;
 import net.vexelon.myglob.crypto.Crypto;
 import net.vexelon.myglob.utils.Base64;
 
@@ -128,7 +128,7 @@ public class UsersManager {
 			byte[] keyData = loadKey();
 	
 			if (keyData != null) {
-				Crypto crypto = CryptoAES256.getInstance();
+				Crypto crypto = CryptoAES.getInstance();
 				try {
 					byte[] decryptedPassword = crypto.decrypt(rawPassword, keyData);
 					result = new String(decryptedPassword);

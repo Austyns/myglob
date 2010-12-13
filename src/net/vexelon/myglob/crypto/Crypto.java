@@ -27,12 +27,12 @@ import java.security.NoSuchAlgorithmException;
 
 public interface Crypto {
 	
-	public byte[] createSecretKey() throws NoSuchAlgorithmException;	
+	public byte[] createSecretKey(int keysize) throws NoSuchAlgorithmException;	
 	
-	public byte[] encrypt(byte[] input, byte[] secretKey)
+	public byte[] encrypt(byte[] input, byte[] secretKey, byte[] iv)
 		throws Exception;
 	
-	public byte[] decrypt(byte[] input, byte[] secretKey)
+	public byte[] decrypt(byte[] input, byte[] secretKey, byte[] iv)
 		throws Exception;
 
 }

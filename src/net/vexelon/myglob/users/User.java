@@ -24,7 +24,7 @@
 package net.vexelon.myglob.users;
 
 import net.vexelon.myglob.configuration.Defs;
-import net.vexelon.myglob.crypto.CryptoAES256;
+import net.vexelon.myglob.crypto.CryptoAES;
 import net.vexelon.myglob.crypto.Crypto;
 import net.vexelon.myglob.utils.Base64;
 import android.content.SharedPreferences;

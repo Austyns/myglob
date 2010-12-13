@@ -1,8 +1,30 @@
 package net.vexelon.myglob.crypto;
 
-public class PasswordEngineImpl1 {
+import net.vexelon.myglob.utils.Base64;
+
+public class PasswordEngineImpl1 implements PasswordEngine {
+
+	//128 bit key
+	private final static byte[] iv = { 0x28, 0x1A, 0x03, 0x78, 0x4F, 0x12, 0x62, 0x04, 0x55, 0x07, 0x3A, 0x6F, 0x1B, 0x12, 0x0B, 0x01 };
+	 
+	private Crypto _crypto;
+	private byte[] _key;
 	
-	private static final char[] key = {0x1E, 0x1E, 0xCE, 0xCB, 0x22, 0x20, 0x7F, 0x48, 0x3F, 0x70, 0xE5, 0xAC, 0xC2, 0x3C, 0xE4, 0xC6, 0x0D, 0xB8, 0xE7, 0x7C, 0x73, 0x3C, 0x6F, 0x4B, 0xF8, 0xB4, 0x4C, 0xCD, 0xF2, 0x3B, 0x30, 0x0A};
-	private static final char[] iv = {0x6F, 0xD1, 0xE1, 0x7C, 0x00, 0xFD, 0x77, 0x67, 0x3C, 0x54, 0xB2, 0xC9, 0xD9, 0xCC, 0x62, 0xAA};
+	public PasswordEngineImpl1(Crypto crypto, String encodedKey) throws Exception {
+		_crypto = crypto;
+		_key = Base64.decode(encodedKey);
+	}
+	
+	@Override
+	public String encryptAndEncode(String rawPassword) throws Exception {
+		byte[] encrypted = _crypto.encrypt(rawPassword.getBytes(), _key, iv);
+		return Base64.encodeBytes(encrypted);
+	}
+	
+	@Override
+	public String decodeAndDecrypt(String encodedPassword) throws Exception {
+		byte[] decrypted = _crypto.decrypt(Base64.decode(encodedPassword), _key, iv);
+		return new String(decrypted);
+	}
 
 }
