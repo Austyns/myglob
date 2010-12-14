@@ -51,4 +51,9 @@
 <item>M-Tel</item>
 </string-array>
 
+<string name="menu_add_account">Добави номер</string>
+<string name="menu_manage_accounts">Редактирай номер</string>
+<string name="dlg_msg_cancel">Отказ</string>
+<string name="text_selectaccount">Изберете номер</string>
+<string name="text_no_accounts">Няма зададени номера! Моля добавете номер.</string>
 </resources>

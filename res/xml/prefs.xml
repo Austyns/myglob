@@ -2,10 +2,10 @@
 <PreferenceScreen
   xmlns:android="http://schemas.android.com/apk/res/android">
 <PreferenceCategory android:key="account_preferences"><EditTextPreference android:title="Account Name" android:summary="Enter account name" android:key="@string/pref_account_name"></EditTextPreference>
-<ListPreference android:entries="@array/array_available_operators" android:entryValues="@array/array_available_operators" android:title="Operator" android:summary="Choose mobile operator" android:key="@string/pref_account_operator"></ListPreference><EditTextPreference android:title="Phone Number" android:summary="Enter phone number name" android:key="@string/pref_account_phonenumber"></EditTextPreference>
+<ListPreference android:entries="@array/array_available_operators" android:entryValues="@array/array_available_operators" android:title="Operator" android:summary="Choose mobile operator" android:key="@string/pref_account_operator" android:negativeButtonText="@string/dlg_msg_cancel"></ListPreference><EditTextPreference android:title="Phone Number" android:summary="Enter phone number name" android:key="@string/pref_account_phonenumber"></EditTextPreference>
 
 
-<EditTextPreference android:key="@string/pref_account_password" android:summary="Account password" android:title="Password" android:dialogMessage="Enter password" android:password="true"></EditTextPreference>
+<EditTextPreference android:key="@string/pref_account_password" android:summary="Account password" android:title="Password" android:password="true" android:dialogTitle="Enter password" android:dialogMessage="Password is stored encrypted on the device."></EditTextPreference>
 <Preference android:key="@string/pref_account_delete" android:title="Delete account" android:summary="Delete this account"></Preference>
 </PreferenceCategory>
 </PreferenceScreen>

@@ -30,6 +30,8 @@ import java.util.List;
 import net.vexelon.myglob.configuration.Defs;
 import net.vexelon.myglob.crypto.CryptoAES;
 import net.vexelon.myglob.crypto.Crypto;
+import net.vexelon.myglob.crypto.PasswordEngine;
+import net.vexelon.myglob.crypto.PasswordEngineImpl2;
 import net.vexelon.myglob.utils.Base64;
 
 import android.content.SharedPreferences;
@@ -47,6 +49,7 @@ public class UsersManager {
 	}
 	
 	private ArrayList<User> _users = new ArrayList<User>();
+	private PasswordEngine _passwordEngine = PasswordEngineImpl2.getInstance();
 
 	public UsersManager() {
 		
@@ -119,29 +122,15 @@ public class UsersManager {
 	}
 	
 	public String getUserPassword(User user) throws Exception {
-		String result = "";
-		
 		if (!TextUtils.isEmpty(user.getEncodedPassword())) {
-			
-			byte[] rawPassword = Base64.decode(user.getEncodedPassword());
-			result = new String(rawPassword);
-			byte[] keyData = loadKey();
-	
-			if (keyData != null) {
-				Crypto crypto = CryptoAES.getInstance();
-				try {
-					byte[] decryptedPassword = crypto.decrypt(rawPassword, keyData);
-					result = new String(decryptedPassword);
-				} catch (Exception e) {
-					// Log.e(Defs.LOG_TAG, "Password could not be decrypted!", e);
-					// Utils.showAlertDialog(this,
-					// R.string.dlg_error_msg_decrypt_failed,
-					// R.string.dlg_error_msg_title);
-				}
-			}
+			return _passwordEngine.decodeAndDecrypt(user.getEncodedPassword());
 		}
 
-		return result;
+		return null;
+	}
+	
+	public void setUserPassword(User user, String rawPassword) throws Exception {
+		user.setEncodedPassword(_passwordEngine.encryptAndEncode(rawPassword));
 	}
 	
 	private byte[] loadKey() throws Exception {

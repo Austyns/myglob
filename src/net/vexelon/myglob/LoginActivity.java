@@ -112,7 +112,7 @@ public class LoginActivity extends Activity {
 						
 						try {
 							//throw new Exception("ERROR necrrypt"); //TODO: remove this line
-							encryptedPassword = crypto.encrypt(rawPassword, keyData);
+//							encryptedPassword = crypto.encrypt(rawPassword, keyData);
 						}
 						catch (Exception e) {
 							//Log.e(Defs.LOG_TAG, "Password could not be encrypted!", e);

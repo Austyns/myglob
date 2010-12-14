@@ -34,6 +34,7 @@ import net.vexelon.myglob.R;
 import net.vexelon.myglob.configuration.Defs;
 import net.vexelon.myglob.configuration.AccountPreferencesActivity;
 import net.vexelon.myglob.configuration.GlobalSettings;
+import net.vexelon.myglob.users.User;
 import net.vexelon.myglob.users.UsersManager;
 import net.vexelon.myglob.utils.Utils;
 
@@ -222,8 +223,8 @@ public class MainActivity extends Activity {
 	
 	private boolean initMenu(Menu menu) {
 		menu.clear();
-		menu.add(1, Defs.MENU_ADD_ACCOUNT, 0, "Add account");
-		menu.add(1, Defs.MENU_MANAGE_ACCOUNTS, 0, "Manage accounts");
+		menu.add(1, Defs.MENU_ADD_ACCOUNT, 0, getResString(R.string.menu_add_account)).setIcon(R.drawable.user_add);
+		menu.add(1, Defs.MENU_MANAGE_ACCOUNTS, 0, getResString(R.string.menu_manage_accounts)).setIcon(R.drawable.user_edit);
 		menu.add(1, Defs.MENU_ABOUT, 15, getResString(R.string.menu_about)).setIcon(R.drawable.help);
 		return true;
 	}
@@ -238,6 +239,13 @@ public class MainActivity extends Activity {
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			builder.setTitle("Select User");
 			builder.setCancelable(true);
+			builder.setNegativeButton(getResString(R.string.dlg_msg_cancel), new DialogInterface.OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.dismiss();
+				}
+			});
 			builder.setSingleChoiceItems(items, -1, new DialogInterface.OnClickListener() {
 				
 				@Override
@@ -276,14 +284,15 @@ public class MainActivity extends Activity {
 	 * Get selected spinner option and update view
 	 */
 	private void updateSelectedStatus() {
-		
 		Spinner spinnerAccounts = (Spinner) findViewById(R.id.SpinnerUserAccounts);
 		
-		if (UsersManager.getInstance().size() > 0) {
+		if (spinnerAccounts.getSelectedItemPosition() != Spinner.INVALID_POSITION) {
 			
 			Spinner spinnerOptions = (Spinner) findViewById(R.id.SpinnerOptions);
 			final Operations operation = (Operations) spinnerOptions.getSelectedItem();
 			final TextView tx = (TextView) _activity.findViewById(R.id.TextContent);
+			
+			final String phoneNumber = (String) spinnerAccounts.getItemAtPosition(spinnerAccounts.getSelectedItemPosition());
 			
 			// show progress
 			final ProgressDialog myProgress = ProgressDialog.show(this, getResString(R.string.dlg_progress_title), getResString(R.string.dlg_progress_message), true);
@@ -293,7 +302,9 @@ public class MainActivity extends Activity {
 				public void run() {
 					
 					try {
-						final String data = getAccountStatus(operation);
+						final String data = getAccountStatus(operation, 
+								UsersManager.getInstance().getUserByPhoneNumber(phoneNumber)
+								);
 //						saveLastResult(data); // keep in storage
 
 						// update text field
@@ -340,7 +351,7 @@ public class MainActivity extends Activity {
 		} // end if		
 	}
 	
-	private String getAccountStatus(Operations operation) throws Exception {
+	private String getAccountStatus(Operations operation, User user) throws Exception {
 		String result = "<td class=\"txt_order_SMS\">" +
         		 "<p>Вашата текуща сметка:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> 1,45 лв.</span> без ДДС</p>" +
                  "<p>Задължения по ф-ра за периода 18.08-17.09.2010г:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> -0,23 лв.</span> с ДДС</p>" +
@@ -355,7 +366,22 @@ public class MainActivity extends Activity {
         		 "<p>Вашата текуща сметка:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> 1,45лв.</span> без ДДС</p>" +
                  "<p>Задължения по ф-ра за периода 18.08-17.09.2010г:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> -0,23 лв.</span> с ДДС</p>" +
                  "<p>Данните са актуални към:<span style=\"font-weight: bold;\"> 07 Октомври, 21:15ч.</span>" +
-                 "</p></td>";  
+                 "</p></td>" + 
+                 "<td class=\"txt_order_SMS\">" +
+        		 "<p>Вашата текуща сметка:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> 1,45 лв.</span> без ДДС</p>" +
+                 "<p>Задължения по ф-ра за периода 18.08-17.09.2010г:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> -0,23 лв.</span> с ДДС</p>" +
+                 "<p>Данните са актуални към:<span style=\"font-weight: bold;\"> 07 Октомври, 21:15ч.</span>" +
+                 "</p></td>" +
+                 "<td class=\"txt_order_SMS\">" +
+        		 "<p>Вашата текуща сметка:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> 1,45 лв.</span> без ДДС</p>" +
+                 "<p>Задължения по ф-ра за периода 18.08-17.09.2010г:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> -0,23 лв.</span> с ДДС</p>" +
+                 "<p>Данните са актуални към:<span style=\"font-weight: bold;\"> 07 Октомври, 21:15ч.</span>" +
+                 "</p></td>" +
+                 "<td class=\"txt_order_SMS\">" +
+        		 "<p>Вашата текуща сметка:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> 1,45лв.</span> без ДДС</p>" +
+                 "<p>Задължения по ф-ра за периода 18.08-17.09.2010г:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> -0,23 лв.</span> с ДДС</p>" +
+                 "<p>Данните са актуални към:<span style=\"font-weight: bold;\"> 07 Октомври, 21:15ч.</span>" +
+                 "</p></td>";                 
 		
 		result = result.replaceAll("(<.[^>]*>)|(</.[^>]*>)", "");
 		result = result.replaceAll("\\t|\\n|\\r", "");	
@@ -374,74 +400,74 @@ public class MainActivity extends Activity {
 		return sb.toString();
 	}
     
-//	private String getAccountStatus(Operations operation) throws Exception {
-//    
-//		String result = "";
-//		GLBClient client = new GLBHttpClientImpl(_username, getDecryptedPassword(_password));
-////		Log.v(Defs.LOG_TAG, "Logging in using " + _username + " and pass: " + getDecryptedPassword(_password));
-//		
-//		try {
-//			client.login();
-//			
-//			switch(operation) {
-//			case CHECK_CURRENT_BALANCE:
-//				result = client.getCurrentBalance();
-//				result = Utils.stripHtml(result);
-//				break;
-//			case CHECK_AVAIL_MINUTES:
-//				result = client.getAvailableMinutes();
-//				result = Utils.stripHtml(result);
-//				break;
-//			case CHECK_CREDIT_LIMIT:
-//				result = client.getCreditLimit();
-//				result = Utils.stripHtml(result);
-//				break;
-//			case CHECK_AVAIL_DATA:
-//				result = client.getAvailableInternetBandwidth();
-//				result = Utils.stripHtml(result);
-//				break;
-//			case CHECK_SMS_PACKAGE:
-//				result = client.getAvailableMSPackage();
-//				result = Utils.stripHtml(result);
-//				break;
-//			case CHECK_ALL:
-//				StringBuffer sb = new StringBuffer(500);
-//				sb.append(Utils.stripHtml(client.getCurrentBalance()));
-//				sb.append("<br><br>");
-//				sb.append(Utils.stripHtml(client.getAvailableMinutes()));
-//				sb.append("<br><br>");
-//				sb.append(Utils.stripHtml(client.getCreditLimit()));
-//				sb.append("<br><br>");
-//				sb.append(Utils.stripHtml(client.getAvailableInternetBandwidth()));
-//				sb.append("<br><br>");
-//				sb.append(Utils.stripHtml(client.getAvailableMSPackage()));
-//				result = sb.toString();
-//				break;
-//			}
-//
-//			// colorfy money values
-//			Pattern p = Pattern.compile("(-*\\d+(,\\d+)*\\s*лв\\.*)|(\\d+:\\d+\\s*(ч\\.*|мин\\.*))", Pattern.CASE_INSENSITIVE);
-//			Matcher m = p.matcher(result);
-//			StringBuffer sb = new StringBuffer(result.length() + result.length());
-//			while (m.find()) {
-//				m.appendReplacement(sb, "<b><font color=\"" + Defs.CLR_TEXT_HIGHLIGHT + "\">" + m.group() + "</font></b>");
-//				//Log.v(Defs.LOG_TAG, "GR: " + sb.toString());
-//			}
-//			m.appendTail(sb);	
-//			result = sb.toString();
-//			
-//			client.logout();
-//		}
-//		catch(Exception e) {
-//			//Log.e(Defs.LOG_TAG, "Login exception!", e);
-//			throw e;
-//		}
-//		finally {
-//			client.close();
-//		}  		
-//		
-//		return result;
-//	}    
+	private String getAccountStatus2(Operations operation, User user) throws Exception {
+    
+		String result = "";
+		GLBClient client = new GLBHttpClientImpl(user.getPhoneNumber(), UsersManager.getInstance().getUserPassword(user));
+		Log.v(Defs.LOG_TAG, "Logging in using " + user.getPhoneNumber() + " and pass: " + UsersManager.getInstance().getUserPassword(user));
+		
+		try {
+			client.login();
+			
+			switch(operation) {
+			case CHECK_CURRENT_BALANCE:
+				result = client.getCurrentBalance();
+				result = Utils.stripHtml(result);
+				break;
+			case CHECK_AVAIL_MINUTES:
+				result = client.getAvailableMinutes();
+				result = Utils.stripHtml(result);
+				break;
+			case CHECK_CREDIT_LIMIT:
+				result = client.getCreditLimit();
+				result = Utils.stripHtml(result);
+				break;
+			case CHECK_AVAIL_DATA:
+				result = client.getAvailableInternetBandwidth();
+				result = Utils.stripHtml(result);
+				break;
+			case CHECK_SMS_PACKAGE:
+				result = client.getAvailableMSPackage();
+				result = Utils.stripHtml(result);
+				break;
+			case CHECK_ALL:
+				StringBuffer sb = new StringBuffer(500);
+				sb.append(Utils.stripHtml(client.getCurrentBalance()));
+				sb.append("<br><br>");
+				sb.append(Utils.stripHtml(client.getAvailableMinutes()));
+				sb.append("<br><br>");
+				sb.append(Utils.stripHtml(client.getCreditLimit()));
+				sb.append("<br><br>");
+				sb.append(Utils.stripHtml(client.getAvailableInternetBandwidth()));
+				sb.append("<br><br>");
+				sb.append(Utils.stripHtml(client.getAvailableMSPackage()));
+				result = sb.toString();
+				break;
+			}
+
+			// colorfy money values
+			Pattern p = Pattern.compile("(-*\\d+(,\\d+)*\\s*лв\\.*)|(\\d+:\\d+\\s*(ч\\.*|мин\\.*))", Pattern.CASE_INSENSITIVE);
+			Matcher m = p.matcher(result);
+			StringBuffer sb = new StringBuffer(result.length() + result.length());
+			while (m.find()) {
+				m.appendReplacement(sb, "<b><font color=\"" + Defs.CLR_TEXT_HIGHLIGHT + "\">" + m.group() + "</font></b>");
+				//Log.v(Defs.LOG_TAG, "GR: " + sb.toString());
+			}
+			m.appendTail(sb);	
+			result = sb.toString();
+			
+			client.logout();
+		}
+		catch(Exception e) {
+			//Log.e(Defs.LOG_TAG, "Login exception!", e);
+			throw e;
+		}
+		finally {
+			client.close();
+		}  		
+		
+		return result;
+	}    
 	
 	private String getResString(int id) {
 		return this.getResources().getString(id);
