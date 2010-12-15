@@ -99,13 +99,34 @@ public class AccountPreferencesActivity extends PreferenceActivity {
 			_accountDeletePref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
 				@Override
 				public boolean onPreferenceClick(Preference preference) {
-					UsersManager.getInstance().removeUser(_accountNumberPref.getText());
 					
-					// save all users
-					SharedPreferences prefs = _activity.getSharedPreferences(Defs.PREFS_USER_PREFS, 0);
-					UsersManager.getInstance().save(prefs);
-					_activity.setResult(Defs.INTENT_RESULT_ACCOUT_DELETED);
-					_activity.finish();
+					AlertDialog.Builder alertBuilder = new AlertDialog.Builder(_activity);
+					alertBuilder.setTitle("AMI SEGA")
+						.setMessage("Delete user ?")
+						.setIcon(R.drawable.alert)
+						.setPositiveButton(getResString(R.string.dlg_msg_yes), new OnClickListener() {
+							
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								UsersManager.getInstance().removeUser(_accountNumberPref.getText());
+								
+								// save all users
+								SharedPreferences prefs = _activity.getSharedPreferences(Defs.PREFS_USER_PREFS, 0);
+								UsersManager.getInstance().save(prefs);
+								_activity.setResult(Defs.INTENT_RESULT_ACCOUT_DELETED);
+								_activity.finish();
+								
+								dialog.dismiss();
+							}
+						})
+						.setNegativeButton(getResString(R.string.dlg_msg_no), new OnClickListener() {
+							
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								dialog.dismiss();
+							}
+						}).show();					
+
 					return false;
 				}
 			});

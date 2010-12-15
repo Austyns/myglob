@@ -49,6 +49,7 @@ import android.graphics.PorterDuff.Mode;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.text.Html;
+import android.text.Layout;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
@@ -57,6 +58,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -109,6 +111,7 @@ public class MainActivity extends Activity {
 	};
 	
 	private Activity _activity = null;
+	private ArrayAdapter<String> _adapterAccounts = null;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -271,12 +274,28 @@ public class MainActivity extends Activity {
 	 * Prefill accounts data in spinner
 	 */
 	private void updateAccountsSpinner() {
+		Spinner spinnerAccounts = (Spinner) findViewById(R.id.SpinnerUserAccounts);
+		LinearLayout layout = (LinearLayout) findViewById(R.id.LayoutNoAccounts);
 		final String[] items = UsersManager.getInstance().getUsersPhoneNumbersList();
+		
 		if (items != null) {
-			Spinner spinnerAccounts = (Spinner) findViewById(R.id.SpinnerUserAccounts);
-			ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, items);
-	        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-	        spinnerAccounts.setAdapter(adapter);
+			_adapterAccounts = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, items);
+			_adapterAccounts.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+	        spinnerAccounts.setAdapter(_adapterAccounts);
+	        
+	        // visualize component
+	        spinnerAccounts.setVisibility(Spinner.VISIBLE);
+	        layout.setVisibility(LinearLayout.INVISIBLE);
+		}
+		else {
+			// remove all items, if any
+//			if (_adapterAccounts != null) {
+//				_adapterAccounts.clear();
+//			}
+	        
+			// no accounts, no selection
+			spinnerAccounts.setVisibility(Spinner.INVISIBLE);
+			layout.setVisibility(LinearLayout.VISIBLE);
 		}
 	}
 	
@@ -286,7 +305,7 @@ public class MainActivity extends Activity {
 	private void updateSelectedStatus() {
 		Spinner spinnerAccounts = (Spinner) findViewById(R.id.SpinnerUserAccounts);
 		
-		if (spinnerAccounts.getSelectedItemPosition() != Spinner.INVALID_POSITION) {
+		if (UsersManager.getInstance().size() > 0 && spinnerAccounts.getSelectedItemPosition() != Spinner.INVALID_POSITION) {
 			
 			Spinner spinnerOptions = (Spinner) findViewById(R.id.SpinnerOptions);
 			final Operations operation = (Operations) spinnerOptions.getSelectedItem();

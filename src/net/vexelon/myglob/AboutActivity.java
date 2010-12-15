@@ -29,6 +29,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.util.Linkify;
+import android.view.KeyEvent;
 import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
