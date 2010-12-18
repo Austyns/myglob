@@ -54,11 +54,11 @@ public class Defs {
 	
 	// OBSOLETE
 	public final static int INTENT_SIGNIN_RQ = 100;
-	public final static String INTENT_EXTRA_KEY = "_SK";
-	public final static String INTENT_EXTRA_USERNAME = "_USERNAME";
-	public final static String INTENT_EXTRA_PASSWORD = "_PASSWORD";
-	public final static String INTENT_EXTRA_SAVECREDENTIALS = "_SAVECREDENTIALS";
-	public final static String INTENT_EXTRA_LASTRESULT = "_LASTRESULT";
+	public final static String LEGACY_INTENT_EXTRA_KEY = "_SK";
+	public final static String LEGACY_INTENT_EXTRA_USERNAME = "_USERNAME";
+	public final static String LEGACY_INTENT_EXTRA_PASSWORD = "_PASSWORD";
+	public final static String LEGACY_INTENT_EXTRA_SAVECREDENTIALS = "_SAVECREDENTIALS";
+//	public final static String INTENT_EXTRA_LASTRESULT = "_LASTRESULT";
 	
 	public final static String DUMMY_PASSWORD = "$_DUMMY_PASSWORD_^";
 	

@@ -34,6 +34,8 @@ import net.vexelon.myglob.R;
 import net.vexelon.myglob.configuration.Defs;
 import net.vexelon.myglob.configuration.AccountPreferencesActivity;
 import net.vexelon.myglob.configuration.GlobalSettings;
+import net.vexelon.myglob.configuration.LegacySettings;
+import net.vexelon.myglob.users.AccountType;
 import net.vexelon.myglob.users.User;
 import net.vexelon.myglob.users.UsersManager;
 import net.vexelon.myglob.utils.Utils;
@@ -73,7 +75,7 @@ public class MainActivity extends Activity {
 	 * 2. [DONE] Add user account class and move methods for handling account info
 	 * 3. [DONE] Refactor LoginActivity - NewAccountActivity 
 	 * 4. [DONE] Add AccountManagement menu button for general account management (Spinner of accounts + sepearet Activity for options)
-	 * 5. Refactor MainActivity class with proper actions for updating account info
+	 * 5. [DONE] Refactor MainActivity class with proper actions for updating account info
 	 * 6. Make previous account preferences work
 	 * 7. Solve problem with security codes on GLB site 
 	 * 
@@ -123,21 +125,18 @@ public class MainActivity extends Activity {
         /**
          * load preferences
          */
-        SharedPreferences prefs = this.getSharedPreferences(Defs.PREFS_USER_PREFS, 0);
-        UsersManager.getInstance().reloadUsers(prefs);
+        final SharedPreferences prefsUsers = this.getSharedPreferences(Defs.PREFS_USER_PREFS, 0);
+        UsersManager.getInstance().reloadUsers(prefsUsers);
         
         SharedPreferences prefsGeneral = this.getSharedPreferences(Defs.PREFS_ALL_PREFS, 0);
         GlobalSettings.getInstance().init(prefsGeneral);
-
+        
         /**
          * initialize UI
          */
         
         this.setTitle(getResString(R.string.app_name) + " - " + getResString(R.string.about_tagline));
         
-        // populate available accounts
-        updateAccountsSpinner();
-
         // init options spinner
         Spinner spinnerOptions = (Spinner) findViewById(R.id.SpinnerOptions);
         OperationsArrayAdapter adapter = new OperationsArrayAdapter(this, android.R.layout.simple_spinner_item, 
@@ -152,6 +151,8 @@ public class MainActivity extends Activity {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerOptions.setAdapter(adapter);
         
+        // populate available accounts
+        updateAccountsSpinner();        
         
         // create update button
         Button btnUpdate = (Button) findViewById(R.id.ButtonUpdate);
@@ -164,6 +165,49 @@ public class MainActivity extends Activity {
         
         //btnUpdate.getBackground().setColorFilter(0x2212FF00, Mode.LIGHTEN);
         btnUpdate.getBackground().setColorFilter(Defs.CLR_BUTTON_UPDATE, Mode.MULTIPLY);
+        
+        /**
+         * try to find legacy users and add them to UsersManager
+         */
+        final LegacySettings legacySettings = new LegacySettings();
+        legacySettings.init(prefsGeneral);
+        if (legacySettings.getPhoneNumber() != null) {
+        	
+			AlertDialog.Builder alertBuilder = new AlertDialog.Builder(_activity);
+			alertBuilder.setTitle("AMI SEGA")
+				.setMessage("Add legacy user ?")
+				.setIcon(R.drawable.alert)
+				.setPositiveButton(getResString(R.string.dlg_msg_yes), new DialogInterface.OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						// Create & Add user
+			        	User user = new User().setAccountName(legacySettings.getPhoneNumber())
+							.setPhoneNumber(legacySettings.getPhoneNumber())
+							.setAccountType(AccountType.Globul); //V1.1.0 has only Globul support
+			        	UsersManager.getInstance().addUser(user);
+			        	try {
+			        		UsersManager.getInstance().setUserPassword(user, legacySettings.getPassword());
+			        		UsersManager.getInstance().save(prefsUsers);
+			        		updateAccountsSpinner();
+			        	}
+			        	catch(Exception e) {
+			        		//TODO: err dialog
+			        		Utils.showAlertDialog(_activity, "Error saving passwo user!", getResString(R.string.dlg_error_msg_title));
+			        	}
+			        	//legacySettings.clear();
+						dialog.dismiss();
+					}
+				})
+				.setNegativeButton(getResString(R.string.dlg_msg_no), new DialogInterface.OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						//legacySettings.clear();
+						dialog.dismiss();
+					}
+				}).show();					
+        }
     }
     
     @Override
@@ -321,7 +365,7 @@ public class MainActivity extends Activity {
 				public void run() {
 					
 					try {
-						final String data = getAccountStatus(operation, 
+						final String data = getAccountStatus2(operation, 
 								UsersManager.getInstance().getUserByPhoneNumber(phoneNumber)
 								);
 //						saveLastResult(data); // keep in storage
@@ -365,7 +409,7 @@ public class MainActivity extends Activity {
 		else  {
 			
 			// show add user screen
-
+			Toast.makeText(getApplicationContext(), "Add an account form the menu.", Toast.LENGTH_SHORT).show();
 
 		} // end if		
 	}
