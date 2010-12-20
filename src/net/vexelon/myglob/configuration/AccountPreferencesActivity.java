@@ -101,8 +101,8 @@ public class AccountPreferencesActivity extends PreferenceActivity {
 				public boolean onPreferenceClick(Preference preference) {
 					
 					AlertDialog.Builder alertBuilder = new AlertDialog.Builder(_activity);
-					alertBuilder.setTitle("AMI SEGA")
-						.setMessage("Delete user ?")
+					alertBuilder.setTitle(R.string.dlg_account_delete_title)
+						.setMessage(R.string.dlg_account_delete_msg)
 						.setIcon(R.drawable.alert)
 						.setPositiveButton(getResString(R.string.dlg_msg_yes), new OnClickListener() {
 							
@@ -182,9 +182,9 @@ public class AccountPreferencesActivity extends PreferenceActivity {
 		if (_accountOperatorPref.getValue().equals(operators[0])) {
 			return AccountType.Globul;
 		}
-		else if (_accountOperatorPref.getValue().equals(operators[1])) {
-			return AccountType.M_Tel;
-		}
+//		else if (_accountOperatorPref.getValue().equals(operators[1])) {
+//			return AccountType.M_Tel;
+//		}
 		
 		return null;
 	}
@@ -226,14 +226,14 @@ public class AccountPreferencesActivity extends PreferenceActivity {
 				// One or more obligatory settings is missing. Show continue yes/no dialog.
 				
 				AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
-				alertBuilder.setTitle("AMI SEGA")
-					.setMessage("User will not be created. Proceed?")
+				alertBuilder.setTitle(R.string.dlg_account_validate_title)
+					.setMessage(R.string.dlg_account_validate_msg)
 					.setIcon(R.drawable.alert)
 					.setPositiveButton(getResString(R.string.dlg_msg_yes), new OnClickListener() {
 						
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
-							Log.i(Defs.LOG_TAG, "Nothing was saved!");
+							//Log.i(Defs.LOG_TAG, "Nothing was saved!");
 							dialog.dismiss();
 							_activity.setResult(RESULT_CANCELED);
 							finish();

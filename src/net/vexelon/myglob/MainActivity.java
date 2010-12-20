@@ -49,10 +49,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.PorterDuff.Mode;
 import android.os.Bundle;
-import android.preference.PreferenceActivity;
 import android.text.Html;
-import android.text.Layout;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -75,8 +72,8 @@ public class MainActivity extends Activity {
 	 * 2. [DONE] Add user account class and move methods for handling account info
 	 * 3. [DONE] Refactor LoginActivity - NewAccountActivity 
 	 * 4. [DONE] Add AccountManagement menu button for general account management (Spinner of accounts + sepearet Activity for options)
-	 * 5. [DONE] Refactor MainActivity class with proper actions for updating account info
-	 * 6. Make previous account preferences work
+	 * 5. [DONE] Refactor MainActivity class"" with proper actions for updating account info
+	 * 6. [DONE] Make previous account preferences work
 	 * 7. Solve problem with security codes on GLB site 
 	 * 
 	 * Milestone 01
@@ -174,8 +171,8 @@ public class MainActivity extends Activity {
         if (legacySettings.getPhoneNumber() != null) {
         	
 			AlertDialog.Builder alertBuilder = new AlertDialog.Builder(_activity);
-			alertBuilder.setTitle("AMI SEGA")
-				.setMessage("Add legacy user ?")
+			alertBuilder.setTitle(R.string.dlg_legacyuser_title)
+				.setMessage(String.format(getResString(R.string.dlg_legacyuser_msg), legacySettings.getPhoneNumber()))
 				.setIcon(R.drawable.alert)
 				.setPositiveButton(getResString(R.string.dlg_msg_yes), new DialogInterface.OnClickListener() {
 					
@@ -192,8 +189,7 @@ public class MainActivity extends Activity {
 			        		updateAccountsSpinner();
 			        	}
 			        	catch(Exception e) {
-			        		//TODO: err dialog
-			        		Utils.showAlertDialog(_activity, "Error saving passwo user!", getResString(R.string.dlg_error_msg_title));
+			        		Utils.showAlertDialog(_activity, R.string.dlg_error_msg_legacy_user_failed, R.string.dlg_error_msg_title);
 			        	}
 			        	//legacySettings.clear();
 						dialog.dismiss();
@@ -215,16 +211,16 @@ public class MainActivity extends Activity {
     	switch(requestCode) {
     	case Defs.INTENT_ACCOUNT_ADD_RQ:
     		if (resultCode == RESULT_OK) {
-    			Toast.makeText(getApplicationContext(), "Account created.", Toast.LENGTH_SHORT).show();
+    			Toast.makeText(getApplicationContext(), R.string.text_account_created, Toast.LENGTH_SHORT).show();
     		}    		
     		break;
     		
     	case Defs.INTENT_ACCOUNT_EDIT_RQ:
     		if (resultCode == RESULT_OK) {
-    			Toast.makeText(getApplicationContext(), "Account saved.", Toast.LENGTH_SHORT).show();
+    			Toast.makeText(getApplicationContext(), R.string.text_account_saved, Toast.LENGTH_SHORT).show();
     		}
     		else if (resultCode == Defs.INTENT_RESULT_ACCOUT_DELETED) {
-    			Toast.makeText(getApplicationContext(), "Account removed.", Toast.LENGTH_SHORT).show();
+    			Toast.makeText(getApplicationContext(), R.string.text_account_removed, Toast.LENGTH_SHORT).show();
     		}
     		break;
     	}
@@ -284,7 +280,7 @@ public class MainActivity extends Activity {
 		final String[] items = UsersManager.getInstance().getUsersPhoneNumbersList();
 		if (items != null) {
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setTitle("Select User");
+			builder.setTitle(R.string.dlg_account_select_title);
 			builder.setCancelable(true);
 			builder.setNegativeButton(getResString(R.string.dlg_msg_cancel), new DialogInterface.OnClickListener() {
 				
@@ -310,7 +306,7 @@ public class MainActivity extends Activity {
 			alert.show();
 		}
 		else {
-			Toast.makeText(getApplicationContext(), "No accounts to manage.", Toast.LENGTH_SHORT).show();
+			Toast.makeText(getApplicationContext(), R.string.text_account_no_account, Toast.LENGTH_SHORT).show();
 		}
 	}
 	
@@ -409,7 +405,7 @@ public class MainActivity extends Activity {
 		else  {
 			
 			// show add user screen
-			Toast.makeText(getApplicationContext(), "Add an account form the menu.", Toast.LENGTH_SHORT).show();
+			Toast.makeText(getApplicationContext(), R.string.text_account_add_new, Toast.LENGTH_SHORT).show();
 
 		} // end if		
 	}

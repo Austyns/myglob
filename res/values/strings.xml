@@ -48,7 +48,7 @@
 <string name="text_selectitem">Проверка на:</string>
 <string name="operation_check_all">Всички</string>
 <string-array name="array_available_operators"><item>Globul</item>
-<item>M-Tel</item>
+
 </string-array>
 
 <string name="menu_add_account">Добави номер</string>
@@ -56,4 +56,18 @@
 <string name="dlg_msg_cancel">Отказ</string>
 <string name="text_selectaccount">Изберете номер</string>
 <string name="text_no_accounts">Няма зададени номера! Моля добавете номер.</string>
+<string name="dlg_error_msg_legacy_user_failed">Грешка при записване на потребителя! Ще се наложи да добавите нов потребител.</string>
+<string name="dlg_legacyuser_title">Намерен номер</string>
+<string name="dlg_legacyuser_msg">Искате ли да добавите номер %s ?</string>
+<string name="text_account_created">Потребителят е създаден.</string>
+<string name="text_account_saved">Потребителят е записан.</string>
+<string name="text_account_removed">Потребителят е премахнат.</string>
+<string name="dlg_account_select_title">Изберете потребител</string>
+<string name="text_account_no_account">Няма създадени потребители.</string>
+<string name="text_account_add_new">Добавете потребител. Използвайте менюто.</string>
+<string name="dlg_account_delete_title">Изтриване на потребител</string>
+<string name="dlg_account_delete_msg">Искате ли да изтриете този потребител ?</string>
+<string name="dlg_account_validate_title">Грешка при валидиране</string>
+
+<string name="dlg_account_validate_msg">Някои от настройките не са въведени. Потребителят няма да бъде създаден. Желаете ли да продължите ?</string>
 </resources>
