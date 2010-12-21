@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen
-  xmlns:android="http://schemas.android.com/apk/res/android">
-<PreferenceCategory android:key="account_preferences"><EditTextPreference android:title="Account Name" android:summary="Enter account name" android:key="@string/pref_account_name"></EditTextPreference>
-<ListPreference android:entries="@array/array_available_operators" android:entryValues="@array/array_available_operators" android:title="Operator" android:summary="Choose mobile operator" android:key="@string/pref_account_operator" android:negativeButtonText="@string/dlg_msg_cancel"></ListPreference><EditTextPreference android:title="Phone Number" android:summary="Enter phone number name" android:key="@string/pref_account_phonenumber"></EditTextPreference>
+  xmlns:android="http://schemas.android.com/apk/res/android" android:title="@string/pref_name_prefs">
+<PreferenceCategory android:key="account_preferences" android:title="@string/pref_name_attributes"><EditTextPreference android:key="@string/pref_account_name" android:title="@string/pref_text_account_name" android:summary="@string/pref_text_account_name_summary" android:maxLength="20" android:lines="1"></EditTextPreference>
+<ListPreference android:entries="@array/array_available_operators" android:entryValues="@array/array_available_operators" android:key="@string/pref_account_operator" android:negativeButtonText="@string/dlg_msg_cancel" android:title="@string/pref_text_account_operator" android:summary="@string/pref_text_account_operator_summary"></ListPreference><EditTextPreference android:key="@string/pref_account_phonenumber" android:dialogMessage="@string/pref_text_account_phonenumber_msg" android:title="@string/pref_text_account_phonenumber" android:summary="@string/pref_text_account_phonenumber_summary" android:numeric="integer" android:maxLength="20" android:lines="1"></EditTextPreference>
 
 
-<EditTextPreference android:key="@string/pref_account_password" android:summary="Account password" android:title="Password" android:password="true" android:dialogTitle="Enter password" android:dialogMessage="Password is stored encrypted on the device."></EditTextPreference>
-<Preference android:key="@string/pref_account_delete" android:title="Delete account" android:summary="Delete this account"></Preference>
+<EditTextPreference android:key="@string/pref_account_password" android:password="true" android:title="@string/pref_text_account_password" android:summary="@string/pref_text_account_password_summary" android:dialogTitle="@string/pref_text_account_password_dialog_title" android:dialogMessage="@string/pref_text_account_password_dialog_msg"></EditTextPreference>
+
+
 </PreferenceCategory>
+<PreferenceCategory android:title="@string/pref_name_operations" android:key="account_operations"><Preference android:key="@string/pref_account_delete" android:title="@string/pref_text_account_delete" android:summary="@string/pref_text_account_delete_summary"></Preference></PreferenceCategory>
+
 </PreferenceScreen>

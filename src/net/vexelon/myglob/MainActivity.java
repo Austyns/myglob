@@ -34,6 +34,8 @@ import net.vexelon.myglob.R;
 import net.vexelon.myglob.configuration.Defs;
 import net.vexelon.myglob.configuration.AccountPreferencesActivity;
 import net.vexelon.myglob.configuration.GlobalSettings;
+import net.vexelon.myglob.configuration.LegacySettings;
+import net.vexelon.myglob.users.AccountType;
 import net.vexelon.myglob.users.User;
 import net.vexelon.myglob.users.UsersManager;
 import net.vexelon.myglob.utils.Utils;
@@ -47,9 +49,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.PorterDuff.Mode;
 import android.os.Bundle;
-import android.preference.PreferenceActivity;
 import android.text.Html;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -57,6 +57,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -71,8 +72,8 @@ public class MainActivity extends Activity {
 	 * 2. [DONE] Add user account class and move methods for handling account info
 	 * 3. [DONE] Refactor LoginActivity - NewAccountActivity 
 	 * 4. [DONE] Add AccountManagement menu button for general account management (Spinner of accounts + sepearet Activity for options)
-	 * 5. Refactor MainActivity class with proper actions for updating account info
-	 * 6. Make previous account preferences work
+	 * 5. [DONE] Refactor MainActivity class"" with proper actions for updating account info
+	 * 6. [DONE] Make previous account preferences work
 	 * 7. Solve problem with security codes on GLB site 
 	 * 
 	 * Milestone 01
@@ -109,6 +110,8 @@ public class MainActivity extends Activity {
 	};
 	
 	private Activity _activity = null;
+	//private ArrayAdapter<String> _adapterAccounts = null;
+	private AccountsArrayAdapter _adapterAccounts = null;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -120,21 +123,18 @@ public class MainActivity extends Activity {
         /**
          * load preferences
          */
-        SharedPreferences prefs = this.getSharedPreferences(Defs.PREFS_USER_PREFS, 0);
-        UsersManager.getInstance().reloadUsers(prefs);
+        final SharedPreferences prefsUsers = this.getSharedPreferences(Defs.PREFS_USER_PREFS, 0);
+        UsersManager.getInstance().reloadUsers(prefsUsers);
         
         SharedPreferences prefsGeneral = this.getSharedPreferences(Defs.PREFS_ALL_PREFS, 0);
         GlobalSettings.getInstance().init(prefsGeneral);
-
+        
         /**
          * initialize UI
          */
         
         this.setTitle(getResString(R.string.app_name) + " - " + getResString(R.string.about_tagline));
         
-        // populate available accounts
-        updateAccountsSpinner();
-
         // init options spinner
         Spinner spinnerOptions = (Spinner) findViewById(R.id.SpinnerOptions);
         OperationsArrayAdapter adapter = new OperationsArrayAdapter(this, android.R.layout.simple_spinner_item, 
@@ -149,6 +149,8 @@ public class MainActivity extends Activity {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerOptions.setAdapter(adapter);
         
+        // populate available accounts
+        updateAccountsSpinner();        
         
         // create update button
         Button btnUpdate = (Button) findViewById(R.id.ButtonUpdate);
@@ -161,6 +163,52 @@ public class MainActivity extends Activity {
         
         //btnUpdate.getBackground().setColorFilter(0x2212FF00, Mode.LIGHTEN);
         btnUpdate.getBackground().setColorFilter(Defs.CLR_BUTTON_UPDATE, Mode.MULTIPLY);
+        
+        /**
+         * try to find legacy users and add them to UsersManager
+         */
+        final LegacySettings legacySettings = new LegacySettings();
+        legacySettings.init(prefsGeneral);
+        if (legacySettings.getPhoneNumber() != null) {
+        	
+			AlertDialog.Builder alertBuilder = new AlertDialog.Builder(_activity);
+			alertBuilder.setTitle(R.string.dlg_legacyuser_title)
+				.setMessage(String.format(getResString(R.string.dlg_legacyuser_msg), legacySettings.getPhoneNumber()))
+				.setIcon(R.drawable.alert)
+				.setPositiveButton(getResString(R.string.dlg_msg_yes), new DialogInterface.OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						// Create & Add user
+			        	User user = new User().setAccountName(legacySettings.getPhoneNumber())
+							.setPhoneNumber(legacySettings.getPhoneNumber())
+							.setAccountType(AccountType.Globul); //V1.1.0 has only Globul support
+			        	
+			        	try {
+				        	if (UsersManager.getInstance().isUserExists(legacySettings.getPhoneNumber()))
+				        		throw new Exception(getResString(R.string.err_msg_user_already_exists));
+				        	
+				        	UsersManager.getInstance().addUser(user);
+			        		UsersManager.getInstance().setUserPassword(user, legacySettings.getPassword());
+			        		UsersManager.getInstance().save(prefsUsers);
+			        		updateAccountsSpinner();
+			        	}
+			        	catch(Exception e) {
+			        		Utils.showAlertDialog(_activity, String.format(getResString(R.string.dlg_error_msg_legacy_user_failed), e.getMessage()), getResString(R.string.dlg_error_msg_title));
+			        	}
+			        	legacySettings.clear();
+						dialog.dismiss();
+					}
+				})
+				.setNegativeButton(getResString(R.string.dlg_msg_no), new DialogInterface.OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						legacySettings.clear();
+						dialog.dismiss();
+					}
+				}).show();					
+        }
     }
     
     @Override
@@ -168,16 +216,16 @@ public class MainActivity extends Activity {
     	switch(requestCode) {
     	case Defs.INTENT_ACCOUNT_ADD_RQ:
     		if (resultCode == RESULT_OK) {
-    			Toast.makeText(getApplicationContext(), "Account created.", Toast.LENGTH_SHORT).show();
+    			Toast.makeText(getApplicationContext(), R.string.text_account_created, Toast.LENGTH_SHORT).show();
     		}    		
     		break;
     		
     	case Defs.INTENT_ACCOUNT_EDIT_RQ:
     		if (resultCode == RESULT_OK) {
-    			Toast.makeText(getApplicationContext(), "Account saved.", Toast.LENGTH_SHORT).show();
+    			Toast.makeText(getApplicationContext(), R.string.text_account_saved, Toast.LENGTH_SHORT).show();
     		}
     		else if (resultCode == Defs.INTENT_RESULT_ACCOUT_DELETED) {
-    			Toast.makeText(getApplicationContext(), "Account removed.", Toast.LENGTH_SHORT).show();
+    			Toast.makeText(getApplicationContext(), R.string.text_account_removed, Toast.LENGTH_SHORT).show();
     		}
     		break;
     	}
@@ -237,7 +285,7 @@ public class MainActivity extends Activity {
 		final String[] items = UsersManager.getInstance().getUsersPhoneNumbersList();
 		if (items != null) {
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setTitle("Select User");
+			builder.setTitle(R.string.dlg_account_select_title);
 			builder.setCancelable(true);
 			builder.setNegativeButton(getResString(R.string.dlg_msg_cancel), new DialogInterface.OnClickListener() {
 				
@@ -263,7 +311,7 @@ public class MainActivity extends Activity {
 			alert.show();
 		}
 		else {
-			Toast.makeText(getApplicationContext(), "No accounts to manage.", Toast.LENGTH_SHORT).show();
+			Toast.makeText(getApplicationContext(), R.string.text_account_no_account, Toast.LENGTH_SHORT).show();
 		}
 	}
 	
@@ -271,12 +319,29 @@ public class MainActivity extends Activity {
 	 * Prefill accounts data in spinner
 	 */
 	private void updateAccountsSpinner() {
+		Spinner spinnerAccounts = (Spinner) findViewById(R.id.SpinnerUserAccounts);
+		LinearLayout layout = (LinearLayout) findViewById(R.id.LayoutNoAccounts);
 		final String[] items = UsersManager.getInstance().getUsersPhoneNumbersList();
+		
 		if (items != null) {
-			Spinner spinnerAccounts = (Spinner) findViewById(R.id.SpinnerUserAccounts);
-			ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, items);
-	        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-	        spinnerAccounts.setAdapter(adapter);
+			//_adapterAccounts = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, items);
+			_adapterAccounts = new AccountsArrayAdapter(this, android.R.layout.simple_spinner_item, items);
+			_adapterAccounts.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+	        spinnerAccounts.setAdapter(_adapterAccounts);
+	        
+	        // visualize component
+	        spinnerAccounts.setVisibility(Spinner.VISIBLE);
+	        layout.setVisibility(LinearLayout.INVISIBLE);
+		}
+		else {
+			// remove all items, if any
+//			if (_adapterAccounts != null) {
+//				_adapterAccounts.clear();
+//			}
+	        
+			// no accounts, no selection
+			spinnerAccounts.setVisibility(Spinner.INVISIBLE);
+			layout.setVisibility(LinearLayout.VISIBLE);
 		}
 	}
 	
@@ -286,7 +351,7 @@ public class MainActivity extends Activity {
 	private void updateSelectedStatus() {
 		Spinner spinnerAccounts = (Spinner) findViewById(R.id.SpinnerUserAccounts);
 		
-		if (spinnerAccounts.getSelectedItemPosition() != Spinner.INVALID_POSITION) {
+		if (UsersManager.getInstance().size() > 0 && spinnerAccounts.getSelectedItemPosition() != Spinner.INVALID_POSITION) {
 			
 			Spinner spinnerOptions = (Spinner) findViewById(R.id.SpinnerOptions);
 			final Operations operation = (Operations) spinnerOptions.getSelectedItem();
@@ -346,65 +411,65 @@ public class MainActivity extends Activity {
 		else  {
 			
 			// show add user screen
-
+			Toast.makeText(getApplicationContext(), R.string.text_account_add_new, Toast.LENGTH_SHORT).show();
 
 		} // end if		
 	}
 	
-	private String getAccountStatus(Operations operation, User user) throws Exception {
-		String result = "<td class=\"txt_order_SMS\">" +
-        		 "<p>Вашата текуща сметка:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> 1,45 лв.</span> без ДДС</p>" +
-                 "<p>Задължения по ф-ра за периода 18.08-17.09.2010г:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> -0,23 лв.</span> с ДДС</p>" +
-                 "<p>Данните са актуални към:<span style=\"font-weight: bold;\"> 07 Октомври, 21:15ч.</span>" +
-                 "</p></td>" +
-                 "<td class=\"txt_order_SMS\">" +
-        		 "<p>Вашата текуща сметка:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> 1,45 лв.</span> без ДДС</p>" +
-                 "<p>Задължения по ф-ра за периода 18.08-17.09.2010г:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> -0,23 лв.</span> с ДДС</p>" +
-                 "<p>Данните са актуални към:<span style=\"font-weight: bold;\"> 07 Октомври, 21:15ч.</span>" +
-                 "</p></td>" +
-                 "<td class=\"txt_order_SMS\">" +
-        		 "<p>Вашата текуща сметка:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> 1,45лв.</span> без ДДС</p>" +
-                 "<p>Задължения по ф-ра за периода 18.08-17.09.2010г:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> -0,23 лв.</span> с ДДС</p>" +
-                 "<p>Данните са актуални към:<span style=\"font-weight: bold;\"> 07 Октомври, 21:15ч.</span>" +
-                 "</p></td>" + 
-                 "<td class=\"txt_order_SMS\">" +
-        		 "<p>Вашата текуща сметка:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> 1,45 лв.</span> без ДДС</p>" +
-                 "<p>Задължения по ф-ра за периода 18.08-17.09.2010г:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> -0,23 лв.</span> с ДДС</p>" +
-                 "<p>Данните са актуални към:<span style=\"font-weight: bold;\"> 07 Октомври, 21:15ч.</span>" +
-                 "</p></td>" +
-                 "<td class=\"txt_order_SMS\">" +
-        		 "<p>Вашата текуща сметка:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> 1,45 лв.</span> без ДДС</p>" +
-                 "<p>Задължения по ф-ра за периода 18.08-17.09.2010г:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> -0,23 лв.</span> с ДДС</p>" +
-                 "<p>Данните са актуални към:<span style=\"font-weight: bold;\"> 07 Октомври, 21:15ч.</span>" +
-                 "</p></td>" +
-                 "<td class=\"txt_order_SMS\">" +
-        		 "<p>Вашата текуща сметка:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> 1,45лв.</span> без ДДС</p>" +
-                 "<p>Задължения по ф-ра за периода 18.08-17.09.2010г:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> -0,23 лв.</span> с ДДС</p>" +
-                 "<p>Данните са актуални към:<span style=\"font-weight: bold;\"> 07 Октомври, 21:15ч.</span>" +
-                 "</p></td>";                 
-		
-		result = result.replaceAll("(<.[^>]*>)|(</.[^>]*>)", "");
-		result = result.replaceAll("\\t|\\n|\\r", "");	
-		result = result.trim();
-		
-		Pattern p = Pattern.compile("(-*\\d+,\\d+\\s*лв\\.*)", Pattern.CASE_INSENSITIVE);
-		Matcher m = p.matcher(result);
-		StringBuffer sb = new StringBuffer();
-		while (m.find()) {
-			m.appendReplacement(sb, "<b><font color=\"#1FAF1F\">" + m.group() + "</font></b>");
-			//Log.v(Defs.LOG_TAG, "GR: " + sb.toString());
-		}
-		m.appendTail(sb);
-		//Log.v(Defs.LOG_TAG, "GR: " + sb.toString());
-		
-		return sb.toString();
-	}
+//	private String getAccountStatus(Operations operation, User user) throws Exception {
+//		String result = "<td class=\"txt_order_SMS\">" +
+//        		 "<p>Вашата текуща сметка:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> 1,45 лв.</span> без ДДС</p>" +
+//                 "<p>Задължения по ф-ра за периода 18.08-17.09.2010г:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> -0,23 лв.</span> с ДДС</p>" +
+//                 "<p>Данните са актуални към:<span style=\"font-weight: bold;\"> 07 Октомври, 21:15ч.</span>" +
+//                 "</p></td>" +
+//                 "<td class=\"txt_order_SMS\">" +
+//        		 "<p>Вашата текуща сметка:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> 1,45 лв.</span> без ДДС</p>" +
+//                 "<p>Задължения по ф-ра за периода 18.08-17.09.2010г:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> -0,23 лв.</span> с ДДС</p>" +
+//                 "<p>Данните са актуални към:<span style=\"font-weight: bold;\"> 07 Октомври, 21:15ч.</span>" +
+//                 "</p></td>" +
+//                 "<td class=\"txt_order_SMS\">" +
+//        		 "<p>Вашата текуща сметка:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> 1,45лв.</span> без ДДС</p>" +
+//                 "<p>Задължения по ф-ра за периода 18.08-17.09.2010г:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> -0,23 лв.</span> с ДДС</p>" +
+//                 "<p>Данните са актуални към:<span style=\"font-weight: bold;\"> 07 Октомври, 21:15ч.</span>" +
+//                 "</p></td>" + 
+//                 "<td class=\"txt_order_SMS\">" +
+//        		 "<p>Вашата текуща сметка:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> 1,45 лв.</span> без ДДС</p>" +
+//                 "<p>Задължения по ф-ра за периода 18.08-17.09.2010г:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> -0,23 лв.</span> с ДДС</p>" +
+//                 "<p>Данните са актуални към:<span style=\"font-weight: bold;\"> 07 Октомври, 21:15ч.</span>" +
+//                 "</p></td>" +
+//                 "<td class=\"txt_order_SMS\">" +
+//        		 "<p>Вашата текуща сметка:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> 1,45 лв.</span> без ДДС</p>" +
+//                 "<p>Задължения по ф-ра за периода 18.08-17.09.2010г:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> -0,23 лв.</span> с ДДС</p>" +
+//                 "<p>Данните са актуални към:<span style=\"font-weight: bold;\"> 07 Октомври, 21:15ч.</span>" +
+//                 "</p></td>" +
+//                 "<td class=\"txt_order_SMS\">" +
+//        		 "<p>Вашата текуща сметка:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> 1,45лв.</span> без ДДС</p>" +
+//                 "<p>Задължения по ф-ра за периода 18.08-17.09.2010г:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> -0,23 лв.</span> с ДДС</p>" +
+//                 "<p>Данните са актуални към:<span style=\"font-weight: bold;\"> 07 Октомври, 21:15ч.</span>" +
+//                 "</p></td>";                 
+//		
+//		result = result.replaceAll("(<.[^>]*>)|(</.[^>]*>)", "");
+//		result = result.replaceAll("\\t|\\n|\\r", "");	
+//		result = result.trim();
+//		
+//		Pattern p = Pattern.compile("(-*\\d+,\\d+\\s*лв\\.*)", Pattern.CASE_INSENSITIVE);
+//		Matcher m = p.matcher(result);
+//		StringBuffer sb = new StringBuffer();
+//		while (m.find()) {
+//			m.appendReplacement(sb, "<b><font color=\"#1FAF1F\">" + m.group() + "</font></b>");
+//			//Log.v(Defs.LOG_TAG, "GR: " + sb.toString());
+//		}
+//		m.appendTail(sb);
+//		//Log.v(Defs.LOG_TAG, "GR: " + sb.toString());
+//		
+//		return sb.toString();
+//	}
     
-	private String getAccountStatus2(Operations operation, User user) throws Exception {
+	private String getAccountStatus(Operations operation, User user) throws Exception {
     
 		String result = "";
 		GLBClient client = new GLBHttpClientImpl(user.getPhoneNumber(), UsersManager.getInstance().getUserPassword(user));
-		Log.v(Defs.LOG_TAG, "Logging in using " + user.getPhoneNumber() + " and pass: " + UsersManager.getInstance().getUserPassword(user));
+		//Log.v(Defs.LOG_TAG, "Logging in using " + user.getPhoneNumber() + " and pass: " + UsersManager.getInstance().getUserPassword(user));
 		
 		try {
 			client.login();

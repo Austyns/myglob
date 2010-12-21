@@ -99,13 +99,34 @@ public class AccountPreferencesActivity extends PreferenceActivity {
 			_accountDeletePref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
 				@Override
 				public boolean onPreferenceClick(Preference preference) {
-					UsersManager.getInstance().removeUser(_accountNumberPref.getText());
 					
-					// save all users
-					SharedPreferences prefs = _activity.getSharedPreferences(Defs.PREFS_USER_PREFS, 0);
-					UsersManager.getInstance().save(prefs);
-					_activity.setResult(Defs.INTENT_RESULT_ACCOUT_DELETED);
-					_activity.finish();
+					AlertDialog.Builder alertBuilder = new AlertDialog.Builder(_activity);
+					alertBuilder.setTitle(R.string.dlg_account_delete_title)
+						.setMessage(R.string.dlg_account_delete_msg)
+						.setIcon(R.drawable.alert)
+						.setPositiveButton(getResString(R.string.dlg_msg_yes), new OnClickListener() {
+							
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								UsersManager.getInstance().removeUser(_accountNumberPref.getText());
+								
+								// save all users
+								SharedPreferences prefs = _activity.getSharedPreferences(Defs.PREFS_USER_PREFS, 0);
+								UsersManager.getInstance().save(prefs);
+								_activity.setResult(Defs.INTENT_RESULT_ACCOUT_DELETED);
+								_activity.finish();
+								
+								dialog.dismiss();
+							}
+						})
+						.setNegativeButton(getResString(R.string.dlg_msg_no), new OnClickListener() {
+							
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								dialog.dismiss();
+							}
+						}).show();					
+
 					return false;
 				}
 			});
@@ -121,16 +142,21 @@ public class AccountPreferencesActivity extends PreferenceActivity {
 		// save all account data
 		
 		User user = null;
+		String phoneNumber = _accountNumberPref.getText().trim();
 		
 		if (getIntent().getBooleanExtra(Defs.INTENT_ACCOUNT_ADD, false)) {
 //		if (_editUser == null) {
 			user = new User().setAccountName(_accountNamePref.getText())
-				.setPhoneNumber(_accountNumberPref.getText())
+				.setPhoneNumber(phoneNumber)
 				.setAccountType(getAccountTypeFromListPrefs());
 //			UsersManager.getInstance().addUser(user);
+			if (UsersManager.getInstance().isUserExists(phoneNumber)) 
+				throw new Exception(getResString(R.string.err_msg_user_already_exists));
 		}
 		else {
 			user = _editUser; // get instance of user being edited
+			user.setAccountName(_accountNamePref.getText());
+			user.setAccountType(getAccountTypeFromListPrefs());
 		}
 			
 		//Log.v(Defs.LOG_TAG, "Saved raw pass: " + _accountPasswordPref.getText() + " Enc pass: " + user.getEncodedPassword());
@@ -161,9 +187,9 @@ public class AccountPreferencesActivity extends PreferenceActivity {
 		if (_accountOperatorPref.getValue().equals(operators[0])) {
 			return AccountType.Globul;
 		}
-		else if (_accountOperatorPref.getValue().equals(operators[1])) {
-			return AccountType.M_Tel;
-		}
+//		else if (_accountOperatorPref.getValue().equals(operators[1])) {
+//			return AccountType.M_Tel;
+//		}
 		
 		return null;
 	}
@@ -205,14 +231,14 @@ public class AccountPreferencesActivity extends PreferenceActivity {
 				// One or more obligatory settings is missing. Show continue yes/no dialog.
 				
 				AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
-				alertBuilder.setTitle("AMI SEGA")
-					.setMessage("User will not be created. Proceed?")
+				alertBuilder.setTitle(R.string.dlg_account_validate_title)
+					.setMessage(R.string.dlg_account_validate_msg)
 					.setIcon(R.drawable.alert)
 					.setPositiveButton(getResString(R.string.dlg_msg_yes), new OnClickListener() {
 						
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
-							Log.i(Defs.LOG_TAG, "Nothing was saved!");
+							//Log.i(Defs.LOG_TAG, "Nothing was saved!");
 							dialog.dismiss();
 							_activity.setResult(RESULT_CANCELED);
 							finish();

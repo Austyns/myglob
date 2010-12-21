@@ -95,6 +95,10 @@ public class UsersManager {
 		_users.add(user);
 	}
 	
+	public boolean isUserExists(String phoneNumber) {
+		return getUserByPhoneNumber(phoneNumber) != null;
+	}
+	
 	public User getUserByPhoneNumber(String phoneNumber) {
 		for (User user : _users) {
 			if (user.getPhoneNumber().equals(phoneNumber)) {
