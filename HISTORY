@@ -4,6 +4,11 @@
 
 ==V2.0.0=
 
+  * Added - Issue 7: Multiple phone numbers checking support now available.
+  * Added - Possibility to edit users.
+  * Changed - Encryption of user passwords changed. Users from V1.0.1 still supported.
+  * Changed - Layout and menus have been changed.
+
 ==V1.1.0=
 
   * Fixed - Issue 2 - Fixed a bug where application used to crash if orientation was changed during account update. 
