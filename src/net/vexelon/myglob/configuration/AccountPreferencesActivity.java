@@ -142,16 +142,21 @@ public class AccountPreferencesActivity extends PreferenceActivity {
 		// save all account data
 		
 		User user = null;
+		String phoneNumber = _accountNumberPref.getText().trim();
 		
 		if (getIntent().getBooleanExtra(Defs.INTENT_ACCOUNT_ADD, false)) {
 //		if (_editUser == null) {
 			user = new User().setAccountName(_accountNamePref.getText())
-				.setPhoneNumber(_accountNumberPref.getText())
+				.setPhoneNumber(phoneNumber)
 				.setAccountType(getAccountTypeFromListPrefs());
 //			UsersManager.getInstance().addUser(user);
+			if (UsersManager.getInstance().isUserExists(phoneNumber)) 
+				throw new Exception(getResString(R.string.err_msg_user_already_exists));
 		}
 		else {
 			user = _editUser; // get instance of user being edited
+			user.setAccountName(_accountNamePref.getText());
+			user.setAccountType(getAccountTypeFromListPrefs());
 		}
 			
 		//Log.v(Defs.LOG_TAG, "Saved raw pass: " + _accountPasswordPref.getText() + " Enc pass: " + user.getEncodedPassword());

@@ -110,7 +110,8 @@ public class MainActivity extends Activity {
 	};
 	
 	private Activity _activity = null;
-	private ArrayAdapter<String> _adapterAccounts = null;
+	//private ArrayAdapter<String> _adapterAccounts = null;
+	private AccountsArrayAdapter _adapterAccounts = null;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -182,16 +183,20 @@ public class MainActivity extends Activity {
 			        	User user = new User().setAccountName(legacySettings.getPhoneNumber())
 							.setPhoneNumber(legacySettings.getPhoneNumber())
 							.setAccountType(AccountType.Globul); //V1.1.0 has only Globul support
-			        	UsersManager.getInstance().addUser(user);
+			        	
 			        	try {
+				        	if (UsersManager.getInstance().isUserExists(legacySettings.getPhoneNumber()))
+				        		throw new Exception(getResString(R.string.err_msg_user_already_exists));
+				        	
+				        	UsersManager.getInstance().addUser(user);
 			        		UsersManager.getInstance().setUserPassword(user, legacySettings.getPassword());
 			        		UsersManager.getInstance().save(prefsUsers);
 			        		updateAccountsSpinner();
 			        	}
 			        	catch(Exception e) {
-			        		Utils.showAlertDialog(_activity, R.string.dlg_error_msg_legacy_user_failed, R.string.dlg_error_msg_title);
+			        		Utils.showAlertDialog(_activity, String.format(getResString(R.string.dlg_error_msg_legacy_user_failed), e.getMessage()), getResString(R.string.dlg_error_msg_title));
 			        	}
-			        	//legacySettings.clear();
+			        	legacySettings.clear();
 						dialog.dismiss();
 					}
 				})
@@ -199,7 +204,7 @@ public class MainActivity extends Activity {
 					
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						//legacySettings.clear();
+						legacySettings.clear();
 						dialog.dismiss();
 					}
 				}).show();					
@@ -319,7 +324,8 @@ public class MainActivity extends Activity {
 		final String[] items = UsersManager.getInstance().getUsersPhoneNumbersList();
 		
 		if (items != null) {
-			_adapterAccounts = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, items);
+			//_adapterAccounts = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, items);
+			_adapterAccounts = new AccountsArrayAdapter(this, android.R.layout.simple_spinner_item, items);
 			_adapterAccounts.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 	        spinnerAccounts.setAdapter(_adapterAccounts);
 	        
@@ -361,7 +367,7 @@ public class MainActivity extends Activity {
 				public void run() {
 					
 					try {
-						final String data = getAccountStatus2(operation, 
+						final String data = getAccountStatus(operation, 
 								UsersManager.getInstance().getUserByPhoneNumber(phoneNumber)
 								);
 //						saveLastResult(data); // keep in storage
@@ -410,60 +416,60 @@ public class MainActivity extends Activity {
 		} // end if		
 	}
 	
-	private String getAccountStatus(Operations operation, User user) throws Exception {
-		String result = "<td class=\"txt_order_SMS\">" +
-        		 "<p>Вашата текуща сметка:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> 1,45 лв.</span> без ДДС</p>" +
-                 "<p>Задължения по ф-ра за периода 18.08-17.09.2010г:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> -0,23 лв.</span> с ДДС</p>" +
-                 "<p>Данните са актуални към:<span style=\"font-weight: bold;\"> 07 Октомври, 21:15ч.</span>" +
-                 "</p></td>" +
-                 "<td class=\"txt_order_SMS\">" +
-        		 "<p>Вашата текуща сметка:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> 1,45 лв.</span> без ДДС</p>" +
-                 "<p>Задължения по ф-ра за периода 18.08-17.09.2010г:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> -0,23 лв.</span> с ДДС</p>" +
-                 "<p>Данните са актуални към:<span style=\"font-weight: bold;\"> 07 Октомври, 21:15ч.</span>" +
-                 "</p></td>" +
-                 "<td class=\"txt_order_SMS\">" +
-        		 "<p>Вашата текуща сметка:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> 1,45лв.</span> без ДДС</p>" +
-                 "<p>Задължения по ф-ра за периода 18.08-17.09.2010г:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> -0,23 лв.</span> с ДДС</p>" +
-                 "<p>Данните са актуални към:<span style=\"font-weight: bold;\"> 07 Октомври, 21:15ч.</span>" +
-                 "</p></td>" + 
-                 "<td class=\"txt_order_SMS\">" +
-        		 "<p>Вашата текуща сметка:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> 1,45 лв.</span> без ДДС</p>" +
-                 "<p>Задължения по ф-ра за периода 18.08-17.09.2010г:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> -0,23 лв.</span> с ДДС</p>" +
-                 "<p>Данните са актуални към:<span style=\"font-weight: bold;\"> 07 Октомври, 21:15ч.</span>" +
-                 "</p></td>" +
-                 "<td class=\"txt_order_SMS\">" +
-        		 "<p>Вашата текуща сметка:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> 1,45 лв.</span> без ДДС</p>" +
-                 "<p>Задължения по ф-ра за периода 18.08-17.09.2010г:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> -0,23 лв.</span> с ДДС</p>" +
-                 "<p>Данните са актуални към:<span style=\"font-weight: bold;\"> 07 Октомври, 21:15ч.</span>" +
-                 "</p></td>" +
-                 "<td class=\"txt_order_SMS\">" +
-        		 "<p>Вашата текуща сметка:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> 1,45лв.</span> без ДДС</p>" +
-                 "<p>Задължения по ф-ра за периода 18.08-17.09.2010г:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> -0,23 лв.</span> с ДДС</p>" +
-                 "<p>Данните са актуални към:<span style=\"font-weight: bold;\"> 07 Октомври, 21:15ч.</span>" +
-                 "</p></td>";                 
-		
-		result = result.replaceAll("(<.[^>]*>)|(</.[^>]*>)", "");
-		result = result.replaceAll("\\t|\\n|\\r", "");	
-		result = result.trim();
-		
-		Pattern p = Pattern.compile("(-*\\d+,\\d+\\s*лв\\.*)", Pattern.CASE_INSENSITIVE);
-		Matcher m = p.matcher(result);
-		StringBuffer sb = new StringBuffer();
-		while (m.find()) {
-			m.appendReplacement(sb, "<b><font color=\"#1FAF1F\">" + m.group() + "</font></b>");
-			//Log.v(Defs.LOG_TAG, "GR: " + sb.toString());
-		}
-		m.appendTail(sb);
-		//Log.v(Defs.LOG_TAG, "GR: " + sb.toString());
-		
-		return sb.toString();
-	}
+//	private String getAccountStatus(Operations operation, User user) throws Exception {
+//		String result = "<td class=\"txt_order_SMS\">" +
+//        		 "<p>Вашата текуща сметка:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> 1,45 лв.</span> без ДДС</p>" +
+//                 "<p>Задължения по ф-ра за периода 18.08-17.09.2010г:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> -0,23 лв.</span> с ДДС</p>" +
+//                 "<p>Данните са актуални към:<span style=\"font-weight: bold;\"> 07 Октомври, 21:15ч.</span>" +
+//                 "</p></td>" +
+//                 "<td class=\"txt_order_SMS\">" +
+//        		 "<p>Вашата текуща сметка:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> 1,45 лв.</span> без ДДС</p>" +
+//                 "<p>Задължения по ф-ра за периода 18.08-17.09.2010г:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> -0,23 лв.</span> с ДДС</p>" +
+//                 "<p>Данните са актуални към:<span style=\"font-weight: bold;\"> 07 Октомври, 21:15ч.</span>" +
+//                 "</p></td>" +
+//                 "<td class=\"txt_order_SMS\">" +
+//        		 "<p>Вашата текуща сметка:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> 1,45лв.</span> без ДДС</p>" +
+//                 "<p>Задължения по ф-ра за периода 18.08-17.09.2010г:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> -0,23 лв.</span> с ДДС</p>" +
+//                 "<p>Данните са актуални към:<span style=\"font-weight: bold;\"> 07 Октомври, 21:15ч.</span>" +
+//                 "</p></td>" + 
+//                 "<td class=\"txt_order_SMS\">" +
+//        		 "<p>Вашата текуща сметка:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> 1,45 лв.</span> без ДДС</p>" +
+//                 "<p>Задължения по ф-ра за периода 18.08-17.09.2010г:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> -0,23 лв.</span> с ДДС</p>" +
+//                 "<p>Данните са актуални към:<span style=\"font-weight: bold;\"> 07 Октомври, 21:15ч.</span>" +
+//                 "</p></td>" +
+//                 "<td class=\"txt_order_SMS\">" +
+//        		 "<p>Вашата текуща сметка:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> 1,45 лв.</span> без ДДС</p>" +
+//                 "<p>Задължения по ф-ра за периода 18.08-17.09.2010г:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> -0,23 лв.</span> с ДДС</p>" +
+//                 "<p>Данните са актуални към:<span style=\"font-weight: bold;\"> 07 Октомври, 21:15ч.</span>" +
+//                 "</p></td>" +
+//                 "<td class=\"txt_order_SMS\">" +
+//        		 "<p>Вашата текуща сметка:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> 1,45лв.</span> без ДДС</p>" +
+//                 "<p>Задължения по ф-ра за периода 18.08-17.09.2010г:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> -0,23 лв.</span> с ДДС</p>" +
+//                 "<p>Данните са актуални към:<span style=\"font-weight: bold;\"> 07 Октомври, 21:15ч.</span>" +
+//                 "</p></td>";                 
+//		
+//		result = result.replaceAll("(<.[^>]*>)|(</.[^>]*>)", "");
+//		result = result.replaceAll("\\t|\\n|\\r", "");	
+//		result = result.trim();
+//		
+//		Pattern p = Pattern.compile("(-*\\d+,\\d+\\s*лв\\.*)", Pattern.CASE_INSENSITIVE);
+//		Matcher m = p.matcher(result);
+//		StringBuffer sb = new StringBuffer();
+//		while (m.find()) {
+//			m.appendReplacement(sb, "<b><font color=\"#1FAF1F\">" + m.group() + "</font></b>");
+//			//Log.v(Defs.LOG_TAG, "GR: " + sb.toString());
+//		}
+//		m.appendTail(sb);
+//		//Log.v(Defs.LOG_TAG, "GR: " + sb.toString());
+//		
+//		return sb.toString();
+//	}
     
-	private String getAccountStatus2(Operations operation, User user) throws Exception {
+	private String getAccountStatus(Operations operation, User user) throws Exception {
     
 		String result = "";
 		GLBClient client = new GLBHttpClientImpl(user.getPhoneNumber(), UsersManager.getInstance().getUserPassword(user));
-		Log.v(Defs.LOG_TAG, "Logging in using " + user.getPhoneNumber() + " and pass: " + UsersManager.getInstance().getUserPassword(user));
+		//Log.v(Defs.LOG_TAG, "Logging in using " + user.getPhoneNumber() + " and pass: " + UsersManager.getInstance().getUserPassword(user));
 		
 		try {
 			client.login();
