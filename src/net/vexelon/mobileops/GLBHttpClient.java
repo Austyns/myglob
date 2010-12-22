@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package net.vexelon.glbclient;
+package net.vexelon.mobileops;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -32,9 +32,9 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.vexelon.glbclient.exceptions.GLBHttpException;
-import net.vexelon.glbclient.exceptions.GLBSecureCodeRequiredException;
-import net.vexelon.glbclient.exceptions.GLBInvalidCredentialsException;
+import net.vexelon.mobileops.exceptions.HttpClientException;
+import net.vexelon.mobileops.exceptions.InvalidCredentialsException;
+import net.vexelon.mobileops.exceptions.SecureCodeRequiredException;
 import net.vexelon.myglob.configuration.Defs;
 import net.vexelon.myglob.utils.Utils;
 
@@ -67,7 +67,7 @@ import org.w3c.dom.Entity;
 import android.util.Log;
 import android.webkit.URLUtil;
 
-public class GLBHttpClientImpl implements GLBClient {
+public class GLBHttpClient implements Client {
 	
 	private final String HTTP_MYGLOBUL_SITE = "https://my.globul.bg";
 	private final String HTTP_USER_AGENT = "Mozilla/5.0 (Windows; U; Windows NT 5.1; ro; rv:1.9.2.8) Gecko/20100722 Firefox/3.6.8";
@@ -80,7 +80,7 @@ public class GLBHttpClientImpl implements GLBClient {
 	private DefaultHttpClient httpClient = null;
 	private CookieStore httpCookieStore = null;
 	
-	public GLBHttpClientImpl(String username, String password) {
+	public GLBHttpClient(String username, String password) {
 		this.username = username;
 		this.password = password;
 		
@@ -111,7 +111,7 @@ public class GLBHttpClientImpl implements GLBClient {
 	}
 	
 	public void logout() 
-		throws IOException, ClientProtocolException, GLBHttpException {
+		throws IOException, ClientProtocolException, HttpClientException {
 		
 		HttpGet httpGet = new HttpGet(HTTP_MYGLOBUL_SITE + GLBRequestType.LOGOUT.getPath() + "?" + GLBRequestType.LOGOUT.getParams());
 
@@ -119,7 +119,7 @@ public class GLBHttpClientImpl implements GLBClient {
 		StatusLine status = resp.getStatusLine();
 		
 		if ( status.getStatusCode() != HttpStatus.SC_OK )
-			throw new GLBHttpException(status.getReasonPhrase(), status.getStatusCode());
+			throw new HttpClientException(status.getReasonPhrase(), status.getStatusCode());
 		
 		resp.getEntity().consumeContent();		
 	}
@@ -210,10 +210,10 @@ public class GLBHttpClientImpl implements GLBClient {
 				if ( content.indexOf("/mg/my/GetImage?refid=") != -1 ) {
 					//TODO: retrieve image url
 					//<img class="code" alt="Ако се затруднявате с разчитането на кода от картинката, моля кликнете върху нея за да я смените." src="/mg/my/GetImage?refid=b7b8fa558b461f1e2d400ae0f3348f2f">
-					throw new GLBSecureCodeRequiredException("");
+					throw new SecureCodeRequiredException("");
 				}
 				
-				throw new GLBInvalidCredentialsException();
+				throw new InvalidCredentialsException();
 			}
 		}
 		else if ( status.getStatusCode() != HttpStatus.SC_MOVED_TEMPORARILY ) {
@@ -222,7 +222,7 @@ public class GLBHttpClientImpl implements GLBClient {
 			
 			//NOTE: Kind of a hack (sometimes we get 302 from the web serv), 
 			//      May not work if Globul changes impl.
-			throw new GLBHttpException(status.getReasonPhrase(), status.getStatusCode());
+			throw new HttpClientException(status.getReasonPhrase(), status.getStatusCode());
 		}		
 	}
 	
@@ -234,7 +234,7 @@ public class GLBHttpClientImpl implements GLBClient {
 	}
 	
 	private String doPostRequest(GLBRequestType requestType) throws UnsupportedEncodingException,
-			IOException, ClientProtocolException, GLBHttpException {
+			IOException, ClientProtocolException, HttpClientException {
 
 		HttpPost httpPost = createPostRequest(HTTP_MYGLOBUL_SITE + requestType.getPath(), requestType.getParamsAsList());
 		httpPost.setHeader("X-Requested-With", "XMLHttpRequest");
@@ -244,7 +244,7 @@ public class GLBHttpClientImpl implements GLBClient {
 		StatusLine status = resp.getStatusLine();
 
 		if (status.getStatusCode() != HttpStatus.SC_OK)
-			throw new GLBHttpException(status.getReasonPhrase(), status.getStatusCode());
+			throw new HttpClientException(status.getReasonPhrase(), status.getStatusCode());
 
 		HttpEntity entity = resp.getEntity();
 		ByteArrayOutputStream baos = new ByteArrayOutputStream(DEFAULT_BUFFER_SIZE);

@@ -21,8 +21,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package net.vexelon.glbclient.exceptions;
+package net.vexelon.mobileops.exceptions;
 
-public class GLBInvalidCredentialsException extends Exception {
+public class InvalidCredentialsException extends Exception {
 	
 }

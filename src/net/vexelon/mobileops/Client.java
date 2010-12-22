@@ -21,19 +21,36 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package net.vexelon.glbclient.exceptions;
+package net.vexelon.mobileops;
 
-public class GLBHttpException extends Exception {
+import java.io.IOException;
 
-	private int statusCode;
+import net.vexelon.mobileops.exceptions.HttpClientException;
 
-	public GLBHttpException(String message, int statusCode) {
-		super(message);
-		
-		this.statusCode = statusCode;
-	}
+import org.apache.http.client.ClientProtocolException;
+
+public interface Client {
+
+	public void login()
+		throws Exception;
 	
-	public int getStatusCode() {
-		return this.statusCode;
-	}
+	public void logout()
+		throws Exception;
+	
+	public String getCurrentBalance() 
+		throws Exception;
+	
+	public String getAvailableMinutes()
+		throws Exception;
+	
+	public String getAvailableInternetBandwidth()
+		throws Exception;
+	
+	public String getCreditLimit()
+		throws Exception;
+
+	public String getAvailableMSPackage()
+		throws Exception;
+	
+	public void close();
 }

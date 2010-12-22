@@ -21,39 +21,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package net.vexelon.glbclient;
+package net.vexelon.mobileops.exceptions;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URISyntaxException;
+public class SecureCodeRequiredException extends Exception {
 
-import net.vexelon.glbclient.exceptions.GLBHttpException;
-import net.vexelon.glbclient.exceptions.GLBInvalidCredentialsException;
+	private String secureCodeImageUrl;
 
-import org.apache.http.client.ClientProtocolException;
-
-public interface GLBClient {
-
-	public void login()
-		throws Exception;
+	public SecureCodeRequiredException(String secureCodeImageUrl) {
+		
+		this.secureCodeImageUrl = secureCodeImageUrl;
+	}
 	
-	public void logout()
-		throws IOException, ClientProtocolException, GLBHttpException;
+	public String getSecureCodeImageUrl() {
+		return this.secureCodeImageUrl;
+	}
 	
-	public String getCurrentBalance() 
-		throws Exception;
-	
-	public String getAvailableMinutes()
-		throws Exception;
-	
-	public String getAvailableInternetBandwidth()
-		throws Exception;
-	
-	public String getCreditLimit()
-		throws Exception;
-
-	public String getAvailableMSPackage()
-		throws Exception;
-	
-	public void close();
 }

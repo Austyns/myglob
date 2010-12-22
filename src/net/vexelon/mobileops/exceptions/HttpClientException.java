@@ -21,19 +21,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package net.vexelon.glbclient.exceptions;
+package net.vexelon.mobileops.exceptions;
 
-public class GLBSecureCodeRequiredException extends Exception {
+public class HttpClientException extends Exception {
 
-	private String secureCodeImageUrl;
+	private int statusCode;
 
-	public GLBSecureCodeRequiredException(String secureCodeImageUrl) {
+	public HttpClientException(String message, int statusCode) {
+		super(message);
 		
-		this.secureCodeImageUrl = secureCodeImageUrl;
+		this.statusCode = statusCode;
 	}
 	
-	public String getSecureCodeImageUrl() {
-		return this.secureCodeImageUrl;
+	public int getStatusCode() {
+		return this.statusCode;
 	}
-	
 }

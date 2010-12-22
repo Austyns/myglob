@@ -26,10 +26,10 @@ package net.vexelon.myglob;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.vexelon.glbclient.GLBClient;
-import net.vexelon.glbclient.GLBHttpClientImpl;
-import net.vexelon.glbclient.exceptions.GLBSecureCodeRequiredException;
-import net.vexelon.glbclient.exceptions.GLBInvalidCredentialsException;
+import net.vexelon.mobileops.Client;
+import net.vexelon.mobileops.GLBHttpClient;
+import net.vexelon.mobileops.exceptions.InvalidCredentialsException;
+import net.vexelon.mobileops.exceptions.SecureCodeRequiredException;
 import net.vexelon.myglob.R;
 import net.vexelon.myglob.configuration.Defs;
 import net.vexelon.myglob.configuration.AccountPreferencesActivity;
@@ -384,11 +384,11 @@ public class MainActivity extends Activity {
 							}
 						});						
 					}
-					catch (GLBInvalidCredentialsException e) {
+					catch (InvalidCredentialsException e) {
 						// Show error dialog
 						Utils.showAlertDialog(_activity, R.string.dlg_error_msg_invalid_credentials, R.string.dlg_error_msg_title);
 					}
-					catch (GLBSecureCodeRequiredException e) {
+					catch (SecureCodeRequiredException e) {
 						// Show error dialog						
 						Utils.showAlertDialog(_activity, R.string.dlg_error_msg_securecode, R.string.dlg_error_msg_title);
 					}
@@ -468,7 +468,7 @@ public class MainActivity extends Activity {
 	private String getAccountStatus(Operations operation, User user) throws Exception {
     
 		String result = "";
-		GLBClient client = new GLBHttpClientImpl(user.getPhoneNumber(), UsersManager.getInstance().getUserPassword(user));
+		Client client = new GLBHttpClient(user.getPhoneNumber(), UsersManager.getInstance().getUserPassword(user));
 		//Log.v(Defs.LOG_TAG, "Logging in using " + user.getPhoneNumber() + " and pass: " + UsersManager.getInstance().getUserPassword(user));
 		
 		try {
