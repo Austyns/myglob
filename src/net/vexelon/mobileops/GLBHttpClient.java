@@ -44,9 +44,11 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.HttpVersion;
 import org.apache.http.NameValuePair;
+import org.apache.http.NoHttpResponseException;
 import org.apache.http.StatusLine;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CookieStore;
+import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -61,6 +63,7 @@ import org.apache.http.params.CoreConnectionPNames;
 import org.apache.http.params.CoreProtocolPNames;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HTTP;
+import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 import org.w3c.dom.Entity;
 
@@ -74,6 +77,7 @@ public class GLBHttpClient implements Client {
 	//private final String HTTP_USER_AGENT = "Mozilla/5.0 (Windows; U; Windows NT 5.1; ro; rv:2.1.0.8) Gecko/20090122 Firefox/3.5.2";
 	private final int DEFAULT_BUFFER_SIZE = 1024;
 	private final String RESPONSE_ENCODING = "Windows-1251";
+	private final int MAX_REQUEST_RETRIES = 2;
 	
 	private String username;
 	private String password;
@@ -166,10 +170,34 @@ public class GLBHttpClient implements Client {
 		params.setParameter(CoreProtocolPNames.USE_EXPECT_CONTINUE, Boolean.TRUE);
 		params.setParameter(CoreProtocolPNames.USER_AGENT, HTTP_USER_AGENT);
 		//params.setParameter(CoreProtocolPNames.HTTP_CONTENT_CHARSET, HTTP.UTF_8);
-		httpClient = new DefaultHttpClient(params);
 		
+		// Bugfix #1: The target server failed to respond
+		params.setParameter(CoreProtocolPNames.USE_EXPECT_CONTINUE, Boolean.TRUE);
+		
+		httpClient = new DefaultHttpClient(params);
 		httpCookieStore = new BasicCookieStore();
 		httpClient.setCookieStore(httpCookieStore);
+
+		// Bugfix #1: Adding retry handler to repeat failed requests
+		HttpRequestRetryHandler retryHandler = new HttpRequestRetryHandler() {
+			
+			@Override
+			public boolean retryRequest(IOException exception, int executionCount,
+					HttpContext context) {
+				
+				if (executionCount >= MAX_REQUEST_RETRIES) {
+					return false;
+				}
+				
+				if (exception instanceof NoHttpResponseException || exception instanceof ClientProtocolException) {
+					return true;
+				}
+				
+				return false;
+			}
+		};
+		
+		httpClient.setHttpRequestRetryHandler(retryHandler);
 	}
 	
 	/**

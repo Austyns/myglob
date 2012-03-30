@@ -1,25 +1,22 @@
-#summary History of project releases and bugfixes
+MyGlob HISTORY file
 
-=MyGlob HISTORY file=
+V2.0.1
+  * Fixed - Issue #1: The target server failed to respond.
 
-==V2.0.0=
-
+V2.0.0
   * Added - Issue 7: Multiple phone numbers checking support now available.
   * Added - Possibility to edit users.
   * Changed - Encryption of user passwords changed. Users from V1.0.1 still supported.
   * Changed - Layout and menus have been changed.
 
-==V1.1.0=
-
+V1.1.0
   * Fixed - Issue 2: Fixed a bug where application used to crash if orientation was changed during account update. 
   * Added - Issue 6: All available checks can now be performed by a single selection available in the menu.
   * Changed - Texts in the dropdown menu were changed to enhance the look & feel of the UI.  
 
-==V1.0.1==
-
+V1.0.1
   * Changed - All application icons updated.
   * Fixed - Issue 1: Application failed to run on Froyo (API 2.1 and 2.2).
 
-==V1.0.0==
-
+V1.0.0
   * Initial release
