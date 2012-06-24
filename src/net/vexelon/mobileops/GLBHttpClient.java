@@ -26,8 +26,6 @@ package net.vexelon.mobileops;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,10 +33,9 @@ import java.util.List;
 import net.vexelon.mobileops.exceptions.HttpClientException;
 import net.vexelon.mobileops.exceptions.InvalidCredentialsException;
 import net.vexelon.mobileops.exceptions.SecureCodeRequiredException;
-import net.vexelon.myglob.configuration.Defs;
+import net.vexelon.myglob.utils.UserAgentHelper;
 import net.vexelon.myglob.utils.Utils;
 
-import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -52,29 +49,19 @@ import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.utils.URLEncodedUtils;
-import org.apache.http.cookie.Cookie;
-import org.apache.http.entity.BasicHttpEntity;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.CoreConnectionPNames;
 import org.apache.http.params.CoreProtocolPNames;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
-import org.apache.http.util.EntityUtils;
-import org.w3c.dom.Entity;
-
-import android.util.Log;
-import android.webkit.URLUtil;
 
 public class GLBHttpClient implements Client {
 	
 	private final String HTTP_MYGLOBUL_SITE = "https://my.globul.bg";
-	private final String HTTP_USER_AGENT = "Mozilla/5.0 (Windows; U; Windows NT 5.1; ro; rv:1.9.2.8) Gecko/20100722 Firefox/3.6.8";
-	//private final String HTTP_USER_AGENT = "Mozilla/5.0 (Windows; U; Windows NT 5.1; ro; rv:2.1.0.8) Gecko/20090122 Firefox/3.5.2";
+	
 	private final int DEFAULT_BUFFER_SIZE = 1024;
 	private final String RESPONSE_ENCODING = "Windows-1251";
 	private final int MAX_REQUEST_RETRIES = 2;
@@ -167,12 +154,11 @@ public class GLBHttpClient implements Client {
 		
 		HttpParams params = new BasicHttpParams();
 		params.setParameter(CoreProtocolPNames.PROTOCOL_VERSION, HttpVersion.HTTP_1_1);
-		params.setParameter(CoreProtocolPNames.USE_EXPECT_CONTINUE, Boolean.TRUE);
-		params.setParameter(CoreProtocolPNames.USER_AGENT, HTTP_USER_AGENT);
+		params.setParameter(CoreProtocolPNames.USER_AGENT, UserAgentHelper.getRandomUserAgent());
 		//params.setParameter(CoreProtocolPNames.HTTP_CONTENT_CHARSET, HTTP.UTF_8);
 		
 		// Bugfix #1: The target server failed to respond
-		params.setParameter(CoreProtocolPNames.USE_EXPECT_CONTINUE, Boolean.TRUE);
+		params.setParameter(CoreProtocolPNames.USE_EXPECT_CONTINUE, Boolean.FALSE);
 		
 		httpClient = new DefaultHttpClient(params);
 		httpCookieStore = new BasicCookieStore();
