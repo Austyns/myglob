@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-      package="net.vexelon.myglob" android:versionName="2.0.1" android:versionCode="5" android:installLocation="preferExternal">
-    <application android:icon="@drawable/icon" android:label="@string/app_name" android:description="@string/about_tagline" android:debuggable="false">
+      package="net.vexelon.myglob" android:versionName="2.0.2" android:versionCode="6" >
+    <application android:icon="@drawable/icon" android:label="@string/app_name" android:description="@string/about_tagline" android:installLocation="preferExternal" android:debuggable="false">
         <activity android:label="@string/app_name" android:name="MainActivity" android:configChanges="keyboardHidden|orientation">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
+<!-- 
+android:installLocation="preferExternal"
+ -->
     
 <activity android:name="AboutActivity" android:theme="@android:style/Theme.Dialog" android:label="@string/app_name"></activity>
 

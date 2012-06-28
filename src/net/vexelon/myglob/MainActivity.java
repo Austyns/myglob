@@ -524,7 +524,7 @@ public class MainActivity extends Activity {
 			client.logout();
 		}
 		catch(Exception e) {
-			//Log.e(Defs.LOG_TAG, "Login exception!", e);
+			Log.e(Defs.LOG_TAG, "Login exception!", e);
 			throw e;
 		}
 		finally {

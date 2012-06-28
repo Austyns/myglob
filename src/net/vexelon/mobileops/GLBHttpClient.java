@@ -27,12 +27,27 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocket;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 import net.vexelon.mobileops.exceptions.HttpClientException;
 import net.vexelon.mobileops.exceptions.InvalidCredentialsException;
 import net.vexelon.mobileops.exceptions.SecureCodeRequiredException;
+import net.vexelon.myglob.configuration.Defs;
+import net.vexelon.myglob.utils.TrustAllSocketFactory;
 import net.vexelon.myglob.utils.UserAgentHelper;
 import net.vexelon.myglob.utils.Utils;
 
@@ -49,8 +64,13 @@ import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.scheme.PlainSocketFactory;
+import org.apache.http.conn.scheme.Scheme;
+import org.apache.http.conn.scheme.SchemeRegistry;
+import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.SingleClientConnManager;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.CoreProtocolPNames;
@@ -58,9 +78,12 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 
+import android.util.Log;
+
 public class GLBHttpClient implements Client {
 	
-	private final String HTTP_MYGLOBUL_SITE = "https://my.globul.bg";
+//	private final String HTTP_MYGLOBUL_SITE = "https://my.globul.bg";
+	private final String HTTP_MYGLOBUL_SITE = "https://kenamick.com/";
 	
 	private final int DEFAULT_BUFFER_SIZE = 1024;
 	private final String RESPONSE_ENCODING = "Windows-1251";
@@ -91,7 +114,9 @@ public class GLBHttpClient implements Client {
 		
 		List<NameValuePair> qparams = new ArrayList<NameValuePair>();
 		qparams.add(new BasicNameValuePair("action", "loginexec"));
-		qparams.add(new BasicNameValuePair("continuation", URLDecoder.decode("myglobul.portal%3Faction%3Duserhome%26pkey%3D0%26jkey%3D0", "UTF-8")));			
+		qparams.add(new BasicNameValuePair("continuation", 
+				URLDecoder.decode("myglobul.portal%3Faction%3Duserhome%26pkey%3D0%26jkey%3D0", 
+						"UTF-8")));			
 		qparams.add(new BasicNameValuePair("image.x", Integer.toString(Utils.getRandomInt(1024)) ));
 		qparams.add(new BasicNameValuePair("image.y", Integer.toString(Utils.getRandomInt(768)) ));
 		qparams.add(new BasicNameValuePair("password", password));
@@ -104,8 +129,11 @@ public class GLBHttpClient implements Client {
 	public void logout() 
 		throws IOException, ClientProtocolException, HttpClientException {
 		
-		HttpGet httpGet = new HttpGet(HTTP_MYGLOBUL_SITE + GLBRequestType.LOGOUT.getPath() + "?" + GLBRequestType.LOGOUT.getParams());
-
+		StringBuilder fullUrl = new StringBuilder(100);
+		fullUrl.append(HTTP_MYGLOBUL_SITE).append(GLBRequestType.LOGOUT.getPath()).append("?")
+			.append(GLBRequestType.LOGOUT.getParams());
+		
+		HttpGet httpGet = new HttpGet(fullUrl.toString());
 		HttpResponse resp = httpClient.execute(httpGet);
 		StatusLine status = resp.getStatusLine();
 		
@@ -156,13 +184,13 @@ public class GLBHttpClient implements Client {
 		params.setParameter(CoreProtocolPNames.PROTOCOL_VERSION, HttpVersion.HTTP_1_1);
 		params.setParameter(CoreProtocolPNames.USER_AGENT, UserAgentHelper.getRandomUserAgent());
 		//params.setParameter(CoreProtocolPNames.HTTP_CONTENT_CHARSET, HTTP.UTF_8);
-		
+
 		// Bugfix #1: The target server failed to respond
 		params.setParameter(CoreProtocolPNames.USE_EXPECT_CONTINUE, Boolean.FALSE);
 		
-		httpClient = new DefaultHttpClient(params);
+		DefaultHttpClient client = new DefaultHttpClient(params);
 		httpCookieStore = new BasicCookieStore();
-		httpClient.setCookieStore(httpCookieStore);
+		client.setCookieStore(httpCookieStore);
 
 		// Bugfix #1: Adding retry handler to repeat failed requests
 		HttpRequestRetryHandler retryHandler = new HttpRequestRetryHandler() {
@@ -182,8 +210,30 @@ public class GLBHttpClient implements Client {
 				return false;
 			}
 		};
+		client.setHttpRequestRetryHandler(retryHandler);
 		
-		httpClient.setHttpRequestRetryHandler(retryHandler);
+		// SSL
+		HostnameVerifier verifier = org.apache.http.conn.ssl.SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER;
+
+		try {
+			SchemeRegistry registry = new SchemeRegistry();
+			registry.register(new Scheme("http", new PlainSocketFactory(), 80));
+			registry.register(new Scheme("https", new TrustAllSocketFactory(), 443));
+	
+			SingleClientConnManager connMgr = new SingleClientConnManager(
+					client.getParams(), registry);
+			
+			httpClient = new DefaultHttpClient(connMgr, client.getParams());
+		}
+		catch (InvalidAlgorithmParameterException e) {
+			Log.e(Defs.LOG_TAG, "", e);
+			
+			// init without connection manager
+			httpClient = new DefaultHttpClient(client.getParams());
+		}
+		
+		HttpsURLConnection.setDefaultHostnameVerifier(verifier);
+
 	}
 	
 	/**
@@ -193,7 +243,10 @@ public class GLBHttpClient implements Client {
 	private void handleLogin(List<NameValuePair> qparams) 
 		throws Exception {
 		
-		HttpPost httpPost = createPostRequest(HTTP_MYGLOBUL_SITE + GLBRequestType.LOGIN.getPath(), qparams);
+		StringBuilder fullUrl = new StringBuilder(100);
+		fullUrl.append(HTTP_MYGLOBUL_SITE).append(GLBRequestType.LOGIN.getPath());
+		
+		HttpPost httpPost = createPostRequest(fullUrl.toString(), qparams);
 		
 //		rametersapplication/x-www-form-urlencoded
 //		action	
@@ -223,7 +276,8 @@ public class GLBHttpClient implements Client {
 				//check if secure code image is sent
 				if ( content.indexOf("/mg/my/GetImage?refid=") != -1 ) {
 					//TODO: retrieve image url
-					//<img class="code" alt="Ако се затруднявате с разчитането на кода от картинката, моля кликнете върху нея за да я смените." src="/mg/my/GetImage?refid=b7b8fa558b461f1e2d400ae0f3348f2f">
+					//<img class="code" alt="Ако се затруднявате с разчитането на кода от картинката, моля кликнете 
+					//върху нея за да я смените." src="/mg/my/GetImage?refid=b7b8fa558b461f1e2d400ae0f3348f2f">
 					throw new SecureCodeRequiredException("");
 				}
 				
@@ -250,7 +304,8 @@ public class GLBHttpClient implements Client {
 	private String doPostRequest(GLBRequestType requestType) throws UnsupportedEncodingException,
 			IOException, ClientProtocolException, HttpClientException {
 
-		HttpPost httpPost = createPostRequest(HTTP_MYGLOBUL_SITE + requestType.getPath(), requestType.getParamsAsList());
+		HttpPost httpPost = createPostRequest(HTTP_MYGLOBUL_SITE + requestType.getPath(), 
+				requestType.getParamsAsList());
 		httpPost.setHeader("X-Requested-With", "XMLHttpRequest");
 		httpPost.setHeader("X-Prototype-Version", "1.6.0.2");
 
