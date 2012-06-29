@@ -72,8 +72,8 @@ public class AboutActivity extends Activity {
 		sb.append("\n");
 		sb.append("http://www.famfamfam.com");
 		sb.append("\n");
-		sb.append(getResString(R.string.about_thanks));
 		sb.append("\n");
+		sb.append(getResString(R.string.about_thanks));
 		sb.append("\n");
 		sb.append("Atanas Atanasow (Testing)");
 		sb.append("\n");
