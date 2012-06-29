@@ -39,7 +39,6 @@ import java.net.URLConnection;
 import java.util.Random;
 
 import net.vexelon.myglob.R;
-import net.vexelon.myglob.R.drawable;
 
 import org.apache.http.util.ByteArrayBuffer;
 

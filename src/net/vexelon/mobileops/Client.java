@@ -23,12 +23,6 @@
  */
 package net.vexelon.mobileops;
 
-import java.io.IOException;
-
-import net.vexelon.mobileops.exceptions.HttpClientException;
-
-import org.apache.http.client.ClientProtocolException;
-
 public interface Client {
 
 	public void login()

@@ -60,7 +60,7 @@ public enum GLBRequestType {
 		
 		String[] pairs = params.split("&");
 		for (String pair : pairs) {
-			String[] keys = params.split("=");
+			String[] keys = pair.split("=");
 			
 			list.add( new BasicNameValuePair(keys[0], keys[1] != null ? keys[1] : "")  );
 		}

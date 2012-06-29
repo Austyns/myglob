@@ -55,10 +55,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -393,6 +391,7 @@ public class MainActivity extends Activity {
 						Utils.showAlertDialog(_activity, R.string.dlg_error_msg_securecode, R.string.dlg_error_msg_title);
 					}
 					catch (Exception e) {
+//						Log.e(Defs.LOG_TAG,"",e);
 						// Show error dialog						
 						final String msg = e.getMessage();
 						Utils.showAlertDialog(_activity, msg, getResString(R.string.dlg_error_msg_title));

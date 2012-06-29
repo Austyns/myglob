@@ -23,14 +23,10 @@
  */
 package net.vexelon.myglob.configuration;
 
-import java.io.IOException;
 
 import net.vexelon.myglob.crypto.PasswordEngine;
 import net.vexelon.myglob.crypto.PasswordEngineImpl1;
-import net.vexelon.myglob.utils.Base64;
 import android.content.SharedPreferences;
-import android.os.Bundle;
-import android.text.TextUtils;
 
 /**
  *  

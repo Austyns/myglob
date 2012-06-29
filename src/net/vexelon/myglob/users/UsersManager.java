@@ -24,15 +24,10 @@
 package net.vexelon.myglob.users;
 
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 import net.vexelon.myglob.configuration.Defs;
-import net.vexelon.myglob.crypto.CryptoAES;
-import net.vexelon.myglob.crypto.Crypto;
 import net.vexelon.myglob.crypto.PasswordEngine;
 import net.vexelon.myglob.crypto.PasswordEngineImpl2;
-import net.vexelon.myglob.utils.Base64;
 
 import android.content.SharedPreferences;
 import android.text.TextUtils;
@@ -137,30 +132,30 @@ public class UsersManager {
 		user.setEncodedPassword(_passwordEngine.encryptAndEncode(rawPassword));
 	}
 	
-	private byte[] loadKey() throws Exception {
-		
-		byte[] ret = null;
-//		String savedKey = prefs.getString(Defs.PREFS_KEY_TEMPLATE + _id, "");
+//	private byte[] loadKey() throws Exception {
 //		
-//		if (TextUtils.isEmpty(savedKey)) {
-//			// generate new key
-//			Crypto crypto = CryptAESImpl.getInstance();
-//			try {
-//				// line
-//				ret = crypto.createSecretKey();
-//			} catch (Exception e) {
-//				// Log.e(Defs.LOG_TAG, "Key could not be created!");
-//				// AlertDialog alert = Utils.createAlertDialog(this,
-//				// R.string.dlg_error_msg_create_key_failed,
-//				// R.string.dlg_error_msg_title);
-//				// alert.show();
-//			}
-//		}
-//		else {
-//			ret = Base64.decode(savedKey);
-//		}
-		
-		return ret;
-	}		
+//		byte[] ret = null;
+////		String savedKey = prefs.getString(Defs.PREFS_KEY_TEMPLATE + _id, "");
+////		
+////		if (TextUtils.isEmpty(savedKey)) {
+////			// generate new key
+////			Crypto crypto = CryptAESImpl.getInstance();
+////			try {
+////				// line
+////				ret = crypto.createSecretKey();
+////			} catch (Exception e) {
+////				// Log.e(Defs.LOG_TAG, "Key could not be created!");
+////				// AlertDialog alert = Utils.createAlertDialog(this,
+////				// R.string.dlg_error_msg_create_key_failed,
+////				// R.string.dlg_error_msg_title);
+////				// alert.show();
+////			}
+////		}
+////		else {
+////			ret = Base64.decode(savedKey);
+////		}
+//		
+//		return ret;
+//	}		
 
 }
