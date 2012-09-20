@@ -48,8 +48,9 @@ import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 
 /**
+ * <p>
  * Use this socket factory to blindly verify server certificates.
- * 
+ * <p> 
  * Also includes reverse DNS fix for Android < 4.0
  * Source: http://code.google.com/p/android/issues/detail?id=13117#c14
  * 
