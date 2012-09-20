@@ -43,6 +43,7 @@ public class WidgetProvider extends AppWidgetProvider {
 		// Get all ids
 		ComponentName thisWidget = new ComponentName(context,
 				WidgetProvider.class);
+		
 		int[] allWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget);
 		for (int widgetId : allWidgetIds) {
 			// Create some random data
