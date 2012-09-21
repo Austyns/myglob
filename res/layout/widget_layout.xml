@@ -7,16 +7,21 @@
     android:orientation="vertical"
     android:background="@drawable/widget_shape" 
     >
-    
- <TextView
+    <TextView
         android:id="@+id/update"
         style="@android:style/TextAppearance.Medium"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:gravity="center_horizontal|center_vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
         android:layout_margin="4dip"
+        android:gravity="left|top"
         android:text="Static Text" >
-  </TextView>
+    </TextView>
+  
+    <Button
+        android:id="@+id/btnRefresh"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Refresh" /> 
         
 </LinearLayout>
