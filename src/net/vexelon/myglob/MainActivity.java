@@ -359,7 +359,7 @@ public class MainActivity extends Activity {
 						
 						Log.d(Defs.LOG_TAG, "Saved acc - " + GlobalSettings.getInstance().getLastSelectedAccount());
 						
-						final String data = action.execute().getStringResult();
+						final String data = action.execute().getString();
 //						saveLastResult(data); // keep in storage
 
 						// update text field

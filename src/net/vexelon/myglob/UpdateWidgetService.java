@@ -1,7 +1,7 @@
 /*
  * The MIT License
  * 
- * Copyright (c) 2010 Petar Petrov
+ * Copyright (c) 2012 Petar Petrov
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,6 +23,8 @@
  */
 package net.vexelon.myglob;
 
+import net.vexelon.mobileops.exceptions.InvalidCredentialsException;
+import net.vexelon.mobileops.exceptions.SecureCodeRequiredException;
 import net.vexelon.myglob.actions.AccountStatusAction;
 import net.vexelon.myglob.actions.Action;
 import net.vexelon.myglob.configuration.Defs;
@@ -45,6 +47,8 @@ public class UpdateWidgetService extends Service {
 	
 	private String getLastAccountStatus() {
 		
+		String result = "";
+		
         final SharedPreferences prefsUsers = this.getSharedPreferences(Defs.PREFS_USER_PREFS, 0);
         UsersManager.getInstance().reloadUsers(prefsUsers);
 
@@ -52,20 +56,24 @@ public class UpdateWidgetService extends Service {
         GlobalSettings.getInstance().init(prefsGeneral);
         
         Log.d(Defs.LOG_TAG, "Last acc is " + GlobalSettings.getInstance().getLastSelectedAccount());
-        
-        Action action = new AccountStatusAction(
-        		GlobalSettings.getInstance().getLastSelectedOperation(),
-        		UsersManager.getInstance().getUserByPhoneNumber(
-        				GlobalSettings.getInstance().getLastSelectedAccount())
-        				);
-        
+
         try {
-        	return action.execute().getStringResult();
-        } catch (Exception e) {
-        	Log.e(Defs.LOG_TAG, "Error retrieving account status!", e);
-        }
+            Action action = new AccountStatusAction(
+            		GlobalSettings.getInstance().getLastSelectedOperation(),
+            		UsersManager.getInstance().getUserByPhoneNumber(
+            				GlobalSettings.getInstance().getLastSelectedAccount())
+            				);
+        	result = action.execute().getString();
+        } catch (InvalidCredentialsException e) {
+        	result = getResString(R.string.dlg_error_msg_invalid_credentials);
+		} catch (SecureCodeRequiredException e) {
+			result = getResString(R.string.dlg_error_msg_securecode);
+		} catch (Exception e) {
+			Log.e(Defs.LOG_TAG, "Error retrieving account status! Error: " + e.getMessage());
+			result = e.getMessage();
+		}
         
-        return "Error!";
+        return result;
 	}
 	
 	@Override
@@ -88,17 +96,23 @@ public class UpdateWidgetService extends Service {
 			RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_layout);
 			
 			// update text
-			remoteViews.setTextViewText(R.id.update, Html.fromHtml(lastSelectedAccountStatus));	
+			Log.i(Defs.LOG_TAG, "Result is " + lastSelectedAccountStatus);
+			
+			remoteViews.setTextViewText(R.id.widgetText, Html.fromHtml(lastSelectedAccountStatus));
 			
 			// onClick listener
-			Intent clickIntent = new Intent(context, WidgetProvider.class);
-			clickIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-			clickIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, widgetIds);
-
-			PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, clickIntent, 
+			Intent updateIntent = new Intent(context, WidgetProvider.class);
+			updateIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+			updateIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, widgetIds);
+			PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, updateIntent, 
 					PendingIntent.FLAG_UPDATE_CURRENT);
-//			remoteViews.setOnClickPendingIntent(R.id.update, pendingIntent);
+			remoteViews.setOnClickPendingIntent(R.id.refreshButton, pendingIntent);
+			
+			// openApp listener
+			Intent openIntent = new Intent(context, MainActivity.class);
+			pendingIntent = PendingIntent.getActivity(context, 0, openIntent, 0);
 			remoteViews.setOnClickPendingIntent(R.id.layout, pendingIntent);
+			
 			appWidgetManager.updateAppWidget(widgetId, remoteViews);
 		}
 
@@ -111,5 +125,9 @@ public class UpdateWidgetService extends Service {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	private String getResString(int id) {
+		return this.getResources().getString(id);
+	}	
 
 }
