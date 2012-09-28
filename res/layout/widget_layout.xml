@@ -15,13 +15,9 @@
         android:layout_gravity="left"
         android:layout_margin="4dip"
         android:gravity="left|top"
-        android:text="Static Text" >
+        android:text="Static Text"
+        android:textSize="12dp" 
+        >
     </TextView>
-  
-    <Button
-        android:id="@+id/btnRefresh"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Refresh" /> 
         
 </LinearLayout>

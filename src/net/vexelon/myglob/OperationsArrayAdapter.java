@@ -23,7 +23,6 @@
  */
 package net.vexelon.myglob;
 
-import net.vexelon.myglob.MainActivity.Operations;
 import android.content.Context;
 import android.graphics.Color;
 import android.util.TypedValue;
@@ -52,7 +51,7 @@ public class OperationsArrayAdapter extends ArrayAdapter<Operations> {
 			convertView = new TextView(getContext());
 		}
 		TextView tv = (TextView)convertView;
-		tv.setText(_items[position].getName(getContext()));
+		tv.setText(_items[position].getText(getContext()));
 		tv.setTextColor(Color.BLACK);
 		tv.setPadding(1, 5, 1, 5);
 		tv.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
@@ -65,7 +64,7 @@ public class OperationsArrayAdapter extends ArrayAdapter<Operations> {
 			convertView = new TextView(getContext());
 		}
 		TextView tv = (TextView)convertView;
-		tv.setText(_items[position].getName(getContext()));
+		tv.setText(_items[position].getText(getContext()));
 		tv.setTextColor(Color.BLACK);
 		tv.setPadding(1, 5, 1, 5);
 		tv.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);

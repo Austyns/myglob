@@ -30,6 +30,8 @@ import net.vexelon.mobileops.Client;
 import net.vexelon.mobileops.GLBHttpClient;
 import net.vexelon.mobileops.exceptions.InvalidCredentialsException;
 import net.vexelon.mobileops.exceptions.SecureCodeRequiredException;
+import net.vexelon.myglob.actions.AccountStatusAction;
+import net.vexelon.myglob.actions.Action;
 import net.vexelon.myglob.configuration.AccountPreferencesActivity;
 import net.vexelon.myglob.configuration.Defs;
 import net.vexelon.myglob.configuration.GlobalSettings;
@@ -48,6 +50,7 @@ import android.content.SharedPreferences;
 import android.graphics.PorterDuff.Mode;
 import android.os.Bundle;
 import android.text.Html;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -58,51 +61,36 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+/**
+ * 
+ * @author p.petrov
+ *
+ * <pre>
+ * Milestone 02
+ * 1. [DONE] Add spinner for user accounts
+ * 2. [DONE] Add user account class and move methods for handling account info
+ * 3. [DONE] Refactor LoginActivity - NewAccountActivity
+ * 4. [DONE] Add AccountManagement menu button for general account management (Spinner of accounts + sepearet Activity for options)
+ * 5. [DONE] Refactor MainActivity class"" with proper actions for updating account info
+ * 6. [DONE] Make previous account preferences work
+ * 7. Solve problem with security codes on GLB site
+ *
+ * Milestone 01
+ * 1. [DONE] Complete Spinner actions
+ * 2. [DONE] Test secure code image occurrence
+ * 3. [DONE] Test saving/loading of options
+ * 4. [DONE] Add/Finish About activity
+ * 5. [DONE] Add Progress dialog(s)
+ * 6. [DONE] Add strings to resources
+ * 7. [DONE] Test error message screens
+ * 8. [DONE] Add images and fix/adjust layout
+ * 9. [DONE] What to do if key-create fails ??
+ * 10. Protect IV
+ * 11. [DONE] Remove log tags
+ * </pre>
+ * 
+ */
 public class MainActivity extends Activity {
-
-	/* Milestones TODO list
-	 *
-	 * Milestone 02
-	 * 1. [DONE] Add spinner for user accounts
-	 * 2. [DONE] Add user account class and move methods for handling account info
-	 * 3. [DONE] Refactor LoginActivity - NewAccountActivity
-	 * 4. [DONE] Add AccountManagement menu button for general account management (Spinner of accounts + sepearet Activity for options)
-	 * 5. [DONE] Refactor MainActivity class"" with proper actions for updating account info
-	 * 6. [DONE] Make previous account preferences work
-	 * 7. Solve problem with security codes on GLB site
-	 *
-	 * Milestone 01
-	 * 1. [DONE] Complete Spinner actions
-	 * 2. [DONE] Test secure code image occurrence
-	 * 3. [DONE] Test saving/loading of options
-	 * 4. [DONE] Add/Finish About activity
-	 * 5. [DONE] Add Progress dialog(s)
-	 * 6. [DONE] Add strings to resources
-	 * 7. [DONE] Test error message screens
-	 * 8. [DONE] Add images and fix/adjust layout
-	 * 9. [DONE] What to do if key-create fails ??
-	 * 10. Protect IV
-	 * 11. [DONE] Remove log tags
-	 */
-
-	public enum Operations {
-		CHECK_CURRENT_BALANCE(R.string.operation_check_balance),
-		CHECK_AVAIL_MINUTES(R.string.operation_check_avail_minutes),
-		CHECK_AVAIL_DATA(R.string.operation_check_avail_data),
-		CHECK_SMS_PACKAGE(R.string.operation_check_sms_pack),
-		CHECK_CREDIT_LIMIT(R.string.operation_check_credit_limit),
-		CHECK_ALL(R.string.operation_check_all);
-
-		private int resId = -1;
-
-		Operations(int resourceId) {
-			this.resId = resourceId;
-		}
-
-		public String getName(Context context) {
-			return context.getString(this.resId);
-		}
-	};
 
 	private Activity _activity = null;
 	//private ArrayAdapter<String> _adapterAccounts = null;
@@ -362,9 +350,16 @@ public class MainActivity extends Activity {
 				public void run() {
 
 					try {
-						final String data = getAccountStatus(operation,
-								UsersManager.getInstance().getUserByPhoneNumber(phoneNumber)
-								);
+						Action action = new AccountStatusAction(operation,
+								UsersManager.getInstance().getUserByPhoneNumber(phoneNumber));
+						
+						// remember last account and operation
+						GlobalSettings.getInstance().putLastSelectedAccount(phoneNumber);
+						GlobalSettings.getInstance().putLastSelectedOperation(operation);
+						
+						Log.d(Defs.LOG_TAG, "Saved acc - " + GlobalSettings.getInstance().getLastSelectedAccount());
+						
+						final String data = action.execute().getStringResult();
 //						saveLastResult(data); // keep in storage
 
 						// update text field
@@ -410,124 +405,6 @@ public class MainActivity extends Activity {
 			Toast.makeText(getApplicationContext(), R.string.text_account_add_new, Toast.LENGTH_SHORT).show();
 
 		} // end if
-	}
-
-//	private String getAccountStatus(Operations operation, User user) throws Exception {
-//		String result = "<td class=\"txt_order_SMS\">" +
-//        		 "<p>Вашата текуща сметка:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> 1,45 лв.</span> без ДДС</p>" +
-//                 "<p>Задължения по ф-ра за периода 18.08-17.09.2010г:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> -0,23 лв.</span> с ДДС</p>" +
-//                 "<p>Данните са актуални към:<span style=\"font-weight: bold;\"> 07 Октомври, 21:15ч.</span>" +
-//                 "</p></td>" +
-//                 "<td class=\"txt_order_SMS\">" +
-//        		 "<p>Вашата текуща сметка:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> 1,45 лв.</span> без ДДС</p>" +
-//                 "<p>Задължения по ф-ра за периода 18.08-17.09.2010г:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> -0,23 лв.</span> с ДДС</p>" +
-//                 "<p>Данните са актуални към:<span style=\"font-weight: bold;\"> 07 Октомври, 21:15ч.</span>" +
-//                 "</p></td>" +
-//                 "<td class=\"txt_order_SMS\">" +
-//        		 "<p>Вашата текуща сметка:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> 1,45лв.</span> без ДДС</p>" +
-//                 "<p>Задължения по ф-ра за периода 18.08-17.09.2010г:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> -0,23 лв.</span> с ДДС</p>" +
-//                 "<p>Данните са актуални към:<span style=\"font-weight: bold;\"> 07 Октомври, 21:15ч.</span>" +
-//                 "</p></td>" +
-//                 "<td class=\"txt_order_SMS\">" +
-//        		 "<p>Вашата текуща сметка:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> 1,45 лв.</span> без ДДС</p>" +
-//                 "<p>Задължения по ф-ра за периода 18.08-17.09.2010г:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> -0,23 лв.</span> с ДДС</p>" +
-//                 "<p>Данните са актуални към:<span style=\"font-weight: bold;\"> 07 Октомври, 21:15ч.</span>" +
-//                 "</p></td>" +
-//                 "<td class=\"txt_order_SMS\">" +
-//        		 "<p>Вашата текуща сметка:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> 1,45 лв.</span> без ДДС</p>" +
-//                 "<p>Задължения по ф-ра за периода 18.08-17.09.2010г:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> -0,23 лв.</span> с ДДС</p>" +
-//                 "<p>Данните са актуални към:<span style=\"font-weight: bold;\"> 07 Октомври, 21:15ч.</span>" +
-//                 "</p></td>" +
-//                 "<td class=\"txt_order_SMS\">" +
-//        		 "<p>Вашата текуща сметка:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> 1,45лв.</span> без ДДС</p>" +
-//                 "<p>Задължения по ф-ра за периода 18.08-17.09.2010г:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> -0,23 лв.</span> с ДДС</p>" +
-//                 "<p>Данните са актуални към:<span style=\"font-weight: bold;\"> 07 Октомври, 21:15ч.</span>" +
-//                 "</p></td>";
-//
-//		result = result.replaceAll("(<.[^>]*>)|(</.[^>]*>)", "");
-//		result = result.replaceAll("\\t|\\n|\\r", "");
-//		result = result.trim();
-//
-//		Pattern p = Pattern.compile("(-*\\d+,\\d+\\s*лв\\.*)", Pattern.CASE_INSENSITIVE);
-//		Matcher m = p.matcher(result);
-//		StringBuffer sb = new StringBuffer();
-//		while (m.find()) {
-//			m.appendReplacement(sb, "<b><font color=\"#1FAF1F\">" + m.group() + "</font></b>");
-//			//Log.v(Defs.LOG_TAG, "GR: " + sb.toString());
-//		}
-//		m.appendTail(sb);
-//		//Log.v(Defs.LOG_TAG, "GR: " + sb.toString());
-//
-//		return sb.toString();
-//	}
-
-	private String getAccountStatus(Operations operation, User user) throws Exception {
-
-		String result = "";
-		Client client = new GLBHttpClient(user.getPhoneNumber(), UsersManager.getInstance().getUserPassword(user));
-		//Log.v(Defs.LOG_TAG, "Logging in using " + user.getPhoneNumber() + " and pass: " + UsersManager.getInstance().getUserPassword(user));
-
-		try {
-			client.login();
-
-			switch(operation) {
-			case CHECK_CURRENT_BALANCE:
-				result = client.getCurrentBalance();
-				result = Utils.stripHtml(result);
-				break;
-			case CHECK_AVAIL_MINUTES:
-				result = client.getAvailableMinutes();
-				result = Utils.stripHtml(result);
-				break;
-			case CHECK_CREDIT_LIMIT:
-				result = client.getCreditLimit();
-				result = Utils.stripHtml(result);
-				break;
-			case CHECK_AVAIL_DATA:
-				result = client.getAvailableInternetBandwidth();
-				result = Utils.stripHtml(result);
-				break;
-			case CHECK_SMS_PACKAGE:
-				result = client.getAvailableMSPackage();
-				result = Utils.stripHtml(result);
-				break;
-			case CHECK_ALL:
-				StringBuilder sb = new StringBuilder(500);
-				sb.append(Utils.stripHtml(client.getCurrentBalance()));
-				sb.append("<br><br>");
-				sb.append(Utils.stripHtml(client.getAvailableMinutes()));
-				sb.append("<br><br>");
-				sb.append(Utils.stripHtml(client.getCreditLimit()));
-				sb.append("<br><br>");
-				sb.append(Utils.stripHtml(client.getAvailableInternetBandwidth()));
-				sb.append("<br><br>");
-				sb.append(Utils.stripHtml(client.getAvailableMSPackage()));
-				result = sb.toString();
-				break;
-			}
-
-			// colorfy money values
-			Pattern p = Pattern.compile("(-*\\d+(,\\d+)*\\s*лв\\.*)|(\\d+:\\d+\\s*(ч\\.*|мин\\.*))", Pattern.CASE_INSENSITIVE);
-			Matcher m = p.matcher(result);
-			StringBuffer sb = new StringBuffer(result.length() + result.length());
-			while (m.find()) {
-				m.appendReplacement(sb, "<b><font color=\"" + Defs.CLR_TEXT_HIGHLIGHT + "\">" + m.group() + "</font></b>");
-				//Log.v(Defs.LOG_TAG, "GR: " + sb.toString());
-			}
-			m.appendTail(sb);
-			result = sb.toString();
-
-			client.logout();
-		}
-		catch(Exception e) {
-//			Log.e(Defs.LOG_TAG, "Login exception!", e);
-			throw e;
-		}
-		finally {
-			client.close();
-		}
-
-		return result;
 	}
 
 	private String getResString(int id) {

@@ -38,6 +38,7 @@ public class Defs {
 	public final static String PREFS_ALL_PREFS = "MyGlobAppPreferences";
 	public final static String PREFS_KEY = "_KEY_";
 	public final static String PREFS_LAST_SELECTED_ACCOUNT = "_LAST_SELECTED_ACCOUNT_";
+	public final static String PREFS_LAST_SELECTED_OPERATION = "_LAST_SELECTED_OPERATION_";
 	
 	public final static String PREFS_USER_PREFS = "MyGlobAppPreferences.UserPrefs";
 	public final static String PREFS_USER_COUNT = "_USER_COUNT";

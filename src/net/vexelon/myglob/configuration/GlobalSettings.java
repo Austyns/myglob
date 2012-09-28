@@ -23,6 +23,7 @@
  */
 package net.vexelon.myglob.configuration;
 
+import net.vexelon.myglob.Operations;
 import android.content.SharedPreferences;
 
 public class GlobalSettings {
@@ -39,7 +40,6 @@ public class GlobalSettings {
 	private SharedPreferences _prefs = null;
 	
 	public GlobalSettings() {
-		
 	}
 	
 	public void init(SharedPreferences prefs) {
@@ -51,8 +51,24 @@ public class GlobalSettings {
 	}
 	
 	public void putLastSelectedAccount(String value) {
-		_prefs.edit().putString(Defs.PREFS_LAST_SELECTED_ACCOUNT, value);
-		_prefs.edit().commit();
+		SharedPreferences.Editor editor = _prefs.edit();
+		editor.putString(Defs.PREFS_LAST_SELECTED_ACCOUNT, value);
+		editor.commit();
 	}
-
+	
+	/**
+	 * 
+	 * @return Last saved operation. Default is <code>CHECK_CURRENT_BALANCE</code>
+	 */
+	public Operations getLastSelectedOperation() {
+		return Operations.valueOf(
+				_prefs.getString(Defs.PREFS_LAST_SELECTED_OPERATION, Operations.CHECK_CURRENT_BALANCE.name()));
+	}
+	
+	public void putLastSelectedOperation(Operations operation) {
+		SharedPreferences.Editor editor = _prefs.edit();
+		editor.putString(Defs.PREFS_LAST_SELECTED_OPERATION, operation.name());
+		editor.commit();
+	}
+	
 }
