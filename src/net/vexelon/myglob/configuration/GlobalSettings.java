@@ -71,4 +71,14 @@ public class GlobalSettings {
 		editor.commit();
 	}
 	
+	public String getLastCheckedInfo() {
+		return _prefs.getString(Defs.PREFS_LAST_CHECKED_INFO, "");
+	}
+	
+	public void putLastCheckedInfo(String value) {
+		SharedPreferences.Editor editor = _prefs.edit();
+		editor.putString(Defs.PREFS_LAST_CHECKED_INFO, value);
+		editor.commit();		
+	}
+	
 }

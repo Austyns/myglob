@@ -23,11 +23,6 @@
  */
 package net.vexelon.myglob;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import net.vexelon.mobileops.Client;
-import net.vexelon.mobileops.GLBHttpClient;
 import net.vexelon.mobileops.exceptions.InvalidCredentialsException;
 import net.vexelon.mobileops.exceptions.SecureCodeRequiredException;
 import net.vexelon.myglob.actions.AccountStatusAction;
@@ -43,7 +38,6 @@ import net.vexelon.myglob.utils.Utils;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -360,14 +354,15 @@ public class MainActivity extends Activity {
 						Log.d(Defs.LOG_TAG, "Saved acc - " + GlobalSettings.getInstance().getLastSelectedAccount());
 						
 						final String data = action.execute().getString();
-//						saveLastResult(data); // keep in storage
+						
+						// save what was last found
+						GlobalSettings.getInstance().putLastCheckedInfo(data);
 
 						// update text field
 						_activity.runOnUiThread(new Runnable() {
 
 							@Override
 							public void run() {
-								//tx.setText(data);
 								tx.setText(Html.fromHtml(data));
 								//WebView wv = (WebView) _activity.findViewById(R.id.TextContent);
 								//wv.loadData(data, "text/html", "utf-8");
