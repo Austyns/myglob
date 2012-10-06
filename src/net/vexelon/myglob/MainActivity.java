@@ -141,6 +141,11 @@ public class MainActivity extends Activity {
         //btnUpdate.getBackground().setColorFilter(0x2212FF00, Mode.LIGHTEN);
         btnUpdate.getBackground().setColorFilter(Defs.CLR_BUTTON_UPDATE, Mode.MULTIPLY);
         
+        // load last saved operation info (if available)
+        if (GlobalSettings.getInstance().getLastCheckedInfo() != GlobalSettings.NO_INFO) {
+        	TextView textContent = (TextView) findViewById(R.id.TextContent);
+        	textContent.setText(Html.fromHtml(GlobalSettings.getInstance().getLastCheckedInfo()));
+        }
 
         /**
          * try to find legacy users and add them to UsersManager
@@ -310,6 +315,12 @@ public class MainActivity extends Activity {
 	        // visualize component
 	        spinnerAccounts.setVisibility(Spinner.VISIBLE);
 	        layout.setVisibility(LinearLayout.INVISIBLE);
+	        
+	        // pre-select
+	        if (GlobalSettings.getInstance().getLastSelectedAccount() != GlobalSettings.NO_ACCOUNT) {
+		        spinnerAccounts.setSelection(
+		        		_adapterAccounts.getItemPosition(GlobalSettings.getInstance().getLastSelectedAccount()));
+	        }
 		}
 		else {
 			// remove all items, if any

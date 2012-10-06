@@ -69,4 +69,12 @@ public class AccountsArrayAdapter extends ArrayAdapter<String> {
 		return tv;		
 	}
 	
+	public int getItemPosition(String phoneNumber) {
+		for (int i = 0; i < _items.length; i++) {
+			if (_items[i].equals(phoneNumber))
+				return i;
+		}
+		return -1;
+	}
+	
 }
