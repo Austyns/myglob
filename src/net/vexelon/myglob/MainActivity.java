@@ -140,6 +140,7 @@ public class MainActivity extends Activity {
 
         //btnUpdate.getBackground().setColorFilter(0x2212FF00, Mode.LIGHTEN);
         btnUpdate.getBackground().setColorFilter(Defs.CLR_BUTTON_UPDATE, Mode.MULTIPLY);
+        
 
         /**
          * try to find legacy users and add them to UsersManager

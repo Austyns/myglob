@@ -72,4 +72,5 @@
 <string name="dlg_account_validate_msg">Някои от настройките не са въведени. Потребителят няма да бъде създаден. Желаете ли да продължите ?</string>
 <string name="err_msg_user_already_exists">Потребител с този номер вече съществува</string>
 <string name="about_thanks">Благодарности на:</string>
+<string name="text_account_invalid">Изберете потребител/номер!</string>
 </resources>

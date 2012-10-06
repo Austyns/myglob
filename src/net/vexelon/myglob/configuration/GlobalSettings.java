@@ -28,6 +28,9 @@ import android.content.SharedPreferences;
 
 public class GlobalSettings {
 	
+	public static final String NO_ACCOUNT = "";
+	public static final String NO_INFO = "";
+	
 	private static GlobalSettings _INSTANCE = null;
 	
 	public static GlobalSettings getInstance() {
@@ -47,7 +50,7 @@ public class GlobalSettings {
 	}
 	
 	public String getLastSelectedAccount() {
-		return _prefs.getString(Defs.PREFS_LAST_SELECTED_ACCOUNT, "");
+		return _prefs.getString(Defs.PREFS_LAST_SELECTED_ACCOUNT, NO_ACCOUNT);
 	}
 	
 	public void putLastSelectedAccount(String value) {
@@ -72,9 +75,14 @@ public class GlobalSettings {
 	}
 	
 	public String getLastCheckedInfo() {
-		return _prefs.getString(Defs.PREFS_LAST_CHECKED_INFO, "");
+		return _prefs.getString(Defs.PREFS_LAST_CHECKED_INFO, NO_INFO);
 	}
 	
+	/**
+	 * 
+	 * @param value
+	 * @remark Maximum is 8192 characters (8k)
+	 */
 	public void putLastCheckedInfo(String value) {
 		SharedPreferences.Editor editor = _prefs.edit();
 		editor.putString(Defs.PREFS_LAST_CHECKED_INFO, value);

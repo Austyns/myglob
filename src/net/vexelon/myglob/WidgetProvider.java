@@ -23,57 +23,63 @@
  */
 package net.vexelon.myglob;
 
+import java.util.Arrays;
 
 import net.vexelon.myglob.configuration.Defs;
 
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+import android.view.View;
+import android.widget.RemoteViews;
 
 public class WidgetProvider extends AppWidgetProvider {
+
+	@Override
+	public void onReceive(Context context, Intent intent) {
+		Log.d(Defs.LOG_TAG, "onReceive() called");
+		
+		int widgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
+		if (AppWidgetManager.INVALID_APPWIDGET_ID == widgetId) {
+			super.onReceive(context, intent);
+		} else {
+			this.onUpdate(context, AppWidgetManager.getInstance(context), new int[] {widgetId});
+		}
+	}
 	
 	@Override
 	public void onUpdate(Context context, AppWidgetManager appWidgetManager,
 			int[] appWidgetIds) {
 
-		Log.d(Defs.LOG_TAG, "onUpdate() called");
+		Log.d(Defs.LOG_TAG, "onUpdate() called - " + Arrays.toString(appWidgetIds));
 		
 		// get all widgets ids
-		ComponentName thisWidget = new ComponentName(context,
-				WidgetProvider.class);
-		int[] widgetIds = appWidgetManager.getAppWidgetIds(thisWidget);
+//		ComponentName thisWidget = new ComponentName(context, WidgetProvider.class);
+//		int[] allWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget);
 		
 		// build intent and call service
 		Intent serviceIntent = new Intent(context.getApplicationContext(), UpdateWidgetService.class);
-		serviceIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, widgetIds);
+		serviceIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
 		
 		// update widgets via the service
 		context.startService(serviceIntent);
 		
-//		for (int widgetId : allWidgetIds) {
-//			// Create some random data
-//			int number = (new Random().nextInt(100));
-//
-//			RemoteViews remoteViews = new RemoteViews(context.getPackageName(),
-//					R.layout.widget_layout);
-//			Log.w("WidgetExample", String.valueOf(number));
-//			// Set the text
-//			remoteViews.setTextViewText(R.id.update, String.valueOf(number));
-//
-//			// Register an onClickListener
-//			Intent intent = new Intent(context, WidgetProvider.class);
-//
-//			intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-//			intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
-//
-//			PendingIntent pendingIntent = PendingIntent.getBroadcast(context,
-//					0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-//			remoteViews.setOnClickPendingIntent(R.id.update, pendingIntent);
-//			appWidgetManager.updateAppWidget(widgetId, remoteViews);
-//		}
+		// show animation
+		for (int widgetId : appWidgetIds) {
+			RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_layout);
+			remoteViews.setTextViewText(R.id.widgetText, context.getString(R.string.dlg_progress_message));
+			// prevent multiple clicks
+			remoteViews.setViewVisibility(R.id.refreshButton, View.INVISIBLE);
+			
+//			ImageView imageView = new ImageView(context);
+//			imageView.setImageResource(R.drawable.loading);
+//			AnimationDrawable loadingAnimation = (AnimationDrawable)imageView.getDrawable();
+//			remoteViews.addView(imageView.getId(), imageView);
+//			remoteViews.setImageViewResource(viewId, srcId)
+			appWidgetManager.updateAppWidget(widgetId, remoteViews);
+		}
 	}
 
 }

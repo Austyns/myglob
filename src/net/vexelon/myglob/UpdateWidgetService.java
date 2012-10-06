@@ -38,12 +38,16 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.IBinder;
 import android.text.Html;
 import android.util.Log;
+import android.view.View;
 import android.widget.RemoteViews;
 
 public class UpdateWidgetService extends Service {
+	
+	private static String URI_SCHEME = "MYGB";
 	
 	private String getLastAccountStatus() {
 		
@@ -55,15 +59,21 @@ public class UpdateWidgetService extends Service {
         SharedPreferences prefsGeneral = this.getSharedPreferences(Defs.PREFS_ALL_PREFS, 0);
         GlobalSettings.getInstance().init(prefsGeneral);
         
-        Log.d(Defs.LOG_TAG, "Last acc is " + GlobalSettings.getInstance().getLastSelectedAccount());
+        String account = GlobalSettings.getInstance().getLastSelectedAccount();
+        
+        Log.d(Defs.LOG_TAG, "Last acc is " + account);
 
         try {
-            Action action = new AccountStatusAction(
-            		GlobalSettings.getInstance().getLastSelectedOperation(),
-            		UsersManager.getInstance().getUserByPhoneNumber(
-            				GlobalSettings.getInstance().getLastSelectedAccount())
-            				);
-        	result = action.execute().getString();
+        	if (account == GlobalSettings.NO_ACCOUNT) {
+        		result = getResString(R.string.text_account_no_account);
+        	} else if (UsersManager.getInstance().isUserExists(account)) {
+                Action action = new AccountStatusAction(
+                		GlobalSettings.getInstance().getLastSelectedOperation(),
+                		UsersManager.getInstance().getUserByPhoneNumber(account));
+            	result = action.execute().getString();
+        	} else {
+        		result = getResString(R.string.text_account_invalid);
+        	}
         } catch (InvalidCredentialsException e) {
         	result = getResString(R.string.dlg_error_msg_invalid_credentials);
 		} catch (SecureCodeRequiredException e) {
@@ -83,6 +93,10 @@ public class UpdateWidgetService extends Service {
 		
 		AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
 		int[] widgetIds = intent.getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS);
+		if (widgetIds == null) {
+			Log.w(Defs.LOG_TAG, "No widgets found to update!");
+			return;
+		}
 		
 		ComponentName thisWidget = new ComponentName(context, WidgetProvider.class);
 		int[] allWidgetIds2 = appWidgetManager.getAppWidgetIds(thisWidget);
@@ -90,20 +104,25 @@ public class UpdateWidgetService extends Service {
 		Log.w(Defs.LOG_TAG, "Direct: " + String.valueOf(allWidgetIds2.length));
 		
 		String lastSelectedAccountStatus = getLastAccountStatus();
+		Log.i(Defs.LOG_TAG, "Result is " + lastSelectedAccountStatus);
 		
 		for (int widgetId : widgetIds) {
 			// get all views inside this widget
 			RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_layout);
-			
-			// update text
-			Log.i(Defs.LOG_TAG, "Result is " + lastSelectedAccountStatus);
-			
+			// update text			
 			remoteViews.setTextViewText(R.id.widgetText, Html.fromHtml(lastSelectedAccountStatus));
 			
+			Log.d(Defs.LOG_TAG, "Updating id=" + widgetId);
+			
 			// onClick listener
+			Uri data = Uri.withAppendedPath(
+				    Uri.parse(URI_SCHEME + "://widget/id/"), String.valueOf(widgetId));
 			Intent updateIntent = new Intent(context, WidgetProvider.class);
+			updateIntent.setData(data);
+			
 			updateIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-			updateIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, widgetIds);
+//			updateIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, new int[] {widgetId});
+			updateIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId);
 			PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, updateIntent, 
 					PendingIntent.FLAG_UPDATE_CURRENT);
 			remoteViews.setOnClickPendingIntent(R.id.refreshButton, pendingIntent);
@@ -112,6 +131,9 @@ public class UpdateWidgetService extends Service {
 			Intent openIntent = new Intent(context, MainActivity.class);
 			pendingIntent = PendingIntent.getActivity(context, 0, openIntent, 0);
 			remoteViews.setOnClickPendingIntent(R.id.layout, pendingIntent);
+			
+			// Refresh button now visible again
+			remoteViews.setViewVisibility(R.id.refreshButton, View.VISIBLE);
 			
 			appWidgetManager.updateAppWidget(widgetId, remoteViews);
 		}
