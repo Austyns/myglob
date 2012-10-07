@@ -1,7 +1,7 @@
 MyGlob HISTORY file
 
 V2.1.0
-Feature: (Issue #5) MyGlob now available as Widget for your Home screen. The widget shows the last checked account status. You can refresh it via the Refresh button on the widget. To change the operation tap the Widget and use the app dropdown boxes.
+Feature: (Issue #4) MyGlob now available as Widget for your Home screen. The widget shows the last checked account status. You can refresh it via the Refresh button. To change the account & operation tap the Widget and use the app dropdown boxes.
 Improvement/Change: The app now remembers the last selected account and operation.
 Improvement/Change: The app will now automatically show the last fetched info upon opening.
 Improvement/Change: Changed menu icons.

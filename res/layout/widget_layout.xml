@@ -18,7 +18,7 @@
         android:layout_margin="4dip"
         android:gravity="left|top"
         android:text="N/A"
-        android:textSize="10dp" 
+        android:textSize="11dp" 
         android:layout_toLeftOf="@+id/refreshButton"
         >
     </TextView>

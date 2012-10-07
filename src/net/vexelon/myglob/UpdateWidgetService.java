@@ -71,6 +71,10 @@ public class UpdateWidgetService extends Service {
                 		GlobalSettings.getInstance().getLastSelectedOperation(),
                 		UsersManager.getInstance().getUserByPhoneNumber(account));
             	result = action.execute().getString();
+            	
+            	// save result
+            	GlobalSettings.getInstance().putLastCheckedInfo(result);
+            	
         	} else {
         		result = getResString(R.string.text_account_invalid);
         	}

@@ -74,4 +74,6 @@
 <string name="about_thanks">Благодарности на:</string>
 <string name="text_account_invalid">Изберете потребител/номер!</string>
 <string name="text_error">Грешка</string>
+<string name="widget_4x1">MyGlob 4x1</string>
+<string name="widget_4x2">MyGlob 4x2</string>
 </resources>
