@@ -2,7 +2,7 @@ MyGlob HISTORY file
 
 V2.1.0
 Important: App now requires Android SDK 7 (2.1).
-Feature: (Issue #4) MyGlob now available as Widget for your Home screen. The widget shows the last checked account status. You can refresh it via the Refresh button. To change the account & operation tap the Widget and use the dropdown app dropdown boxes. Widget auto-updates every 2 hours. If there is no internet connection the last fetched info will be shown.
+Feature: (Issue #4) MyGlob widget now available. The widget shows the last checked account status. You can refresh via the Refresh button. To change the account & operation tap the Widget and use the in-app dropdowns. Widget auto-updates every 2 hours. If there is no internet connection the last fetched info will be shown.
 Improvement/Change: The app now remembers the last selected account and operation.
 Improvement/Change: The app will now automatically show the last fetched info upon opening.
 Improvement/Change: Changed menu icons.
