@@ -49,6 +49,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -124,7 +125,7 @@ public class MainActivity extends Activity {
         });
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerOptions.setAdapter(adapter);
-
+        
         // pre-select Operation
         int pos = adapter.getItemPosition(GlobalSettings.getInstance().getLastSelectedOperation());
         if (pos != -1) {
@@ -197,6 +198,40 @@ public class MainActivity extends Activity {
 					}
 				}).show();
         }
+    }
+    
+    @Override
+    protected void onStart() {
+    	
+    	// trap Operations selection
+    	Spinner spinnerOptions = (Spinner) findViewById(R.id.SpinnerOptions);
+        spinnerOptions.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        	@Override
+        	public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+        		Operations operation = (Operations) parentView.getSelectedItem();
+        		GlobalSettings.getInstance().putLastSelectedOperation(operation);
+        	}
+        	
+        	@Override
+        	public void onNothingSelected(AdapterView<?> parentView) {
+        	}
+		});   
+        
+        // trap phone number selection
+        Spinner spinnerAccounts = (Spinner) findViewById(R.id.SpinnerUserAccounts);
+        spinnerAccounts.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        	@Override
+        	public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+        		String phoneNumber = (String) parentView.getSelectedItem();
+        		GlobalSettings.getInstance().putLastSelectedAccount(phoneNumber);
+        	}
+        	
+        	@Override
+        	public void onNothingSelected(AdapterView<?> parentView) {
+        	}
+		});           
+    	
+    	super.onStart();
     }
 
     @Override
@@ -350,7 +385,6 @@ public class MainActivity extends Activity {
 			Spinner spinnerOptions = (Spinner) findViewById(R.id.SpinnerOptions);
 			final Operations operation = (Operations) spinnerOptions.getSelectedItem();
 			final TextView tx = (TextView) _activity.findViewById(R.id.TextContent);
-
 			final String phoneNumber = (String) spinnerAccounts.getItemAtPosition(spinnerAccounts.getSelectedItemPosition());
 
 			// show progress
@@ -368,8 +402,6 @@ public class MainActivity extends Activity {
 						GlobalSettings.getInstance().putLastSelectedAccount(phoneNumber);
 						GlobalSettings.getInstance().putLastSelectedOperation(operation);
 						
-						Log.d(Defs.LOG_TAG, "Saved acc - " + GlobalSettings.getInstance().getLastSelectedAccount());
-						
 						final String data = action.execute().getString();
 						
 						// save what was last found
@@ -385,10 +417,12 @@ public class MainActivity extends Activity {
 								//wv.loadData(data, "text/html", "utf-8");
 							}
 						});
+						
 					}
 					catch (InvalidCredentialsException e) {
 						// Show error dialog
-						Utils.showAlertDialog(_activity, R.string.dlg_error_msg_invalid_credentials, R.string.dlg_error_msg_title);
+						Utils.showAlertDialog(_activity, R.string.dlg_error_msg_invalid_credentials, 
+								R.string.dlg_error_msg_title);
 					}
 					catch (SecureCodeRequiredException e) {
 						// Show error dialog

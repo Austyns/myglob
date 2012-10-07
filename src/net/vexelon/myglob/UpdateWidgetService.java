@@ -78,6 +78,8 @@ public class UpdateWidgetService extends Service {
         	} else {
         		result = getResString(R.string.text_account_invalid);
         	}
+        	
+        	return result; // All fine
         } catch (InvalidCredentialsException e) {
         	result = getResString(R.string.dlg_error_msg_invalid_credentials);
 		} catch (SecureCodeRequiredException e) {
@@ -88,7 +90,13 @@ public class UpdateWidgetService extends Service {
 			result = getResString(R.string.dlg_error_msg_title);
 		}
         
-        return result;
+        // instead of writing error message just spit the last saved nfo
+        String lastInfo = GlobalSettings.getInstance().getLastCheckedInfo();
+        if (!lastInfo.equals(GlobalSettings.NO_INFO)) {
+        	result = lastInfo;
+        }
+        
+        return result; // Error msg or backup nfo
 	}
 	
 	@Override
@@ -103,10 +111,9 @@ public class UpdateWidgetService extends Service {
 			return;
 		}
 		
-		ComponentName thisWidget = new ComponentName(context, WidgetProvider.class);
-		int[] allWidgetIds2 = appWidgetManager.getAppWidgetIds(thisWidget);
-		
 		if (Defs.LOG_ENABLED) {
+			ComponentName thisWidget = new ComponentName(context, WidgetProvider.class);
+			int[] allWidgetIds2 = appWidgetManager.getAppWidgetIds(thisWidget);			
 			Log.d(Defs.LOG_TAG, "From intent: " + String.valueOf(widgetIds.length));
 			Log.d(Defs.LOG_TAG, "Direct: " + String.valueOf(allWidgetIds2.length));
 		}
