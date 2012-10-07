@@ -23,8 +23,8 @@
  */
 package net.vexelon.myglob;
 
-import net.vexelon.mobileops.exceptions.InvalidCredentialsException;
-import net.vexelon.mobileops.exceptions.SecureCodeRequiredException;
+import net.vexelon.mobileops.InvalidCredentialsException;
+import net.vexelon.mobileops.SecureCodeRequiredException;
 import net.vexelon.myglob.actions.AccountStatusAction;
 import net.vexelon.myglob.actions.Action;
 import net.vexelon.myglob.configuration.AccountPreferencesActivity;
@@ -56,9 +56,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 /**
- * 
  * @author p.petrov
- *
+ * <p>
  * <pre>
  * Milestone 02
  * 1. [DONE] Add spinner for user accounts
@@ -125,6 +124,12 @@ public class MainActivity extends Activity {
         });
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerOptions.setAdapter(adapter);
+
+        // pre-select Operation
+        int pos = adapter.getItemPosition(GlobalSettings.getInstance().getLastSelectedOperation());
+        if (pos != -1) {
+        	spinnerOptions.setSelection(pos);
+        }
 
         // populate available accounts
         updateAccountsSpinner();
@@ -254,9 +259,9 @@ public class MainActivity extends Activity {
 
 	private boolean initMenu(Menu menu) {
 		menu.clear();
-		menu.add(1, Defs.MENU_ADD_ACCOUNT, 0, getResString(R.string.menu_add_account)).setIcon(R.drawable.user_add);
-		menu.add(1, Defs.MENU_MANAGE_ACCOUNTS, 0, getResString(R.string.menu_manage_accounts)).setIcon(R.drawable.user_edit);
-		menu.add(1, Defs.MENU_ABOUT, 15, getResString(R.string.menu_about)).setIcon(R.drawable.help);
+		menu.add(1, Defs.MENU_ADD_ACCOUNT, 0, getResString(R.string.menu_add_account)).setIcon(R.drawable.ic_menu_invite);
+		menu.add(1, Defs.MENU_MANAGE_ACCOUNTS, 0, getResString(R.string.menu_manage_accounts)).setIcon(R.drawable.ic_menu_manage);
+		menu.add(1, Defs.MENU_ABOUT, 15, getResString(R.string.menu_about)).setIcon(R.drawable.ic_menu_help);
 		return true;
 	}
 
@@ -390,7 +395,7 @@ public class MainActivity extends Activity {
 						Utils.showAlertDialog(_activity, R.string.dlg_error_msg_securecode, R.string.dlg_error_msg_title);
 					}
 					catch (Exception e) {
-//						Log.e(Defs.LOG_TAG,"",e);
+						Log.e(Defs.LOG_TAG, "Error updating status!", e);
 						// Show error dialog
 						final String msg = e.getMessage();
 						Utils.showAlertDialog(_activity, msg, getResString(R.string.dlg_error_msg_title));

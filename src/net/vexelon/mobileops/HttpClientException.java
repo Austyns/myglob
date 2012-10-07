@@ -1,7 +1,7 @@
 /*
  * The MIT License
  * 
- * Copyright (c) 2010 Petar Petrov
+ * Copyright (c) 2012 Petar Petrov
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,19 +21,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package net.vexelon.mobileops.exceptions;
+package net.vexelon.mobileops;
 
-public class SecureCodeRequiredException extends Exception {
-
-	private String secureCodeImageUrl;
-
-	public SecureCodeRequiredException(String secureCodeImageUrl) {
+public class HttpClientException extends Exception {
+	
+	private int statusCode = -1;
+	
+	public HttpClientException(String message) {
+		super(message);
+	}
+	
+	public HttpClientException(String message, int statusCode) {
+		super(message);
 		
-		this.secureCodeImageUrl = secureCodeImageUrl;
-	}
+		this.statusCode = statusCode;
+	}	
 	
-	public String getSecureCodeImageUrl() {
-		return this.secureCodeImageUrl;
+	public HttpClientException(String message, Throwable t) {
+		super(message, t);
 	}
-	
+
+	public int getStatusCode() {
+		return this.statusCode;
+	}	
 }

@@ -21,19 +21,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package net.vexelon.mobileops.exceptions;
+package net.vexelon.mobileops;
 
-public class HttpClientException extends Exception {
-
-	private int statusCode;
-
-	public HttpClientException(String message, int statusCode) {
-		super(message);
-		
-		this.statusCode = statusCode;
-	}
+public class InvalidCredentialsException extends Exception {
 	
-	public int getStatusCode() {
-		return this.statusCode;
-	}
 }

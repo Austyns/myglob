@@ -26,25 +26,25 @@ package net.vexelon.mobileops;
 public interface Client {
 
 	public void login()
-		throws Exception;
+		throws HttpClientException, InvalidCredentialsException, SecureCodeRequiredException;
 	
 	public void logout()
-		throws Exception;
+		throws HttpClientException;
 	
 	public String getCurrentBalance() 
-		throws Exception;
+		throws HttpClientException;
 	
 	public String getAvailableMinutes()
-		throws Exception;
+		throws HttpClientException;
 	
 	public String getAvailableInternetBandwidth()
-		throws Exception;
+		throws HttpClientException;
 	
 	public String getCreditLimit()
-		throws Exception;
+		throws HttpClientException;
 
 	public String getAvailableMSPackage()
-		throws Exception;
+		throws HttpClientException;
 	
 	public void close();
 }

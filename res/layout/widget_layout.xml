@@ -23,7 +23,7 @@
         >
     </TextView>
 
-    <ImageButton
+    <ImageView
         android:id="@+id/refreshButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -31,7 +31,7 @@
         android:layout_alignParentRight="true"
         android:layout_alignWithParentIfMissing="false"
         android:layout_centerVertical="true"
-        android:src="@drawable/refresh"
+        android:src="@drawable/icon_refresh"
          />
 
 </RelativeLayout>

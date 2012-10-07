@@ -34,9 +34,6 @@ import java.util.List;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 
-import net.vexelon.mobileops.exceptions.HttpClientException;
-import net.vexelon.mobileops.exceptions.InvalidCredentialsException;
-import net.vexelon.mobileops.exceptions.SecureCodeRequiredException;
 import net.vexelon.myglob.utils.TrustAllSocketFactory;
 import net.vexelon.myglob.utils.UserAgentHelper;
 import net.vexelon.myglob.utils.Utils;
@@ -67,8 +64,6 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 
-import android.util.Log;
-
 public class GLBHttpClient implements Client {
 
 	private final String HTTP_MYGLOBUL_SITE = "https://my.globul.bg";
@@ -97,66 +92,74 @@ public class GLBHttpClient implements Client {
 	/**
 	 * Perform login into the web system using the specified user and password
 	 */
-	public void login()
-		throws Exception {
+	public void login() throws HttpClientException, InvalidCredentialsException, SecureCodeRequiredException {
+		try {
+			List<NameValuePair> qparams = new ArrayList<NameValuePair>();
+			qparams.add(new BasicNameValuePair("action", "loginexec"));
+			qparams.add(new BasicNameValuePair("continuation",
+					URLDecoder.decode("myglobul.portal%3Faction%3Duserhome%26pkey%3D0%26jkey%3D0",
+							"UTF-8")));
+			qparams.add(new BasicNameValuePair("image.x", Integer.toString(Utils.getRandomInt(1024)) ));
+			qparams.add(new BasicNameValuePair("image.y", Integer.toString(Utils.getRandomInt(768)) ));
+			qparams.add(new BasicNameValuePair("password", password));
+			//qparams.add(new BasicNameValuePair("refid", ""));
+			qparams.add(new BasicNameValuePair("username", username));
 
-		List<NameValuePair> qparams = new ArrayList<NameValuePair>();
-		qparams.add(new BasicNameValuePair("action", "loginexec"));
-		qparams.add(new BasicNameValuePair("continuation",
-				URLDecoder.decode("myglobul.portal%3Faction%3Duserhome%26pkey%3D0%26jkey%3D0",
-						"UTF-8")));
-		qparams.add(new BasicNameValuePair("image.x", Integer.toString(Utils.getRandomInt(1024)) ));
-		qparams.add(new BasicNameValuePair("image.y", Integer.toString(Utils.getRandomInt(768)) ));
-		qparams.add(new BasicNameValuePair("password", password));
-		//qparams.add(new BasicNameValuePair("refid", ""));
-		qparams.add(new BasicNameValuePair("username", username));
-
-		handleLogin(qparams);
+			handleLogin(qparams);
+		} catch (UnsupportedEncodingException e) {
+			throw new HttpClientException("Failed to create url! " + e.getMessage(), e);
+		}
 	}
 
 	public void logout()
-		throws IOException, ClientProtocolException, HttpClientException {
+		throws HttpClientException {
 
 		StringBuilder fullUrl = new StringBuilder(100);
 		fullUrl.append(HTTP_MYGLOBUL_SITE).append(GLBRequestType.LOGOUT.getPath()).append("?")
 			.append(GLBRequestType.LOGOUT.getParams());
 
-		HttpGet httpGet = new HttpGet(fullUrl.toString());
-		HttpResponse resp = httpClient.execute(httpGet);
-		StatusLine status = resp.getStatusLine();
+		try {
+			HttpGet httpGet = new HttpGet(fullUrl.toString());
+			HttpResponse resp = httpClient.execute(httpGet);
+			StatusLine status = resp.getStatusLine();
 
-		if ( status.getStatusCode() != HttpStatus.SC_OK )
-			throw new HttpClientException(status.getReasonPhrase(), status.getStatusCode());
+			if ( status.getStatusCode() != HttpStatus.SC_OK )
+				throw new HttpClientException(status.getReasonPhrase(), status.getStatusCode());
 
-		resp.getEntity().consumeContent();
+			resp.getEntity().consumeContent();
+		} catch (ClientProtocolException e) {
+			throw new HttpClientException("Client protocol error!" + e.getMessage(), e);
+		} catch (IOException e) {
+			throw new HttpClientException("Client error!" + e.getMessage(), e);
+		}
 	}
 
 	public String getCurrentBalance()
-		throws Exception {
+		throws HttpClientException {
 
 		return doPostRequest(GLBRequestType.GET_BALANCE);
 	}
 
 	public String getAvailableMinutes()
-		throws Exception {
+		throws HttpClientException {
 
 		return doPostRequest(GLBRequestType.GET_MINUTES);
 	}
 
 	public String getAvailableInternetBandwidth()
-		throws Exception {
+		throws HttpClientException {
 
 		return doPostRequest(GLBRequestType.GET_BANDWIDTH);
 	}
 
 	public String getCreditLimit()
-		throws Exception {
+		throws HttpClientException {
 
 		return doPostRequest(GLBRequestType.GET_CREDITLIMIT);
 	}
 
 	public String getAvailableMSPackage()
-		throws Exception {
+		throws HttpClientException {
 
 		return doPostRequest(GLBRequestType.GET_MSPACKAGE);
 	}
@@ -228,8 +231,8 @@ public class GLBHttpClient implements Client {
 	 * Login logic
 	 * @param qparams
 	 */
-	private void handleLogin(List<NameValuePair> qparams)
-		throws Exception {
+	private void handleLogin(List<NameValuePair> qparams) throws HttpClientException, InvalidCredentialsException, 
+	SecureCodeRequiredException, UnsupportedEncodingException {
 
 		StringBuilder fullUrl = new StringBuilder(100);
 		fullUrl.append(HTTP_MYGLOBUL_SITE).append(GLBRequestType.LOGIN.getPath());
@@ -246,16 +249,28 @@ public class GLBHttpClient implements Client {
 //		refid		0a7b8fa558b46142e2d400ae0f2548f2f
 //		username	0899123456
 
-		HttpResponse resp = httpClient.execute(httpPost);
+		HttpResponse resp;
+		try {
+			resp = httpClient.execute(httpPost);
+		} catch (Exception e) {
+			throw new HttpClientException("Client protocol error!" + e.getMessage(), e);
+		}
+		
 		StatusLine status = resp.getStatusLine();
 
 		if ( status.getStatusCode() == HttpStatus.SC_OK ) {
 
 			// retrieve contents of the reply
 			HttpEntity entity = resp.getEntity();
-			ByteArrayOutputStream baos = new ByteArrayOutputStream(DEFAULT_BUFFER_SIZE);
-			entity.writeTo(baos);
-			baos.close();
+			ByteArrayOutputStream baos = null;
+			try {
+				baos = new ByteArrayOutputStream(DEFAULT_BUFFER_SIZE);
+				entity.writeTo(baos);
+			} catch (IOException e) {
+				throw new HttpClientException("Failed to load response! " + e.getMessage(), e);
+			} finally {
+				if (baos != null) try { baos.close(); } catch (IOException e) {};
+			}
 
 			String content = baos.toString();
 
@@ -273,9 +288,11 @@ public class GLBHttpClient implements Client {
 			}
 		}
 		else if ( status.getStatusCode() != HttpStatus.SC_MOVED_TEMPORARILY ) {
-
-			resp.getEntity().consumeContent();
-
+			try {
+				resp.getEntity().consumeContent();
+			} catch (IOException e) {
+				throw new HttpClientException("Could not consume MOVED_TEMPORARIL content!", e);
+			}
 			//NOTE: Kind of a hack (sometimes we get 302 from the web serv),
 			//      May not work if Globul changes impl.
 			throw new HttpClientException(status.getReasonPhrase(), status.getStatusCode());
@@ -289,27 +306,39 @@ public class GLBHttpClient implements Client {
 		return httpPost;
 	}
 
-	private String doPostRequest(GLBRequestType requestType) throws UnsupportedEncodingException,
-			IOException, ClientProtocolException, HttpClientException {
+	private String doPostRequest(GLBRequestType requestType) throws HttpClientException {
 
-		HttpPost httpPost = createPostRequest(HTTP_MYGLOBUL_SITE + requestType.getPath(),
-				requestType.getParamsAsList());
-		httpPost.setHeader("X-Requested-With", "XMLHttpRequest");
-		httpPost.setHeader("X-Prototype-Version", "1.6.0.2");
-
-		HttpResponse resp = httpClient.execute(httpPost);
+		HttpResponse resp;
+		try {
+			HttpPost httpPost = createPostRequest(HTTP_MYGLOBUL_SITE + requestType.getPath(),
+					requestType.getParamsAsList());
+			httpPost.setHeader("X-Requested-With", "XMLHttpRequest");
+			httpPost.setHeader("X-Prototype-Version", "1.6.0.2");
+			resp = httpClient.execute(httpPost);
+		} catch (Exception e) {
+			throw new HttpClientException("Client protocol error!" + e.getMessage(), e);
+		}
 		StatusLine status = resp.getStatusLine();
 
 		if (status.getStatusCode() != HttpStatus.SC_OK)
 			throw new HttpClientException(status.getReasonPhrase(), status.getStatusCode());
 
 		HttpEntity entity = resp.getEntity();
-		ByteArrayOutputStream baos = new ByteArrayOutputStream(DEFAULT_BUFFER_SIZE);
-		entity.writeTo(baos);
-		baos.close();
+		ByteArrayOutputStream baos = null;
+		try {
+			baos = new ByteArrayOutputStream(DEFAULT_BUFFER_SIZE);
+			entity.writeTo(baos);
+		} catch (Exception e) {
+			throw new HttpClientException("Failed to load response! " + e.getMessage(), e);
+		} finally {
+			if (baos != null) try { baos.close(); } catch (IOException e) {};
+		}
 
-		return new String(baos.toByteArray(), RESPONSE_ENCODING);
-		//return baos.toString();
+		try {
+			return new String(baos.toByteArray(), RESPONSE_ENCODING);
+		} catch (UnsupportedEncodingException e) {
+			return new String(baos.toByteArray()); // XXX check this!
+		}
 	}
 
 }

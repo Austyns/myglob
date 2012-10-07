@@ -23,8 +23,8 @@
  */
 package net.vexelon.myglob;
 
-import net.vexelon.mobileops.exceptions.InvalidCredentialsException;
-import net.vexelon.mobileops.exceptions.SecureCodeRequiredException;
+import net.vexelon.mobileops.InvalidCredentialsException;
+import net.vexelon.mobileops.SecureCodeRequiredException;
 import net.vexelon.myglob.actions.AccountStatusAction;
 import net.vexelon.myglob.actions.Action;
 import net.vexelon.myglob.configuration.Defs;
@@ -51,8 +51,6 @@ public class UpdateWidgetService extends Service {
 	
 	private String getLastAccountStatus() {
 		
-		String result = "";
-		
         final SharedPreferences prefsUsers = this.getSharedPreferences(Defs.PREFS_USER_PREFS, 0);
         UsersManager.getInstance().reloadUsers(prefsUsers);
 
@@ -60,9 +58,11 @@ public class UpdateWidgetService extends Service {
         GlobalSettings.getInstance().init(prefsGeneral);
         
         String account = GlobalSettings.getInstance().getLastSelectedAccount();
+        if (Defs.LOG_ENABLED) {
+        	Log.d(Defs.LOG_TAG, "Last acccount loaded = " + account);
+        }
         
-        Log.d(Defs.LOG_TAG, "Last acc is " + account);
-
+        String result = "";
         try {
         	if (account == GlobalSettings.NO_ACCOUNT) {
         		result = getResString(R.string.text_account_no_account);
@@ -79,8 +79,9 @@ public class UpdateWidgetService extends Service {
 		} catch (SecureCodeRequiredException e) {
 			result = getResString(R.string.dlg_error_msg_securecode);
 		} catch (Exception e) {
-			Log.e(Defs.LOG_TAG, "Error retrieving account status! Error: " + e.getMessage());
-			result = e.getMessage();
+			Log.e(Defs.LOG_TAG, "Error updating status!", e);
+//			result = getResString(R.string.text_error) + e.getMessage();
+			result = getResString(R.string.dlg_error_msg_title);
 		}
         
         return result;
@@ -100,11 +101,17 @@ public class UpdateWidgetService extends Service {
 		
 		ComponentName thisWidget = new ComponentName(context, WidgetProvider.class);
 		int[] allWidgetIds2 = appWidgetManager.getAppWidgetIds(thisWidget);
-		Log.w(Defs.LOG_TAG, "From intent: " + String.valueOf(widgetIds.length));
-		Log.w(Defs.LOG_TAG, "Direct: " + String.valueOf(allWidgetIds2.length));
+		
+		if (Defs.LOG_ENABLED) {
+			Log.d(Defs.LOG_TAG, "From intent: " + String.valueOf(widgetIds.length));
+			Log.d(Defs.LOG_TAG, "Direct: " + String.valueOf(allWidgetIds2.length));
+		}
 		
 		String lastSelectedAccountStatus = getLastAccountStatus();
-		Log.i(Defs.LOG_TAG, "Result is " + lastSelectedAccountStatus);
+		
+		if (Defs.LOG_ENABLED) {
+			Log.i(Defs.LOG_TAG, "Result = " + lastSelectedAccountStatus);
+		}
 		
 		for (int widgetId : widgetIds) {
 			// get all views inside this widget
@@ -112,7 +119,9 @@ public class UpdateWidgetService extends Service {
 			// update text			
 			remoteViews.setTextViewText(R.id.widgetText, Html.fromHtml(lastSelectedAccountStatus));
 			
-			Log.d(Defs.LOG_TAG, "Updating id=" + widgetId);
+			if (Defs.LOG_ENABLED) {
+				Log.d(Defs.LOG_TAG, "Updating id=" + widgetId);
+			}
 			
 			// onClick listener
 			Uri data = Uri.withAppendedPath(

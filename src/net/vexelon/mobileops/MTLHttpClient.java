@@ -50,43 +50,43 @@ public class MTLHttpClient implements Client {
 	}
 
 	@Override
-	public String getAvailableInternetBandwidth() throws Exception {
+	public String getAvailableInternetBandwidth() throws HttpClientException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String getAvailableMSPackage() throws Exception {
+	public String getAvailableMSPackage() throws HttpClientException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String getAvailableMinutes() throws Exception {
+	public String getAvailableMinutes() throws HttpClientException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String getCreditLimit() throws Exception {
+	public String getCreditLimit() throws HttpClientException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String getCurrentBalance() throws Exception {
+	public String getCurrentBalance() throws HttpClientException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public void login() throws Exception {
+	public void login() throws HttpClientException, InvalidCredentialsException, SecureCodeRequiredException {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void logout() throws Exception {
+	public void logout() throws HttpClientException {
 		// TODO Auto-generated method stub
 
 	}

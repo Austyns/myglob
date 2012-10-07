@@ -73,4 +73,5 @@
 <string name="err_msg_user_already_exists">Потребител с този номер вече съществува</string>
 <string name="about_thanks">Благодарности на:</string>
 <string name="text_account_invalid">Изберете потребител/номер!</string>
+<string name="text_error">Грешка</string>
 </resources>

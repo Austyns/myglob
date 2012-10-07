@@ -71,4 +71,13 @@ public class OperationsArrayAdapter extends ArrayAdapter<Operations> {
 		return tv;		
 	}
 	
+	public int getItemPosition(Operations operation) {
+		for (int i = 0; i < _items.length; i++) {
+			if (_items[i].equals(operation)) {
+				return i;
+			}
+		}
+		return -1;
+	}
+	
 }

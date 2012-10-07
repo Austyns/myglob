@@ -21,8 +21,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package net.vexelon.mobileops.exceptions;
+package net.vexelon.mobileops;
 
-public class InvalidCredentialsException extends Exception {
+public class SecureCodeRequiredException extends Exception {
+
+	private String secureCodeImageUrl;
+
+	public SecureCodeRequiredException(String secureCodeImageUrl) {
+		
+		this.secureCodeImageUrl = secureCodeImageUrl;
+	}
+	
+	public String getSecureCodeImageUrl() {
+		return this.secureCodeImageUrl;
+	}
 	
 }

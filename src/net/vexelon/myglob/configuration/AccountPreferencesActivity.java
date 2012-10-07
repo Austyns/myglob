@@ -43,7 +43,6 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
 
 public class AccountPreferencesActivity extends PreferenceActivity {

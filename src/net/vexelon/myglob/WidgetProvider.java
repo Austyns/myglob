@@ -39,7 +39,8 @@ public class WidgetProvider extends AppWidgetProvider {
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
-		Log.d(Defs.LOG_TAG, "onReceive() called");
+		if (Defs.LOG_ENABLED)
+			Log.d(Defs.LOG_TAG, "onReceive() called");
 		
 		int widgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
 		if (AppWidgetManager.INVALID_APPWIDGET_ID == widgetId) {
@@ -50,10 +51,9 @@ public class WidgetProvider extends AppWidgetProvider {
 	}
 	
 	@Override
-	public void onUpdate(Context context, AppWidgetManager appWidgetManager,
-			int[] appWidgetIds) {
-
-		Log.d(Defs.LOG_TAG, "onUpdate() called - " + Arrays.toString(appWidgetIds));
+	public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
+		if (Defs.LOG_ENABLED)
+			Log.d(Defs.LOG_TAG, "onUpdate() called - " + Arrays.toString(appWidgetIds));
 		
 		// get all widgets ids
 //		ComponentName thisWidget = new ComponentName(context, WidgetProvider.class);
