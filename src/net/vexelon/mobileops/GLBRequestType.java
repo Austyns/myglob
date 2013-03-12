@@ -41,6 +41,7 @@ public enum GLBRequestType {
 
 	private final String path;
 	private final String params;
+	prviate List<NameValuePair> list;
 	
 	GLBRequestType(String path, String params) {
 		this.path = path;
@@ -56,13 +57,15 @@ public enum GLBRequestType {
 	}
 	
 	public List<NameValuePair> getParamsAsList() {
-		List<NameValuePair> list = new ArrayList<NameValuePair>();
-		
-		String[] pairs = params.split("&");
-		for (String pair : pairs) {
-			String[] keys = pair.split("=");
+		if (list == null) {
+			list = new ArrayList<NameValuePair>();
 			
-			list.add( new BasicNameValuePair(keys[0], keys[1] != null ? keys[1] : "")  );
+			String[] pairs = params.split("&");
+			for (String pair : pairs) {
+				String[] keys = pair.split("=");
+				
+				list.add( new BasicNameValuePair(keys[0], keys[1] != null ? keys[1] : "")  );
+			}			
 		}
 		
 		return list;
