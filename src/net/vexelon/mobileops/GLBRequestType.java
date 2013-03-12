@@ -41,7 +41,7 @@ public enum GLBRequestType {
 
 	private final String path;
 	private final String params;
-	prviate List<NameValuePair> list;
+	private List<NameValuePair> list;
 	
 	GLBRequestType(String path, String params) {
 		this.path = path;
