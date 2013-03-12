@@ -78,15 +78,15 @@ public class AccountStatusAction implements Action {
 				break;
 			case CHECK_ALL:
 				StringBuilder sb = new StringBuilder(500);
-				sb.append(Utils.stripHtml(client.getCurrentBalance()));
-				sb.append("<br><br>");
-				sb.append(Utils.stripHtml(client.getAvailableMinutes()));
-				sb.append("<br><br>");
-				sb.append(Utils.stripHtml(client.getCreditLimit()));
-				sb.append("<br><br>");
-				sb.append(Utils.stripHtml(client.getAvailableInternetBandwidth()));
-				sb.append("<br><br>");
-				sb.append(Utils.stripHtml(client.getAvailableMSPackage()));
+				sb.append(Utils.stripHtml(client.getCurrentBalance()))
+				.append("<br><br>")
+				.append(Utils.stripHtml(client.getAvailableMinutes()))
+				.append("<br><br>")
+				.append(Utils.stripHtml(client.getCreditLimit()))
+				.append("<br><br>")
+				.append(Utils.stripHtml(client.getAvailableInternetBandwidth()))
+				.append("<br><br>")
+				.append(Utils.stripHtml(client.getAvailableMSPackage()));
 				tmpResult = sb.toString();
 				break;
 			}
