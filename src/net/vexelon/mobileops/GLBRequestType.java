@@ -32,6 +32,7 @@ import org.apache.http.message.BasicNameValuePair;
 public enum GLBRequestType {
 	
 	LOGIN("/mg/myglobul.portal", ""),
+	PAGE_BILLCHECK("/mg/myglobul.bch", "action=billcheck"),
 	GET_BALANCE("/mg/myglobul.bch", "action=billcheckperform"),
 	GET_MINUTES("/mg/myglobul.bch", "action=bundlecheckperform"),
 	GET_BANDWIDTH("/mg/myglobul.bch", "action=gprscheckperform"),

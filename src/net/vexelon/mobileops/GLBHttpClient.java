@@ -23,21 +23,29 @@
  */
 package net.vexelon.mobileops;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.security.InvalidAlgorithmParameterException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 
+import net.vexelon.myglob.configuration.Defs;
 import net.vexelon.myglob.utils.TrustAllSocketFactory;
 import net.vexelon.myglob.utils.UserAgentHelper;
 import net.vexelon.myglob.utils.Utils;
 
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -64,6 +72,8 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 
+import android.util.Log;
+
 public class GLBHttpClient implements Client {
 
 	private final String HTTP_MYGLOBUL_SITE = "https://my.globul.bg";
@@ -76,6 +86,8 @@ public class GLBHttpClient implements Client {
 	private String password;
 	private DefaultHttpClient httpClient = null;
 	private CookieStore httpCookieStore = null;
+	
+	private HashMap<GLBRequestType, String> operationsHash;
 
 	public GLBHttpClient(String username, String password) {
 		this.username = username;
@@ -93,19 +105,35 @@ public class GLBHttpClient implements Client {
 	 * Perform login into the web system using the specified user and password
 	 */
 	public void login() throws HttpClientException, InvalidCredentialsException, SecureCodeRequiredException {
+		
+//		rametersapplication/x-www-form-urlencoded
+//		action
+//		continuation	myglobul.portal%3Faction%3Duserhome%26pkey%3D0%26jkey%3D0
+//		image.x	0
+//		image.y	0
+//		imglogin	JFNH
+//		password	mypassword
+//		refid		0a7b8fa558b46142e2d400ae0f2548f2f
+//		username	0899123456
+		
 		try {
 			List<NameValuePair> qparams = new ArrayList<NameValuePair>();
 			qparams.add(new BasicNameValuePair("action", "loginexec"));
+			//qparams.add(new BasicNameValuePair("refid", ""));
 			qparams.add(new BasicNameValuePair("continuation",
 					URLDecoder.decode("myglobul.portal%3Faction%3Duserhome%26pkey%3D0%26jkey%3D0",
 							"UTF-8")));
 			qparams.add(new BasicNameValuePair("image.x", Integer.toString(Utils.getRandomInt(1024)) ));
 			qparams.add(new BasicNameValuePair("image.y", Integer.toString(Utils.getRandomInt(768)) ));
 			qparams.add(new BasicNameValuePair("password", password));
-			//qparams.add(new BasicNameValuePair("refid", ""));
 			qparams.add(new BasicNameValuePair("username", username));
+			
+			Log.d(Defs.LOG_TAG, "credts: " + username + " " + password);
 
 			handleLogin(qparams);
+			
+			operationsHash = fetchOperationsHash();
+			
 		} catch (UnsupportedEncodingException e) {
 			throw new HttpClientException("Failed to create url! " + e.getMessage(), e);
 		}
@@ -133,7 +161,7 @@ public class GLBHttpClient implements Client {
 			throw new HttpClientException("Client error!" + e.getMessage(), e);
 		}
 	}
-
+	
 	public String getCurrentBalance()
 		throws HttpClientException {
 
@@ -238,18 +266,8 @@ public class GLBHttpClient implements Client {
 		fullUrl.append(HTTP_MYGLOBUL_SITE).append(GLBRequestType.LOGIN.getPath());
 
 		HttpPost httpPost = createPostRequest(fullUrl.toString(), qparams);
-
-//		rametersapplication/x-www-form-urlencoded
-//		action
-//		continuation	myglobul.portal%3Faction%3Duserhome%26pkey%3D0%26jkey%3D0
-//		image.x	0
-//		image.y	0
-//		imglogin	JFNH
-//		password	mypassword
-//		refid		0a7b8fa558b46142e2d400ae0f2548f2f
-//		username	0899123456
-
 		HttpResponse resp;
+		
 		try {
 			resp = httpClient.execute(httpPost);
 		} catch (Exception e) {
@@ -273,7 +291,7 @@ public class GLBHttpClient implements Client {
 			}
 
 			String content = baos.toString();
-
+			
 			// if the username is not present in the content, then we're obviously not logged in
 			if ( content.indexOf("action=pdetails") == -1 || content.indexOf("action=chpass") == -1 ) {
 				//check if secure code image is sent
@@ -286,17 +304,133 @@ public class GLBHttpClient implements Client {
 
 				throw new InvalidCredentialsException();
 			}
-		}
-		else if ( status.getStatusCode() != HttpStatus.SC_MOVED_TEMPORARILY ) {
+		} else if ( status.getStatusCode() == HttpStatus.SC_MOVED_TEMPORARILY || 
+				status.getStatusCode() == HttpStatus.SC_MOVED_PERMANENTLY || 
+				status.getStatusCode() == HttpStatus.SC_SEE_OTHER ||
+				status.getStatusCode() == HttpStatus.SC_TEMPORARY_REDIRECT) {
+			
+			// XXX Kind of a hack (sometimes we get 302 from the web serv),
+			//     May not work if Globul changes impl.	
+			//	   What we should do is proper redirect and parsing.
+			// See http://hc.apache.org/httpclient-legacy/redirects.html
+			
+//			String redirectLocation;
+//	        Header locationHeader = resp.getFirstHeader("location");
+//	        if (locationHeader != null) {
+//	            redirectLocation = locationHeader.getValue();
+//	        } else {
+//	            // The response is invalid and did not provide the new location for
+//	            // the resource.  Report an error or possibly handle the response
+//	            // like a 404 Not Found error.
+//	        }
+			
 			try {
 				resp.getEntity().consumeContent();
 			} catch (IOException e) {
-				throw new HttpClientException("Could not consume MOVED_TEMPORARIL content!", e);
-			}
-			//NOTE: Kind of a hack (sometimes we get 302 from the web serv),
-			//      May not work if Globul changes impl.
+				throw new HttpClientException("Could not consume MOVED_TEMPORARILY content!", e);
+			}			
+			
+		} else {
+			// Unhandled response
 			throw new HttpClientException(status.getReasonPhrase(), status.getStatusCode());
 		}
+	}
+	
+	private HashMap<GLBRequestType, String>  fetchOperationsHash() throws HttpClientException {
+		
+		HashMap<GLBRequestType, String>  result = new HashMap<GLBRequestType, String>();
+		
+		StringBuilder fullUrl = new StringBuilder(100);
+		fullUrl.append(HTTP_MYGLOBUL_SITE).append(GLBRequestType.PAGE_BILLCHECK.getPath()).append("?")
+			.append(GLBRequestType.PAGE_BILLCHECK.getParams());
+
+		try {
+			HttpGet httpGet = new HttpGet(fullUrl.toString());
+			HttpResponse resp = httpClient.execute(httpGet);
+			StatusLine status = resp.getStatusLine();
+
+			if ( status.getStatusCode() == HttpStatus.SC_OK ) {
+				
+				String content = "";
+				InputStream in = resp.getEntity().getContent();
+				BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+				StringBuilder str = new StringBuilder();
+				String line = null;
+				while((line = reader.readLine()) != null)
+				{
+				    str.append(line);
+				}
+				in.close();
+				content = str.toString();				
+				
+//				// retrieve contents of the reply
+//				HttpEntity entity = resp.getEntity();
+//				ByteArrayOutputStream baos = null;
+//				try {
+//					baos = new ByteArrayOutputStream(DEFAULT_BUFFER_SIZE);
+//					entity.writeTo(baos);
+//				} catch (IOException e) {
+//					throw new HttpClientException("Failed to load response! " + e.getMessage(), e);
+//				} finally {
+//					if (baos != null) try { baos.close(); } catch (IOException e) {};
+//				}
+//				String content = baos.toString();
+				
+				// get rid of new lines
+				content = content.replaceAll("[\\n\\r]", "");
+				
+//				Log.d(Defs.LOG_TAG, "Cnt: " + content.substring(0, 4000));
+//				Log.d(Defs.LOG_TAG, "Cnt: " + content.substring(4000, content.length()));
+				
+				// Some guy at globul thought he's very clever ;)
+//	            performAjaxRequest( 'myglobul.bch?action=billcheckperform',
+//	                    'post',
+//	                    'billcheck_perform.jsp',
+//	                    'checkResult',
+//	                    'myglobul.bch?action=billcheck','f4144ba748d321abc8186fb2391b7a1c');
+				
+				// get hash codes
+				result.put(GLBRequestType.GET_BALANCE, findRequestTypeHash(content, GLBRequestType.GET_BALANCE));
+				result.put(GLBRequestType.GET_BALANCE, findRequestTypeHash(content, GLBRequestType.GET_MINUTES));
+				result.put(GLBRequestType.GET_BALANCE, findRequestTypeHash(content, GLBRequestType.GET_BANDWIDTH));
+				result.put(GLBRequestType.GET_BALANCE, findRequestTypeHash(content, GLBRequestType.GET_CREDITLIMIT));
+				result.put(GLBRequestType.GET_BALANCE, findRequestTypeHash(content, GLBRequestType.GET_MSPACKAGE));
+				
+			} else {
+				// TODO PROBLEM
+			}
+			
+		} catch (ClientProtocolException e) {
+			throw new HttpClientException("Client protocol error!" + e.getMessage(), e);
+		} catch (IOException e) {
+			throw new HttpClientException("Client error!" + e.getMessage(), e);
+		}		
+		
+		return result;
+	}	
+	
+	private String findRequestTypeHash(String content, GLBRequestType type) {
+		String result = "";
+		
+		Pattern p = Pattern.compile("performAjaxRequest\\(.+action=billcheckperform(.[^)]+)\\)", Pattern.CASE_INSENSITIVE);
+		// type.getParams() + "(.+)'([0-9a-f]+)'"
+		Log.v(Defs.LOG_TAG, p.pattern());
+		Matcher m = p.matcher(content);
+		while (m.find()) {
+			for (int i = 0; i < m.groupCount(); i++) {
+				Log.d(Defs.LOG_TAG, "GR: " + m.group(i));
+			}			
+		}
+		
+//		if (m.groupCount() < 2) {
+//			// TODO PROBLEM
+//		} else {
+//			result = m.group(2);
+//		}
+		
+		Log.d(Defs.LOG_TAG, "Hash for " + type.getPath() + " = " + result);
+		
+		return result;
 	}
 
 	private HttpPost createPostRequest(String url, List<NameValuePair> qparams)
@@ -310,8 +444,11 @@ public class GLBHttpClient implements Client {
 
 		HttpResponse resp;
 		try {
-			HttpPost httpPost = createPostRequest(HTTP_MYGLOBUL_SITE + requestType.getPath(),
-					requestType.getParamsAsList());
+			
+			List<NameValuePair> qparams = requestType.getParamsAsList();
+			qparams.add(new BasicNameValuePair("parameter", this.operationsHash.get(requestType)));
+			
+			HttpPost httpPost = createPostRequest(HTTP_MYGLOBUL_SITE + requestType.getPath(), qparams);
 			httpPost.setHeader("X-Requested-With", "XMLHttpRequest");
 			httpPost.setHeader("X-Prototype-Version", "1.6.0.2");
 			resp = httpClient.execute(httpPost);
