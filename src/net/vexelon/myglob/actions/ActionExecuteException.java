@@ -23,6 +23,7 @@
  */
 package net.vexelon.myglob.actions;
 
+@SuppressWarnings("serial")
 public class ActionExecuteException extends Exception {
 	
 	public ActionExecuteException(String message) {
