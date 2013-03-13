@@ -23,6 +23,10 @@
  */
 package net.vexelon.myglob;
 
+import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
+
 import net.vexelon.mobileops.InvalidCredentialsException;
 import net.vexelon.mobileops.SecureCodeRequiredException;
 import net.vexelon.myglob.actions.AccountStatusAction;
@@ -42,49 +46,23 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.PorterDuff.Mode;
+import android.graphics.Shader.TileMode;
+import android.graphics.drawable.BitmapDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-/**
- * @author p.petrov
- * <p>
- * <pre>
- * Milestone 02
- * 1. [DONE] Add spinner for user accounts
- * 2. [DONE] Add user account class and move methods for handling account info
- * 3. [DONE] Refactor LoginActivity - NewAccountActivity
- * 4. [DONE] Add AccountManagement menu button for general account management (Spinner of accounts + sepearet Activity for options)
- * 5. [DONE] Refactor MainActivity class"" with proper actions for updating account info
- * 6. [DONE] Make previous account preferences work
- * 7. Solve problem with security codes on GLB site
- *
- * Milestone 01
- * 1. [DONE] Complete Spinner actions
- * 2. [DONE] Test secure code image occurrence
- * 3. [DONE] Test saving/loading of options
- * 4. [DONE] Add/Finish About activity
- * 5. [DONE] Add Progress dialog(s)
- * 6. [DONE] Add strings to resources
- * 7. [DONE] Test error message screens
- * 8. [DONE] Add images and fix/adjust layout
- * 9. [DONE] What to do if key-create fails ??
- * 10. Protect IV
- * 11. [DONE] Remove log tags
- * </pre>
- * 
- */
-public class MainActivity extends Activity {
+public class MainActivity extends SherlockActivity {
 
 	private Activity _activity = null;
 	//private ArrayAdapter<String> _adapterAccounts = null;
@@ -92,6 +70,8 @@ public class MainActivity extends Activity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+    	this.setTheme(R.style.Theme_Sherlock);
+    	
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
@@ -111,10 +91,21 @@ public class MainActivity extends Activity {
          */
 
         this.setTitle(getResString(R.string.app_name) + " - " + getResString(R.string.about_tagline));
+        
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+            BitmapDrawable bg = (BitmapDrawable)getResources().getDrawable(R.drawable.bg_striped);
+            bg.setTileModeXY(TileMode.REPEAT, TileMode.REPEAT);
+            getSupportActionBar().setBackgroundDrawable(bg);
+
+            BitmapDrawable bgSplit = (BitmapDrawable)getResources().getDrawable(R.drawable.bg_striped_split_img);
+            bgSplit.setTileModeXY(TileMode.REPEAT, TileMode.REPEAT);
+            getSupportActionBar().setSplitBackgroundDrawable(bgSplit);
+        }        
 
         // init options spinner
         Spinner spinnerOptions = (Spinner) findViewById(R.id.SpinnerOptions);
-        OperationsArrayAdapter adapter = new OperationsArrayAdapter(this, android.R.layout.simple_spinner_item,
+        OperationsArrayAdapter adapter = new OperationsArrayAdapter(
+        		getSupportActionBar().getThemedContext(), R.layout.sherlock_spinner_item,
         		new Operations[]{
         		Operations.CHECK_CURRENT_BALANCE,
 				Operations.CHECK_AVAIL_MINUTES,
@@ -123,7 +114,7 @@ public class MainActivity extends Activity {
 				Operations.CHECK_CREDIT_LIMIT,
 				Operations.CHECK_ALL,
         });
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        adapter.setDropDownViewResource(R.layout.sherlock_spinner_dropdown_item);
         spinnerOptions.setAdapter(adapter);
         
         // pre-select Operation
@@ -264,16 +255,27 @@ public class MainActivity extends Activity {
 
     	updateAccountsSpinner();
     }
+    
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+		menu.clear();
+		
+		menu.add(1, Defs.MENU_ADD_ACCOUNT, 0, getResString(R.string.menu_add_account)).setIcon(R.drawable.ic_menu_invite)
+		.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+		
+		menu.add(1, Defs.MENU_MANAGE_ACCOUNTS, 0, getResString(R.string.menu_manage_accounts)).setIcon(R.drawable.ic_menu_manage)
+		.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+		
+		menu.add(1, Defs.MENU_ABOUT, 15, getResString(R.string.menu_about)).setIcon(R.drawable.ic_menu_help)
+		.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+		
+		return super.onCreateOptionsMenu(menu);
+    }
 
 //	@Override
-//	public boolean onCreateOptionsMenu(Menu menu) {
+//	public boolean onPrepareOptionsMenu(Menu menu) {
 //		return initMenu(menu);
 //	}
-
-	@Override
-	public boolean onPrepareOptionsMenu(Menu menu) {
-		return initMenu(menu);
-	}
 
 	@Override
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
@@ -298,14 +300,6 @@ public class MainActivity extends Activity {
 			break;
 		}
 
-		return true;
-	}
-
-	private boolean initMenu(Menu menu) {
-		menu.clear();
-		menu.add(1, Defs.MENU_ADD_ACCOUNT, 0, getResString(R.string.menu_add_account)).setIcon(R.drawable.ic_menu_invite);
-		menu.add(1, Defs.MENU_MANAGE_ACCOUNTS, 0, getResString(R.string.menu_manage_accounts)).setIcon(R.drawable.ic_menu_manage);
-		menu.add(1, Defs.MENU_ABOUT, 15, getResString(R.string.menu_about)).setIcon(R.drawable.ic_menu_help);
 		return true;
 	}
 
