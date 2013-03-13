@@ -1,5 +1,9 @@
 MyGlob HISTORY file
 
+V2.1.1
+Fixed: Issue 7 - Page does not exist (Страницата не съществува)
+Fixed: Issue 6 - No menu button on latest Android phones (Добавен меню бутон за телефони без хардуерен меню бутон)
+
 V2.1.0
 Important: App now requires Android SDK 7 (2.1).
 Feature: (Issue #4) MyGlob widget now available. The widget shows the last checked account status. You can refresh via the Refresh button. To change the account & operation tap the Widget and use the in-app dropdowns. Widget auto-updates every 2 hours. If there is no internet connection the last fetched info will be shown.
