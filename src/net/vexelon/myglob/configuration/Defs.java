@@ -26,7 +26,7 @@ package net.vexelon.myglob.configuration;
 public class Defs {
 	
 	public final static String LOG_TAG = "net.vexelon.myglob";
-	public final static boolean LOG_ENABLED = true;
+	public final static boolean LOG_ENABLED = false;
 	
 	public final static int CLR_BUTTON_UPDATE = 0xFFA6D060;
 	public final static String CLR_TEXT_HIGHLIGHT = "#FF7F00"; //0xFFFF7F00;
