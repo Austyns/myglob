@@ -132,7 +132,7 @@ public class GLBHttpClient implements Client {
 
 			handleLogin(qparams);
 			
-			operationsHash = fetchOperationsHash();
+			operationsHash = findOperationsHashCodes();
 			
 		} catch (UnsupportedEncodingException e) {
 			throw new HttpClientException("Failed to create url! " + e.getMessage(), e);
@@ -336,7 +336,7 @@ public class GLBHttpClient implements Client {
 		}
 	}
 	
-	private HashMap<GLBRequestType, String> fetchOperationsHash() throws HttpClientException {
+	private HashMap<GLBRequestType, String> findOperationsHashCodes() throws HttpClientException {
 		
 		HashMap<GLBRequestType, String>  result = new HashMap<GLBRequestType, String>();
 		
@@ -344,18 +344,16 @@ public class GLBHttpClient implements Client {
 		fullUrl.append(HTTP_MYGLOBUL_SITE).append(GLBRequestType.PAGE_BILLCHECK.getPath()).append("?")
 			.append(GLBRequestType.PAGE_BILLCHECK.getParams());
 
+		BufferedReader reader = null;
+		
 		try {
 			HttpGet httpGet = new HttpGet(fullUrl.toString());
 			HttpResponse resp = httpClient.execute(httpGet);
 			StatusLine status = resp.getStatusLine();
-
+			
 			if ( status.getStatusCode() == HttpStatus.SC_OK ) {
 				
-				String content = "";
-				
-				InputStream in = resp.getEntity().getContent();
-				BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-				StringBuilder str = new StringBuilder();
+				reader = new BufferedReader(new InputStreamReader(resp.getEntity().getContent()));
 				
 				boolean inParam = false;
 				String line = null;
@@ -364,9 +362,14 @@ public class GLBHttpClient implements Client {
 				while((line = reader.readLine()) != null) {
 					
 					if (line.contains("performAjaxRequest")) {
+						// reset hash code expect, since we obviously passed the last one
+						inParam = false;
+						
 						String params[] = line.split("=");
 						if (params.length > 1) {
-							Log.d(Defs.LOG_TAG, "Found param: " + params[1]);
+							
+							if (Defs.LOG_ENABLED)
+								Log.d(Defs.LOG_TAG, "Found param: " + params[1]);
 							
 							// extract keyword
 							Pattern p = Pattern.compile("([a-zA-Z0-9]+)", Pattern.CASE_INSENSITIVE);
@@ -375,15 +378,12 @@ public class GLBHttpClient implements Client {
 //								Log.v(Defs.LOG_TAG, "Match: " + m.group());
 								
 								reqType = GLBRequestType.getFromAction(m.group());
-								if (reqType == null) {
-									// unknown request type, so we skip it
-									continue;
-								}
-							} else {
-								// TODO
+								if (reqType != null) {
+									// we expect to find hash code, next
+									inParam = true;
+								} 
 							}
 							
-							inParam = true;
 							continue;
 						}
 					}
@@ -392,36 +392,39 @@ public class GLBHttpClient implements Client {
 						if (line.contains("action=billcheck")) {
 							String params[] = line.split(",");
 							if (params.length > 1) {
-								Log.d(Defs.LOG_TAG, "Hash param: " + params[1]);
+								
+								if (Defs.LOG_ENABLED)
+									Log.d(Defs.LOG_TAG, "Hash param: " + params[1]);
+								
 								inParam = false;
 								
 								// extract hash
 								Pattern p = Pattern.compile("([a-z0-9]+)", Pattern.CASE_INSENSITIVE);
 								Matcher m = p.matcher(params[1]);
 								if (m.find()) {
-//									Log.v(Defs.LOG_TAG, "Hash: " + m.group());
 									
-									Log.v(Defs.LOG_TAG, "Putting: " + reqType.getParams() + " to " + m.group());
+									if (Defs.LOG_ENABLED)
+										Log.v(Defs.LOG_TAG, "Putting: " + reqType.getParams() + " to " + m.group());
+									
 									result.put(reqType, m.group());
-								} else {
-									// TODO
 								}
 							}
 						}
 					}
 					
 				}
-				in.close();
 				
 			} else {
-				// TODO PROBLEM
+				throw new HttpClientException(status.getReasonPhrase(), status.getStatusCode());
 			}
 			
 		} catch (ClientProtocolException e) {
 			throw new HttpClientException("Client protocol error!" + e.getMessage(), e);
 		} catch (IOException e) {
 			throw new HttpClientException("Client error!" + e.getMessage(), e);
-		}		
+		} finally {
+			if (reader != null) try { reader.close(); } catch (IOException e) {};
+		}
 		
 		return result;
 	}	
@@ -437,8 +440,8 @@ public class GLBHttpClient implements Client {
 
 		HttpResponse resp;
 		try {
-			
 			List<NameValuePair> qparams = requestType.getParamsAsList();
+			// Fix Issue #7 - Page does not exist
 			qparams.add(new BasicNameValuePair("parameter", this.operationsHash.get(requestType)));
 			
 			HttpPost httpPost = createPostRequest(HTTP_MYGLOBUL_SITE + requestType.getPath(), qparams);
@@ -448,8 +451,9 @@ public class GLBHttpClient implements Client {
 		} catch (Exception e) {
 			throw new HttpClientException("Client protocol error!" + e.getMessage(), e);
 		}
+		
 		StatusLine status = resp.getStatusLine();
-
+		
 		if (status.getStatusCode() != HttpStatus.SC_OK)
 			throw new HttpClientException(status.getReasonPhrase(), status.getStatusCode());
 
