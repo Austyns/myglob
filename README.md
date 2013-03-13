@@ -15,7 +15,9 @@ Note: This application is localized only in Bulgarian language.
 
 
 Please check HISTORY for latest release changes.
+
 Please check LICENSE for licensing topics.
+
 Please check CREDITS for contributed code.
 
 Have fun ! ;)
