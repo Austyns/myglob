@@ -78,7 +78,7 @@
 		android:layout_below="@+id/SpinnerUserAccounts"
 		android:layout_alignParentRight="true"
 		android:textStyle="bold"
-		android:textColor="#FFFFFFFF"
+		android:textColor="#000"
 		/>		
 
 </RelativeLayout>
