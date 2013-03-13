@@ -143,6 +143,15 @@ public class MainActivity extends Activity {
 				updateSelectedStatus();
 			}
 		});
+        
+     // create menu button
+        Button btnMenu = (Button) findViewById(R.id.ButtonMenu);
+        btnMenu.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				openOptionsMenu();
+			}
+		});        
 
         //btnUpdate.getBackground().setColorFilter(0x2212FF00, Mode.LIGHTEN);
         btnUpdate.getBackground().setColorFilter(Defs.CLR_BUTTON_UPDATE, Mode.MULTIPLY);
