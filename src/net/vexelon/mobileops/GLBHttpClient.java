@@ -26,7 +26,6 @@ package net.vexelon.mobileops;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -45,7 +44,6 @@ import net.vexelon.myglob.utils.TrustAllSocketFactory;
 import net.vexelon.myglob.utils.UserAgentHelper;
 import net.vexelon.myglob.utils.Utils;
 
-import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -128,8 +126,6 @@ public class GLBHttpClient implements Client {
 			qparams.add(new BasicNameValuePair("password", password));
 			qparams.add(new BasicNameValuePair("username", username));
 			
-			Log.d(Defs.LOG_TAG, "credts: " + username + " " + password);
-
 			handleLogin(qparams);
 			
 			operationsHash = findOperationsHashCodes();
