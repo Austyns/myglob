@@ -336,7 +336,7 @@ public class GLBHttpClient implements Client {
 		}
 	}
 	
-	private HashMap<GLBRequestType, String>  fetchOperationsHash() throws HttpClientException {
+	private HashMap<GLBRequestType, String> fetchOperationsHash() throws HttpClientException {
 		
 		HashMap<GLBRequestType, String>  result = new HashMap<GLBRequestType, String>();
 		
@@ -352,49 +352,66 @@ public class GLBHttpClient implements Client {
 			if ( status.getStatusCode() == HttpStatus.SC_OK ) {
 				
 				String content = "";
+				
 				InputStream in = resp.getEntity().getContent();
 				BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 				StringBuilder str = new StringBuilder();
+				
+				boolean inParam = false;
 				String line = null;
-				while((line = reader.readLine()) != null)
-				{
-				    str.append(line);
+				GLBRequestType reqType = null;
+				
+				while((line = reader.readLine()) != null) {
+					
+					if (line.contains("performAjaxRequest")) {
+						String params[] = line.split("=");
+						if (params.length > 1) {
+							Log.d(Defs.LOG_TAG, "Found param: " + params[1]);
+							
+							// extract keyword
+							Pattern p = Pattern.compile("([a-zA-Z0-9]+)", Pattern.CASE_INSENSITIVE);
+							Matcher m = p.matcher(params[1]);
+							if (m.find()) {
+//								Log.v(Defs.LOG_TAG, "Match: " + m.group());
+								
+								reqType = GLBRequestType.getFromAction(m.group());
+								if (reqType == null) {
+									// unknown request type, so we skip it
+									continue;
+								}
+							} else {
+								// TODO
+							}
+							
+							inParam = true;
+							continue;
+						}
+					}
+					
+					if (inParam) {
+						if (line.contains("action=billcheck")) {
+							String params[] = line.split(",");
+							if (params.length > 1) {
+								Log.d(Defs.LOG_TAG, "Hash param: " + params[1]);
+								inParam = false;
+								
+								// extract hash
+								Pattern p = Pattern.compile("([a-z0-9]+)", Pattern.CASE_INSENSITIVE);
+								Matcher m = p.matcher(params[1]);
+								if (m.find()) {
+//									Log.v(Defs.LOG_TAG, "Hash: " + m.group());
+									
+									Log.v(Defs.LOG_TAG, "Putting: " + reqType.getParams() + " to " + m.group());
+									result.put(reqType, m.group());
+								} else {
+									// TODO
+								}
+							}
+						}
+					}
+					
 				}
 				in.close();
-				content = str.toString();				
-				
-//				// retrieve contents of the reply
-//				HttpEntity entity = resp.getEntity();
-//				ByteArrayOutputStream baos = null;
-//				try {
-//					baos = new ByteArrayOutputStream(DEFAULT_BUFFER_SIZE);
-//					entity.writeTo(baos);
-//				} catch (IOException e) {
-//					throw new HttpClientException("Failed to load response! " + e.getMessage(), e);
-//				} finally {
-//					if (baos != null) try { baos.close(); } catch (IOException e) {};
-//				}
-//				String content = baos.toString();
-				
-				// get rid of new lines
-				content = content.replaceAll("[\\n\\r]", "");
-				
-//				Log.d(Defs.LOG_TAG, "Cnt: " + content.substring(0, 4000));
-//				Log.d(Defs.LOG_TAG, "Cnt: " + content.substring(4000, content.length()));
-				
-				// Some guy at globul thought he's very clever ;)
-//	            performAjaxRequest( 'myglobul.bch?action=billcheckperform',
-//	                    'post',
-//	                    'billcheck_perform.jsp',
-//	                    'checkResult',
-//	                    'myglobul.bch?action=billcheck','f4144ba748d321abc8186fb2391b7a1c');
-				
-				// get hash codes
-				result.put(GLBRequestType.GET_BALANCE, findRequestTypeHash(content, GLBRequestType.GET_BALANCE));
-				result.put(GLBRequestType.GET_BALANCE, findRequestTypeHash(content, GLBRequestType.GET_MINUTES));
-				result.put(GLBRequestType.GET_BALANCE, findRequestTypeHash(content, GLBRequestType.GET_BANDWIDTH));
-				result.put(GLBRequestType.GET_BALANCE, findRequestTypeHash(content, GLBRequestType.GET_CREDITLIMIT));
-				result.put(GLBRequestType.GET_BALANCE, findRequestTypeHash(content, GLBRequestType.GET_MSPACKAGE));
 				
 			} else {
 				// TODO PROBLEM
@@ -409,30 +426,6 @@ public class GLBHttpClient implements Client {
 		return result;
 	}	
 	
-	private String findRequestTypeHash(String content, GLBRequestType type) {
-		String result = "";
-		
-		Pattern p = Pattern.compile("performAjaxRequest\\(.+action=billcheckperform(.[^)]+)\\)", Pattern.CASE_INSENSITIVE);
-		// type.getParams() + "(.+)'([0-9a-f]+)'"
-		Log.v(Defs.LOG_TAG, p.pattern());
-		Matcher m = p.matcher(content);
-		while (m.find()) {
-			for (int i = 0; i < m.groupCount(); i++) {
-				Log.d(Defs.LOG_TAG, "GR: " + m.group(i));
-			}			
-		}
-		
-//		if (m.groupCount() < 2) {
-//			// TODO PROBLEM
-//		} else {
-//			result = m.group(2);
-//		}
-		
-		Log.d(Defs.LOG_TAG, "Hash for " + type.getPath() + " = " + result);
-		
-		return result;
-	}
-
 	private HttpPost createPostRequest(String url, List<NameValuePair> qparams)
 		throws UnsupportedEncodingException {
 		HttpPost httpPost = new HttpPost(url);

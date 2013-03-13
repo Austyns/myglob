@@ -72,4 +72,25 @@ public enum GLBRequestType {
 		return list;
 	}
 
+	/**
+	 * Return request type from action keyword
+	 * @param action
+	 * @return <code>GLBRequestType</code> or <code>null</code>
+	 */
+	public static GLBRequestType getFromAction(String action) {
+		String full = "action=" + action;
+		if (GET_BALANCE.params.equals(full)) {
+			return GET_BALANCE;
+		} else if (GET_MINUTES.params.equals(full)) {
+			return GET_MINUTES;
+		} else if (GET_BANDWIDTH.params.equals(full)) {
+			return GET_BANDWIDTH;
+		} else if (GET_CREDITLIMIT.params.equals(full)) {
+			return GET_CREDITLIMIT;
+		} else if (GET_MSPACKAGE.params.equals(full)) {
+			return GET_MSPACKAGE;
+		}		
+		
+		return null;
+	}
 }
