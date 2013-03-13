@@ -63,20 +63,21 @@ public class AboutActivity extends Activity {
 			sb.append(pinfo.versionName);
 			sb.append("\n");
 		}
-		sb.append(getResString(R.string.about_author));
-		sb.append("\n");
-		sb.append("http://code.google.com/p/myglob");
-		sb.append("\n");
-		sb.append("\n");
-		sb.append(getResString(R.string.about_icons_info));
-		sb.append("\n");
-		sb.append("http://www.famfamfam.com");
-		sb.append("\n");
-		sb.append("\n");
-		sb.append(getResString(R.string.about_thanks));
-		sb.append("\n");
-		sb.append("Atanas Atanasow (Testing)");
-		sb.append("\n");
+		sb.append(getResString(R.string.about_author))
+		.append("\n")
+		.append("http://code.google.com/p/myglob")
+		.append("\n")
+		.append("\n")
+		.append(getResString(R.string.about_icons_info))
+		.append("\n")
+		.append("http://www.famfamfam.com")
+		.append("\n")
+		.append("\n")
+		.append(getResString(R.string.about_thanks))
+		.append("\n").append("Atanas Atanasow (Testing)")
+		.append("\n").append("Янчо Гинчев (Bug reports)")
+		.append("\n").append("Svetlana Velkova (Bug reports)")
+		.append("\n");
 
 		this.setText(R.id.about_apptitle, sb.toString());
 		Linkify.addLinks((TextView)findViewById(R.id.about_apptitle), Linkify.ALL);
