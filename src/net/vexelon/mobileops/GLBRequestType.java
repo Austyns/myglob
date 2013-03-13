@@ -42,7 +42,7 @@ public enum GLBRequestType {
 
 	private final String path;
 	private final String params;
-	private List<NameValuePair> list;
+	private List<NameValuePair> list ;
 	
 	GLBRequestType(String path, String params) {
 		this.path = path;
@@ -59,17 +59,16 @@ public enum GLBRequestType {
 	
 	public List<NameValuePair> getParamsAsList() {
 		if (list == null) {
+			// split
 			list = new ArrayList<NameValuePair>();
-			
-			String[] pairs = params.split("&");
+			String[] pairs = this.params.split("&");
 			for (String pair : pairs) {
 				String[] keys = pair.split("=");
-				
-				list.add( new BasicNameValuePair(keys[0], keys[1] != null ? keys[1] : "")  );
+				list.add(new BasicNameValuePair(keys[0], keys[1] != null ? keys[1] : ""));
 			}			
 		}
 		
-		return list;
+		return new ArrayList<NameValuePair>(list);
 	}
 
 	/**

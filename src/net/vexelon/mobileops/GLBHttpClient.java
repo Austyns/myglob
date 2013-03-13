@@ -440,9 +440,14 @@ public class GLBHttpClient implements Client {
 			// Fix Issue #7 - Page does not exist
 			qparams.add(new BasicNameValuePair("parameter", this.operationsHash.get(requestType)));
 			
+//			for (NameValuePair nameValuePair : qparams) {
+//				Log.d(Defs.LOG_TAG, "Param: " + nameValuePair.getName() + " = " + nameValuePair.getValue());
+//			}
+			
 			HttpPost httpPost = createPostRequest(HTTP_MYGLOBUL_SITE + requestType.getPath(), qparams);
 			httpPost.setHeader("X-Requested-With", "XMLHttpRequest");
 			httpPost.setHeader("X-Prototype-Version", "1.6.0.2");
+			
 			resp = httpClient.execute(httpPost);
 		} catch (Exception e) {
 			throw new HttpClientException("Client protocol error!" + e.getMessage(), e);
