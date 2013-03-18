@@ -49,4 +49,8 @@ public enum Operations {
 	public int getId() {
 		return this.id;
 	}
+	
+	public int getResourceId() {
+		return this.resId;
+	}
 }

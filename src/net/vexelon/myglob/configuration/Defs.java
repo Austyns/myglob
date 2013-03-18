@@ -23,14 +23,20 @@
  */
 package net.vexelon.myglob.configuration;
 
+import net.vexelon.myglob.R;
+
 public class Defs {
 	
 	public final static String LOG_TAG = "net.vexelon.myglob";
 	public final static boolean LOG_ENABLED = false;
 	
+	// Theming
+	public final static int THEME = R.style.Theme_Sherlock;
+	
 	public final static int CLR_BUTTON_UPDATE = 0xFFA6D060;
 	public final static String CLR_TEXT_HIGHLIGHT = "#FF7F00"; //0xFFFF7F00;
 
+	public final static int MENU_REFRESH = 10;
 	public final static int MENU_ADD_ACCOUNT = 20;
 	public final static int MENU_MANAGE_ACCOUNTS = 30;
 	public final static int MENU_ABOUT = 100;

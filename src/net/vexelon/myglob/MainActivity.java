@@ -23,9 +23,11 @@
  */
 package net.vexelon.myglob;
 
+import com.actionbarsherlock.ActionBarSherlock;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.SubMenu;
 
 import net.vexelon.mobileops.InvalidCredentialsException;
 import net.vexelon.mobileops.SecureCodeRequiredException;
@@ -45,6 +47,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.Shader.TileMode;
 import android.graphics.drawable.BitmapDrawable;
@@ -62,20 +65,18 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class MainActivity extends SherlockActivity {
-
-	private Activity _activity = null;
-	//private ArrayAdapter<String> _adapterAccounts = null;
+public class MainActivity extends BaseActivity {
+	
 	private AccountsArrayAdapter _adapterAccounts = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-    	this.setTheme(R.style.Theme_Sherlock);
-    	
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
-        _activity = this;
+//        this.getActionBar().setDisplayOptions(ActivityInfo.UIOPTION_SPLIT_ACTION_BAR_WHEN_NARROW);
+//        this.getActionBar().setCustomView(R.layout.main);
+//        this.getActionBar().set
 
         /**
          * load preferences
@@ -92,144 +93,144 @@ public class MainActivity extends SherlockActivity {
 
         this.setTitle(getResString(R.string.app_name) + " - " + getResString(R.string.about_tagline));
         
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-            BitmapDrawable bg = (BitmapDrawable)getResources().getDrawable(R.drawable.bg_striped);
-            bg.setTileModeXY(TileMode.REPEAT, TileMode.REPEAT);
-            getSupportActionBar().setBackgroundDrawable(bg);
+//        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+//            BitmapDrawable bg = (BitmapDrawable)getResources().getDrawable(R.drawable.bg_striped);
+//            bg.setTileModeXY(TileMode.REPEAT, TileMode.REPEAT);
+//            getSupportActionBar().setBackgroundDrawable(bg);
+//
+//            BitmapDrawable bgSplit = (BitmapDrawable)getResources().getDrawable(R.drawable.bg_striped_split_img);
+//            bgSplit.setTileModeXY(TileMode.REPEAT, TileMode.REPEAT);
+//            getSupportActionBar().setSplitBackgroundDrawable(bgSplit);
+//        }        
 
-            BitmapDrawable bgSplit = (BitmapDrawable)getResources().getDrawable(R.drawable.bg_striped_split_img);
-            bgSplit.setTileModeXY(TileMode.REPEAT, TileMode.REPEAT);
-            getSupportActionBar().setSplitBackgroundDrawable(bgSplit);
-        }        
-
-        // init options spinner
-        Spinner spinnerOptions = (Spinner) findViewById(R.id.SpinnerOptions);
-        OperationsArrayAdapter adapter = new OperationsArrayAdapter(
-        		getSupportActionBar().getThemedContext(), R.layout.sherlock_spinner_item,
-        		new Operations[]{
-        		Operations.CHECK_CURRENT_BALANCE,
-				Operations.CHECK_AVAIL_MINUTES,
-				Operations.CHECK_AVAIL_DATA,
-				Operations.CHECK_SMS_PACKAGE,
-				Operations.CHECK_CREDIT_LIMIT,
-				Operations.CHECK_ALL,
-        });
-        adapter.setDropDownViewResource(R.layout.sherlock_spinner_dropdown_item);
-        spinnerOptions.setAdapter(adapter);
-        
-        // pre-select Operation
-        int pos = adapter.getItemPosition(GlobalSettings.getInstance().getLastSelectedOperation());
-        if (pos != -1) {
-        	spinnerOptions.setSelection(pos);
-        }
-
-        // populate available accounts
-        updateAccountsSpinner();
-
-        // create update button
-        Button btnUpdate = (Button) findViewById(R.id.ButtonUpdate);
-        btnUpdate.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				updateSelectedStatus();
-			}
-		});
-        
-     // create menu button
-        Button btnMenu = (Button) findViewById(R.id.ButtonMenu);
-        btnMenu.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				openOptionsMenu();
-			}
-		});        
-
-        //btnUpdate.getBackground().setColorFilter(0x2212FF00, Mode.LIGHTEN);
-        btnUpdate.getBackground().setColorFilter(Defs.CLR_BUTTON_UPDATE, Mode.MULTIPLY);
-        
+//        // init options spinner
+//        Spinner spinnerOptions = (Spinner) findViewById(R.id.SpinnerOptions);
+//        OperationsArrayAdapter adapter = new OperationsArrayAdapter(
+//        		getSupportActionBar().getThemedContext(), R.layout.sherlock_spinner_item,
+//        		new Operations[]{
+//        		Operations.CHECK_CURRENT_BALANCE,
+//				Operations.CHECK_AVAIL_MINUTES,
+//				Operations.CHECK_AVAIL_DATA,
+//				Operations.CHECK_SMS_PACKAGE,
+//				Operations.CHECK_CREDIT_LIMIT,
+//				Operations.CHECK_ALL,
+//        });
+//        adapter.setDropDownViewResource(R.layout.sherlock_spinner_dropdown_item);
+//        spinnerOptions.setAdapter(adapter);
+//        
+//        // pre-select Operation
+//        int pos = adapter.getItemPosition(GlobalSettings.getInstance().getLastSelectedOperation());
+//        if (pos != -1) {
+//        	spinnerOptions.setSelection(pos);
+//        }
+//
+//        // populate available accounts
+//        updateAccountsSpinner();
+//
+//        // create update button
+//        Button btnUpdate = (Button) findViewById(R.id.ButtonUpdate);
+//        btnUpdate.setOnClickListener(new OnClickListener() {
+//			@Override
+//			public void onClick(View v) {
+//				updateSelectedStatus();
+//			}
+//		});
+//        
+//     // create menu button
+//        Button btnMenu = (Button) findViewById(R.id.ButtonMenu);
+//        btnMenu.setOnClickListener(new OnClickListener() {
+//			@Override
+//			public void onClick(View v) {
+//				openOptionsMenu();
+//			}
+//		});        
+//
+//        //btnUpdate.getBackground().setColorFilter(0x2212FF00, Mode.LIGHTEN);
+//        btnUpdate.getBackground().setColorFilter(Defs.CLR_BUTTON_UPDATE, Mode.MULTIPLY);
+//        
         // load last saved operation info (if available)
         if (GlobalSettings.getInstance().getLastCheckedInfo() != GlobalSettings.NO_INFO) {
         	TextView textContent = (TextView) findViewById(R.id.TextContent);
         	textContent.setText(Html.fromHtml(GlobalSettings.getInstance().getLastCheckedInfo()));
         }
-
-        /**
-         * try to find legacy users and add them to UsersManager
-         */
-        final LegacySettings legacySettings = new LegacySettings();
-        legacySettings.init(prefsGeneral);
-        if (legacySettings.getPhoneNumber() != null) {
-
-			AlertDialog.Builder alertBuilder = new AlertDialog.Builder(_activity);
-			alertBuilder.setTitle(R.string.dlg_legacyuser_title)
-				.setMessage(String.format(getResString(R.string.dlg_legacyuser_msg), legacySettings.getPhoneNumber()))
-				.setIcon(R.drawable.alert)
-				.setPositiveButton(getResString(R.string.dlg_msg_yes), new DialogInterface.OnClickListener() {
-
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						// Create & Add user
-			        	User user = new User().setAccountName(legacySettings.getPhoneNumber())
-							.setPhoneNumber(legacySettings.getPhoneNumber())
-							.setAccountType(AccountType.Globul); //V1.1.0 has only Globul support
-
-			        	try {
-				        	if (UsersManager.getInstance().isUserExists(legacySettings.getPhoneNumber()))
-				        		throw new Exception(getResString(R.string.err_msg_user_already_exists));
-
-				        	UsersManager.getInstance().addUser(user);
-			        		UsersManager.getInstance().setUserPassword(user, legacySettings.getPassword());
-			        		UsersManager.getInstance().save(prefsUsers);
-			        		updateAccountsSpinner();
-			        	}
-			        	catch(Exception e) {
-			        		Utils.showAlertDialog(_activity, String.format(getResString(R.string.dlg_error_msg_legacy_user_failed), e.getMessage()), getResString(R.string.dlg_error_msg_title));
-			        	}
-			        	legacySettings.clear();
-						dialog.dismiss();
-					}
-				})
-				.setNegativeButton(getResString(R.string.dlg_msg_no), new DialogInterface.OnClickListener() {
-
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						legacySettings.clear();
-						dialog.dismiss();
-					}
-				}).show();
-        }
+//
+//        /**
+//         * try to find legacy users and add them to UsersManager
+//         */
+//        final LegacySettings legacySettings = new LegacySettings();
+//        legacySettings.init(prefsGeneral);
+//        if (legacySettings.getPhoneNumber() != null) {
+//
+//			AlertDialog.Builder alertBuilder = new AlertDialog.Builder(_activity);
+//			alertBuilder.setTitle(R.string.dlg_legacyuser_title)
+//				.setMessage(String.format(getResString(R.string.dlg_legacyuser_msg), legacySettings.getPhoneNumber()))
+//				.setIcon(R.drawable.alert)
+//				.setPositiveButton(getResString(R.string.dlg_msg_yes), new DialogInterface.OnClickListener() {
+//
+//					@Override
+//					public void onClick(DialogInterface dialog, int which) {
+//						// Create & Add user
+//			        	User user = new User().setAccountName(legacySettings.getPhoneNumber())
+//							.setPhoneNumber(legacySettings.getPhoneNumber())
+//							.setAccountType(AccountType.Globul); //V1.1.0 has only Globul support
+//
+//			        	try {
+//				        	if (UsersManager.getInstance().isUserExists(legacySettings.getPhoneNumber()))
+//				        		throw new Exception(getResString(R.string.err_msg_user_already_exists));
+//
+//				        	UsersManager.getInstance().addUser(user);
+//			        		UsersManager.getInstance().setUserPassword(user, legacySettings.getPassword());
+//			        		UsersManager.getInstance().save(prefsUsers);
+//			        		updateAccountsSpinner();
+//			        	}
+//			        	catch(Exception e) {
+//			        		Utils.showAlertDialog(_activity, String.format(getResString(R.string.dlg_error_msg_legacy_user_failed), e.getMessage()), getResString(R.string.dlg_error_msg_title));
+//			        	}
+//			        	legacySettings.clear();
+//						dialog.dismiss();
+//					}
+//				})
+//				.setNegativeButton(getResString(R.string.dlg_msg_no), new DialogInterface.OnClickListener() {
+//
+//					@Override
+//					public void onClick(DialogInterface dialog, int which) {
+//						legacySettings.clear();
+//						dialog.dismiss();
+//					}
+//				}).show();
+//        }
     }
     
     @Override
     protected void onStart() {
     	
-    	// trap Operations selection
-    	Spinner spinnerOptions = (Spinner) findViewById(R.id.SpinnerOptions);
-        spinnerOptions.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-        	@Override
-        	public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-        		Operations operation = (Operations) parentView.getSelectedItem();
-        		GlobalSettings.getInstance().putLastSelectedOperation(operation);
-        	}
-        	
-        	@Override
-        	public void onNothingSelected(AdapterView<?> parentView) {
-        	}
-		});   
-        
-        // trap phone number selection
-        Spinner spinnerAccounts = (Spinner) findViewById(R.id.SpinnerUserAccounts);
-        spinnerAccounts.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-        	@Override
-        	public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-        		String phoneNumber = (String) parentView.getSelectedItem();
-        		GlobalSettings.getInstance().putLastSelectedAccount(phoneNumber);
-        	}
-        	
-        	@Override
-        	public void onNothingSelected(AdapterView<?> parentView) {
-        	}
-		});           
+//    	// trap Operations selection
+//    	Spinner spinnerOptions = (Spinner) findViewById(R.id.SpinnerOptions);
+//        spinnerOptions.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//        	@Override
+//        	public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+//        		Operations operation = (Operations) parentView.getSelectedItem();
+//        		GlobalSettings.getInstance().putLastSelectedOperation(operation);
+//        	}
+//        	
+//        	@Override
+//        	public void onNothingSelected(AdapterView<?> parentView) {
+//        	}
+//		});   
+//        
+//        // trap phone number selection
+//        Spinner spinnerAccounts = (Spinner) findViewById(R.id.SpinnerUserAccounts);
+//        spinnerAccounts.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//        	@Override
+//        	public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+//        		String phoneNumber = (String) parentView.getSelectedItem();
+//        		GlobalSettings.getInstance().putLastSelectedAccount(phoneNumber);
+//        	}
+//        	
+//        	@Override
+//        	public void onNothingSelected(AdapterView<?> parentView) {
+//        	}
+//		});           
     	
     	super.onStart();
     }
@@ -256,27 +257,62 @@ public class MainActivity extends SherlockActivity {
     	updateAccountsSpinner();
     }
     
+//    public boolean Activity.onCreateOptionsMenu(android.view.Menu menu) {
+//    	return mSherlock.dispatchCreateOptionsMenu(menu);
+//    }
+    
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-		menu.clear();
+//		menu.clear();
+    	
+		menu.add(0, Defs.MENU_REFRESH, 0, R.string.text_refresh)
+		.setIcon(R.drawable.ic_refresh)
+		.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 		
-		menu.add(1, Defs.MENU_ADD_ACCOUNT, 0, getResString(R.string.menu_add_account)).setIcon(R.drawable.ic_menu_invite)
-		.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+		// Account Operations
+        SubMenu submenuOperations = menu.addSubMenu(R.string.operations_title);
+        
+        Operations[] operationsArray = new Operations[] {
+			Operations.CHECK_CURRENT_BALANCE,
+			Operations.CHECK_AVAIL_MINUTES,
+			Operations.CHECK_AVAIL_DATA,
+			Operations.CHECK_SMS_PACKAGE,
+			Operations.CHECK_CREDIT_LIMIT,
+			Operations.CHECK_ALL
+		};  
+        
+        for (Operations operation : operationsArray) {
+        	submenuOperations.add(5, operation.getId(), 0, operation.getResourceId());	
+		}
+
+        MenuItem subMenu1Item = submenuOperations.getItem();
+        subMenu1Item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 		
-		menu.add(1, Defs.MENU_MANAGE_ACCOUNTS, 0, getResString(R.string.menu_manage_accounts)).setIcon(R.drawable.ic_menu_manage)
-		.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
-		
-		menu.add(1, Defs.MENU_ABOUT, 15, getResString(R.string.menu_about)).setIcon(R.drawable.ic_menu_help)
-		.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
-		
-		return super.onCreateOptionsMenu(menu);
+        // App Menu
+        SubMenu submenuActions = menu.addSubMenu("Themes");
+        
+        submenuActions.add(0, Defs.MENU_ADD_ACCOUNT, 0, R.string.menu_add_account)
+		.setIcon(R.drawable.ic_menu_invite)
+		.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+        
+        submenuActions.add(0, Defs.MENU_MANAGE_ACCOUNTS, 0, R.string.menu_manage_accounts)
+		.setIcon(R.drawable.ic_menu_manage)
+		.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+        
+        submenuActions.add(0, Defs.MENU_ABOUT, 0, R.string.menu_about)
+		.setIcon(R.drawable.ic_menu_help)
+		.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);        
+        
+        submenuActions.getItem().setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+
+		return true; //mSherlock.dispatchCreateOptionsMenu(menu);
     }
 
 //	@Override
 //	public boolean onPrepareOptionsMenu(Menu menu) {
 //		return initMenu(menu);
 //	}
-
+    
 	@Override
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
 
