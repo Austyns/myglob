@@ -70,7 +70,7 @@
 		/>	
 		
 	<Button 
-		android:text="@string/btn_msg_menu" 
+		android:text="@string/text_menu" 
 		android:id="@+id/ButtonMenu" 
 		android:minWidth="140dp" 
 		android:layout_width="wrap_content" 

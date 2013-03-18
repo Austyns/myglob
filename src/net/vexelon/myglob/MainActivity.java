@@ -23,8 +23,6 @@
  */
 package net.vexelon.myglob;
 
-import com.actionbarsherlock.ActionBarSherlock;
-import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
@@ -36,30 +34,16 @@ import net.vexelon.myglob.actions.Action;
 import net.vexelon.myglob.configuration.AccountPreferencesActivity;
 import net.vexelon.myglob.configuration.Defs;
 import net.vexelon.myglob.configuration.GlobalSettings;
-import net.vexelon.myglob.configuration.LegacySettings;
-import net.vexelon.myglob.users.AccountType;
-import net.vexelon.myglob.users.User;
 import net.vexelon.myglob.users.UsersManager;
 import net.vexelon.myglob.utils.Utils;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.ActivityInfo;
-import android.graphics.PorterDuff.Mode;
-import android.graphics.Shader.TileMode;
-import android.graphics.drawable.BitmapDrawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -265,7 +249,7 @@ public class MainActivity extends BaseActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
 //		menu.clear();
     	
-		menu.add(0, Defs.MENU_REFRESH, 0, R.string.text_refresh)
+		menu.add(Menu.NONE, Defs.MENU_REFRESH, 0, R.string.text_refresh)
 		.setIcon(R.drawable.ic_refresh)
 		.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 		
@@ -285,25 +269,27 @@ public class MainActivity extends BaseActivity {
         	submenuOperations.add(5, operation.getId(), 0, operation.getResourceId());	
 		}
 
-        MenuItem subMenu1Item = submenuOperations.getItem();
-        subMenu1Item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+        submenuOperations.getItem()
+        .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 		
         // App Menu
-        SubMenu submenuActions = menu.addSubMenu("Themes");
+        SubMenu submenuActions = menu.addSubMenu(R.string.text_menu);
         
-        submenuActions.add(0, Defs.MENU_ADD_ACCOUNT, 0, R.string.menu_add_account)
+        submenuActions.add(Menu.NONE, Defs.MENU_ADD_ACCOUNT, 0, R.string.menu_add_account)
 		.setIcon(R.drawable.ic_menu_invite)
 		.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
         
-        submenuActions.add(0, Defs.MENU_MANAGE_ACCOUNTS, 0, R.string.menu_manage_accounts)
+        submenuActions.add(Menu.NONE, Defs.MENU_MANAGE_ACCOUNTS, 0, R.string.menu_manage_accounts)
 		.setIcon(R.drawable.ic_menu_manage)
 		.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
         
-        submenuActions.add(0, Defs.MENU_ABOUT, 0, R.string.menu_about)
+        submenuActions.add(Menu.NONE, Defs.MENU_ABOUT, 0, R.string.menu_about)
 		.setIcon(R.drawable.ic_menu_help)
-		.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);        
+		.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);        
         
-        submenuActions.getItem().setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        submenuActions.getItem()
+        .setIcon(R.drawable.ic_menu_moreoverflow_normal_holo_dark)
+        .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
 		return true; //mSherlock.dispatchCreateOptionsMenu(menu);
     }
