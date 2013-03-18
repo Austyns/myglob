@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="tabs_array">
+        <item >Профил</item>
+        <item >Относно</item>
+    </string-array>
+    <string-array name="array_available_operators"><item>Globul</item></string-array>
+</resources>

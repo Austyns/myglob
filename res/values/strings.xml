@@ -47,9 +47,7 @@
 <string name="text_no_data">Няма заредени данни. Моля обновете!</string>
 <string name="text_selectitem">Проверка на</string>
 <string name="operation_check_all">Всички</string>
-<string-array name="array_available_operators"><item>Globul</item>
 
-</string-array>
 
 <string name="menu_add_account">Добави номер</string>
 <string name="menu_manage_accounts">Редактирай номер</string>
@@ -77,4 +75,8 @@
 <string name="widget_4x1">MyGlob (4x1)</string>
 <string name="widget_4x2">MyGlob (4x2)</string>
 <string name="btn_msg_menu">Меню</string>
+<string name="text_checks_today">Проверки днес</string>
+<string name="text_checks_overal">Проверки общо</string>
+<string name="text_traffic_today">Трафик днес</string>
+<string name="text_traffic_overal">Трафик общо</string>
 </resources>
