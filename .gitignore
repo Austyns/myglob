@@ -1,2 +1,6 @@
+# Eclipse files
 /bin
 /gen
+
+.metadata/*
+.classpath
