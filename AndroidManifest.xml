@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="net.vexelon.myglob" android:versionName="2.1.2" android:versionCode="10" >
-    <application android:icon="@drawable/icon" android:label="@string/app_name" android:description="@string/about_tagline" android:installLocation="preferExternal" android:debuggable="false" android:theme="@style/Theme.Sherlock">
-        <activity android:label="@string/app_name" android:name="MainActivity" android:configChanges="keyboardHidden|orientation">
+    <application android:icon="@drawable/icon" android:label="@string/app_name" android:description="@string/about_tagline" android:installLocation="preferExternal" android:debuggable="false">
+        <activity android:label="@string/app_name" android:name="MainActivity" android:configChanges="keyboardHidden|orientation" android:uiOptions="splitActionBarWhenNarrow">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -12,7 +12,7 @@
 android:installLocation="preferExternal"
  -->
     
-<activity android:name="AboutActivity" android:theme="@android:style/Theme.Dialog" android:label="@string/app_name"></activity>
+<activity android:name="AboutActivity" android:label="@string/app_name" android:uiOptions="splitActionBarWhenNarrow"></activity>
 
 <activity android:label="Preferences1" android:name=".configuration.AccountPreferencesActivity"></activity>
 <receiver android:name="WidgetProvider" android:label="@string/widget_4x1">

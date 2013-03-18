@@ -22,7 +22,7 @@
 
 <string name="menu_about">Относно</string>
 <string name="dlg_progress_title">Моля изчакайте</string>
-<string name="dlg_progress_message">Изпращане на заявка към сървъра...</string>
+<string name="dlg_progress_message">Изпращане на заявка към сървъра&#8230;</string>
 <string name="err_msg_username_missing">Празно или невалидно потребителско име! (Пример: 0896123456)</string>
 <string name="err_msg_password_missing">Празна или невалидна парола!</string>
 <string name="dlg_error_msg_encrypt_failed">Невъзможно криптиране на паролата! Паролата, която сте въвели ще бъде съхранена некриптирана на устройството. Искате ли да продължите ?</string>
@@ -30,7 +30,7 @@
 <string name="dlg_error_msg_create_key_failed">Невъзможно създаването на ключ за криптиране!</string>
 <string name="dlg_msg_yes">Да</string>
 <string name="dlg_msg_no">Не</string>
-<string name="btn_msg_update">Обнови</string>
+<string name="text_refresh">Обнови</string>
 <string name="btn_msg_login">Влизане</string>
 <string name="text_username">Потребителско име/номер:</string>
 <string name="text_password">Парола:</string>
@@ -79,4 +79,5 @@
 <string name="text_checks_overal">Проверки общо</string>
 <string name="text_traffic_today">Трафик днес</string>
 <string name="text_traffic_overal">Трафик общо</string>
+<string name="operations_title">Операции</string>
 </resources>

@@ -1,171 +1,197 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
   	android:layout_width="fill_parent"
-  	android:layout_height="wrap_content"
+  	android:layout_height="fill_parent"
   	android:padding="4sp"
-  	android:orientation="vertical"
-    >
+  	android:orientation="vertical">
+    
     
 <!--  Options layout -->
-<RelativeLayout
-  	android:layout_width="fill_parent"
-  	android:layout_height="wrap_content"
-  	android:background="#c6c3c6"
-    >
-    <!-- list of operations -->
-	<Spinner 
-		android:id="@+id/SpinnerOptions" 
-		android:prompt="@string/text_selectitem"
-		android:layout_width="fill_parent" 
-		android:layout_height="wrap_content"
-		android:layout_marginTop="2dp"
-		/>
 
-	<LinearLayout 
-		android:id="@+id/LayoutNoAccounts" 
-	  	android:layout_width="fill_parent"
-  		android:layout_height="wrap_content"
-  		android:layout_below="@+id/SpinnerOptions"
-  		>
-	<ImageView 
-		android:id="@+id/user_icon"
-		android:src="@drawable/user_red"
-		android:layout_width="wrap_content" 
-		android:layout_height="wrap_content" 
-		/>	
-	<TextView  
-		android:id="@+id/TextSelectAccount"
-	    android:layout_width="wrap_content" 
-	    android:layout_height="wrap_content"
-	    android:layout_toRightOf="@+id/user_icon"
-	    android:text="@string/text_no_accounts" 
-	    android:layout_marginLeft="4dp"
-	    android:paddingLeft="2dp"
-	    android:paddingRight="2dp"
-	    android:paddingTop="1dp"
-	    android:paddingBottom="1dp"
-	    android:background="#FFFFFF"
-	    android:textColor="#1F1FFF" />	
-	</LinearLayout>
-	
-	<!-- list of accounts -->
-	<Spinner 
-		android:id="@+id/SpinnerUserAccounts" 
-		android:prompt="@string/text_selectaccount"
-		android:layout_width="fill_parent" 
-		android:layout_height="wrap_content"
-		android:layout_below="@+id/SpinnerOptions"
-		>
-	</Spinner>	
-	
-	<Button 
-		android:text="@string/btn_msg_update" 
-		android:id="@+id/ButtonUpdate" 
-		android:minWidth="140dp" 
-		android:layout_width="wrap_content" 
-		android:layout_height="wrap_content"
-		android:layout_below="@+id/SpinnerUserAccounts"
-		android:textStyle="bold"
-		android:textColor="#FFFFFFFF"
-		/>	
-		
-	<Button 
-		android:text="@string/btn_msg_menu" 
-		android:id="@+id/ButtonMenu" 
-		android:minWidth="140dp" 
-		android:layout_width="wrap_content" 
-		android:layout_height="wrap_content"
-		android:layout_below="@+id/SpinnerUserAccounts"
-		android:layout_alignParentRight="true"
-		android:textStyle="bold"
-		android:textColor="#000"
-		/>		
-
-</RelativeLayout>
+<LinearLayout
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content" >
     
-<!-- Options frame 
-<FrameLayout 
-	android:id="@+id/FrameTopOptions" 
-	android:layout_width="fill_parent" 
-    android:layout_height="wrap_content"
-    android:background="#c6c3c6"
-    android:minHeight="54dp"
-    android:paddingLeft="2dp"
-    android:paddingRight="2dp">
-	
-	<Spinner 
-		android:id="@+id/SpinnerOptions" 
-		android:prompt="@string/text_selectitem"
-		android:layout_width="fill_parent" 
-		android:layout_height="wrap_content"
-		android:layout_gravity="center_vertical">
-	</Spinner>
-	
-</FrameLayout>
+    <!--  profile  -->
+    
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp" >        
+        
 
-<FrameLayout 
-	android:id="@+id/FrameBottomOptions" 
-	android:layout_width="fill_parent" 
-    android:layout_height="fill_parent"
-    android:layout_gravity="bottom"
-    android:background="#c6c3c6"
-    android:minHeight="54dip"
-    android:paddingLeft="2dip"
-    android:paddingRight="2dip">
+      	<TextView
+             android:id="@+id/tv_profile_number"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:textAppearance="?android:attr/textAppearanceLarge"
+             android:text="0899123456" 
+             />
+         <TextView
+             android:id="@+id/tv_profile_name"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:textColorLink="@color/titletextcolor"
+             android:textAppearance="?android:attr/textAppearanceSmall"
+             android:autoLink="email"
+             android:text="email" 
+             />                 
+         <TextView
+             android:id="@+id/tv_profile_lastchecked_at"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:textAppearance="?android:attr/textAppearanceSmall"
+             android:text="datetime"  
+             />
+         <!-- TextView
+             android:id="@+id/tv_location"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:textAppearance="?android:attr/textAppearanceSmall"
+             android:autoLink="map" / -->
+         
+    </LinearLayout>    
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="10dp" />
+    <!-- Stats -->
+    <TableLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp" >
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            
+            <TableLayout
+                android:id="@+id/cell_checks_today"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" >
+                <TableRow>
+                    <TextView
+                        android:id="@+id/tv_checks_today"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:text="123" />                    
+                </TableRow>
+                <TableRow>
+                    <TextView
+                        android:id="@+id/tv_checks_today_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:text="@string/text_checks_today" />
+                </TableRow>
+            </TableLayout>
+            <TableLayout
+                android:id="@+id/cell_checks_overal"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" >
+                <TableRow>
+                    <TextView
+                        android:id="@+id/tv_checks_overal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:text="123" />                    
+                </TableRow>
+                <TableRow>
+                    <TextView
+                        android:id="@+id/tv_checks_overal_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:text="@string/text_checks_overal" />
+                </TableRow>
+            </TableLayout>
+            <TableLayout
+                android:id="@+id/cell_traffic_today"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" >
+                <TableRow>
+                    <TextView
+                        android:id="@+id/tv_traffic_today"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:text="123" />                    
+                </TableRow>
+                <TableRow>
+                    <TextView
+                        android:id="@+id/tv_traffic_today_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:text="@string/text_traffic_today"  
+                        />
+                </TableRow>
+            </TableLayout>
+            <TableLayout
+                android:id="@+id/cell_traffic_overal"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" >
+                <TableRow>
+                    <TextView
+                        android:id="@+id/tv_traffic_overal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:text="123" />                    
+                </TableRow>
+                <TableRow>
+                    <TextView
+                        android:id="@+id/tv_traffic_overal_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:text="@string/text_traffic_overal"   
+                        />
+                </TableRow>
+            </TableLayout>
+        </TableRow>
+    </TableLayout>
+    <!-- list of operations -->
 
-<LinearLayout
-	android:id="@+id/LayoutLoggedInFlag2"
-  	android:layout_width="fill_parent"
-  	android:layout_height="wrap_content"
-    >
+    <!--  LinearLayout
+        android:id="@+id/LayoutNoAccounts"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
 
+        <ImageView
+            android:id="@+id/user_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/user_red" />
 
- 
-</LinearLayout>    
+        <TextView
+            android:id="@+id/TextSelectAccount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="4dp"
+            android:layout_toRightOf="@+id/user_icon"
+            android:background="#FFFFFF"
+            android:paddingBottom="1dp"
+            android:paddingLeft="2dp"
+            android:paddingRight="2dp"
+            android:paddingTop="1dp"
+            android:text="@string/text_no_accounts"
+            android:textColor="#1F1FFF" />
+    </LinearLayout -->
 
-
-
-<LinearLayout
-	android:id="@+id/LayoutLoggedInFlag2"
-  	android:layout_width="fill_parent"
-  	android:layout_height="wrap_content"
-  	android:paddingTop="58dp">
-<Button 
-	android:text="@string/btn_msg_update" 
-	android:id="@+id/ButtonUpdate" 
-	android:minWidth="140dp" 
-	android:layout_width="wrap_content" 
-	android:layout_height="wrap_content"
-	android:layout_gravity="left"
-	android:textStyle="bold"
-	android:textColor="#FFFFFFFF"
-	/>
+    <!-- list of accounts -->
 </LinearLayout>
-	
-<RelativeLayout
-	android:id="@+id/LayoutLoggedInFlag"
-  	android:layout_width="fill_parent"
-  	android:layout_height="wrap_content"
-  	android:gravity="right" 
-  	android:paddingRight="6sp"
-    >
-
-	
-<TextView  
-	android:id="@+id/TextUserLoggedIn"
-    android:layout_width="wrap_content" 
-    android:layout_height="wrap_content"
-    android:layout_toRightOf="@+id/user_icon"
-    android:text="DUMMY" 
-    android:layout_marginLeft="4dp"
-    android:padding="2dp"
-    android:background="#FFFFFF"
-    android:textColor="#1F1FFF" />	 
-</RelativeLayout>	
-	
-</FrameLayout>
--->
-
+<View
+    android:layout_width="fill_parent"
+    android:layout_height="10dp" />    
 <!--  Content -->
 <ScrollView 
 	android:layout_width="fill_parent"
@@ -177,13 +203,14 @@
   		android:orientation="vertical"
   		android:layout_weight="1"
   		android:gravity="top">
+
   		
-            <TextView
-                android:id="@+id/TextContent"
-                android:textAppearance="@style/FontContent"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/text_no_data" />
+        <TextView
+            android:id="@+id/TextContent"
+            android:textAppearance="@style/FontContent"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/text_no_data" />
     </LinearLayout>
 </ScrollView> 
 
