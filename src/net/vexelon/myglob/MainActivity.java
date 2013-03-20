@@ -67,12 +67,7 @@ public class MainActivity extends SherlockFragmentActivity {
     public void onCreate(Bundle savedInstanceState) {
     	this.setTheme(Defs.THEME);
         super.onCreate(savedInstanceState);
-        
         setContentView(R.layout.view_pager);
-
-//        this.getActionBar().setDisplayOptions(ActivityInfo.UIOPTION_SPLIT_ACTION_BAR_WHEN_NARROW);
-//        this.getActionBar().setCustomView(R.layout.main);
-//        this.getActionBar().set
 
         /**
          * load preferences
@@ -88,7 +83,6 @@ public class MainActivity extends SherlockFragmentActivity {
          * initialize UI
          */
 //        this.setTitle(getResString(R.string.app_name) + " - " + getResString(R.string.about_tagline));
-        
         this._actionBar = getSupportActionBar();
         this._actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
         this._actionBar.setTitle(getResString(R.string.app_name) + " - " + getResString(R.string.about_tagline));
@@ -104,58 +98,24 @@ public class MainActivity extends SherlockFragmentActivity {
 			
 			@Override
 			public void onPageSelected(int arg0) {
-				// TODO Auto-generated method stub
-			}
-			
-			@Override
-			public void onPageScrolled(int arg0, float arg1, int arg2) {
-				// TODO Auto-generated method stub
-			}
-			
-			@Override
-			public void onPageScrollStateChanged(int arg0) {
 				_actionBar.setSelectedNavigationItem(arg0);
 			}
+			
+			@Override
+			public void onPageScrolled(int arg0, float arg1, int arg2) {}
+			
+			@Override
+			public void onPageScrollStateChanged(int arg0) {}
 		});
         
         // Create Fragments
         
-        Tab tab = _actionBar.newTab().setText("home")
-        		.setTabListener(new ActionBar.TabListener() {
-					
-					@Override
-					public void onTabUnselected(Tab tab, FragmentTransaction ft) {}
-					
-					@Override
-					public void onTabSelected(Tab tab, FragmentTransaction ft) {
-						if (tab.getText().equals("home")) {
-							_pager.setCurrentItem(0);
-						}
-					}
-					
-					@Override
-					public void onTabReselected(Tab tab, FragmentTransaction ft) {}
-				});
-        
+        Tab tab = _actionBar.newTab().setText(R.string.text_tab_home)
+        		.setTabListener(new MyTabListener(_pager, HomeFragment.TAB_ID));
         _actionBar.addTab(tab, true);
         
-        tab = _actionBar.newTab().setText("about")
-        		.setTabListener(new ActionBar.TabListener() {
-					
-					@Override
-					public void onTabUnselected(Tab tab, FragmentTransaction ft) {}
-					
-					@Override
-					public void onTabSelected(Tab tab, FragmentTransaction ft) {
-						if (tab.getText().equals("about")) {
-							_pager.setCurrentItem(0);
-						}						
-					}
-					
-					@Override
-					public void onTabReselected(Tab tab, FragmentTransaction ft) {}
-				});
-        
+        tab = _actionBar.newTab().setText(R.string.text_tab_about)
+        		.setTabListener(new MyTabListener(_pager, AboutFragment.TAB_ID));
         _actionBar.addTab(tab);                
         
 //        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
@@ -253,7 +213,37 @@ public class MainActivity extends SherlockFragmentActivity {
 	
 	protected String getResString(int id) {
 		return this.getResources().getString(id);
-	}		
+	}
+	
+	/******************************************************************************************************************
+	 * 
+	 * Set selected Tab
+	 *
+	 */
+	public class MyTabListener implements ActionBar.TabListener {
+		
+		private int _tabId;
+		private ViewPager _pager;
+		
+		public MyTabListener(ViewPager pager, int tabId) {
+			this._pager = pager;
+			this._tabId = tabId;
+		}
+		
+		@Override
+		public void onTabReselected(Tab tab, FragmentTransaction ft) {}
+		
+		@Override
+		public void onTabSelected(Tab tab, FragmentTransaction ft) {
+			if (Defs.LOG_ENABLED) 
+				Log.d(Defs.LOG_TAG, "Selectin tab id: " + this._tabId);
+			
+			_pager.setCurrentItem(_tabId);
+		}
+		
+		@Override
+		public void onTabUnselected(Tab tab, FragmentTransaction ft) {}
+	}
 	
 	/******************************************************************************************************************
 	 * 
@@ -276,11 +266,11 @@ public class MainActivity extends SherlockFragmentActivity {
 			if (Defs.LOG_ENABLED)
 				Log.d(Defs.LOG_TAG, "getItem " + position);
 			
-			if (position == 1) {
-				// About
+			switch (position) {
+			case AboutFragment.TAB_ID:
 				_aboutFragment = AboutFragment.newInstance();
-				return _aboutFragment;
-			} 
+				return _aboutFragment;		
+			}
 				
 			// default (Home)
 			_homeFragment = HomeFragment.newInstance();

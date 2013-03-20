@@ -19,8 +19,6 @@
 <string name="dlg_error_msg_securecode">Операторът изисква да се въведе код за сигурност! За съжаление текущата версия на тази програма не поддържа тази възможност. Моля, опитайте да обновите пак след няколко минути.</string>
 <string name="menu_signin">Вписване</string>
 <string name="menu_signout">Отписване</string>
-
-<string name="menu_about">Относно</string>
 <string name="dlg_progress_title">Моля изчакайте</string>
 <string name="dlg_progress_message">Изпращане на заявка към сървъра&#8230;</string>
 <string name="err_msg_username_missing">Празно или невалидно потребителско име! (Пример: 0896123456)</string>
@@ -80,4 +78,6 @@
 <string name="text_traffic_today">Трафик днес</string>
 <string name="text_traffic_overal">Трафик общо</string>
 <string name="operations_title">Операции</string>
+<string name="text_tab_home">Начало</string>
+<string name="text_tab_about">Относно</string>
 </resources>

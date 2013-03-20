@@ -32,6 +32,8 @@ import android.widget.Toast;
 import com.actionbarsherlock.app.SherlockFragment;
 
 public class HomeFragment extends SherlockFragment implements OnClickListener {
+	// unique ID
+	public static final int TAB_ID = 0;
 	
 	private Activity _activity;
 	private AccountsArrayAdapter _adapterAccounts = null;
