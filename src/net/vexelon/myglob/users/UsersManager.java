@@ -46,8 +46,8 @@ public class UsersManager {
 	private ArrayList<User> _users = new ArrayList<User>();
 	private PasswordEngine _passwordEngine = PasswordEngineImpl2.getInstance();
 
-	public UsersManager() {
-		
+	protected UsersManager() {
+		// empty
 	}
 	
 	public int size() {
@@ -94,6 +94,11 @@ public class UsersManager {
 		return getUserByPhoneNumber(phoneNumber) != null;
 	}
 	
+	/**
+	 * 
+	 * @param phoneNumber
+	 * @return {@link User} object or <code>null</code>
+	 */
 	public User getUserByPhoneNumber(String phoneNumber) {
 		for (User user : _users) {
 			if (user.getPhoneNumber().equals(phoneNumber)) {
@@ -120,6 +125,12 @@ public class UsersManager {
 		_users.remove(getUserByPhoneNumber(phoneNumber));
 	}
 	
+	/**
+	 * 
+	 * @param user
+	 * @return Password string or <code>null</code>
+	 * @throws Exception
+	 */
 	public String getUserPassword(User user) throws Exception {
 		if (!TextUtils.isEmpty(user.getEncodedPassword())) {
 			return _passwordEngine.decodeAndDecrypt(user.getEncodedPassword());
