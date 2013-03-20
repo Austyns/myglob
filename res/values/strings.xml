@@ -80,4 +80,5 @@
 <string name="operations_title">Операции</string>
 <string name="text_tab_home">Начало</string>
 <string name="text_tab_about">Относно</string>
+<string name="text_status">Статус</string>
 </resources>
