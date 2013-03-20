@@ -33,13 +33,28 @@ public class User {
 	private String _phoneNumber;
 	private String _encodedPassword;
 	
+	// XXX
+	// Not really prefs, these should be moved to SQLite
+	private long _checksToday = 0;
+	private long _checksTotal = 0;
+	private long _trafficToday = 0L;
+	private long _trafficTotal = 0L;
+	private long _lastCheckDateTime = 0L;
+	
 	public User() {
+		// Empty
 	}
 	
 	public User load(int id, SharedPreferences prefs) {
 		_accountName = prefs.getString(Defs.PREFS_USER_NAME + id, "");
 		_phoneNumber = prefs.getString(Defs.PREFS_USER_PHONENUMBER + id, "");
 		_encodedPassword = prefs.getString(Defs.PREFS_USER_PASSWORD + id, "");
+		// 20.03
+		_checksToday = prefs.getLong(Defs.PREFS_USER_CHECKSTODAY + id, 0);
+		_checksTotal = prefs.getLong(Defs.PREFS_USER_CHECKSTOTAL + id, 0);
+		_trafficToday = prefs.getLong(Defs.PREFS_USER_TRAFFICTODAY + id, 0);
+		_trafficTotal = prefs.getLong(Defs.PREFS_USER_TRAFFICTOTAL + id, 0);
+		_lastCheckDateTime = prefs.getLong(Defs.PREFS_USER_LASTCHECKDATETIME + id, 0);
 		return this;
 	}
 	
@@ -47,6 +62,12 @@ public class User {
 		editor.putString(Defs.PREFS_USER_NAME + id, _accountName);
 		editor.putString(Defs.PREFS_USER_PHONENUMBER + id, _phoneNumber);
 		editor.putString(Defs.PREFS_USER_PASSWORD + id, _encodedPassword);
+		// 20.03
+		editor.putLong(Defs.PREFS_USER_CHECKSTODAY + id, _checksToday);
+		editor.putLong(Defs.PREFS_USER_CHECKSTOTAL + id, _checksTotal);
+		editor.putLong(Defs.PREFS_USER_TRAFFICTODAY + id, _trafficToday);
+		editor.putLong(Defs.PREFS_USER_TRAFFICTOTAL + id, _trafficTotal);
+		editor.putLong(Defs.PREFS_USER_LASTCHECKDATETIME + id, _lastCheckDateTime);
 		return this;
 	}
 	
@@ -84,6 +105,48 @@ public class User {
 	public User setAccountType(AccountType accountType) {
 		_accountType = accountType;
 		return this;
+	}	
+	
+	// --- 20.03 ---
+	
+	public long getChecksToday() {
+		return _checksToday;
+	}
+
+	public void setChecksToday(long _checksToday) {
+		this._checksToday = _checksToday;
+	}
+
+	public long getChecksTotal() {
+		return _checksTotal;
+	}
+
+	public void setChecksTotal(long _checksTotal) {
+		this._checksTotal = _checksTotal;
+	}
+
+	public long getTrafficToday() {
+		return _trafficToday;
+	}
+
+	public void setTrafficToday(long _trafficToday) {
+		this._trafficToday = _trafficToday;
+	}
+
+	public long getTrafficTotal() {
+		return _trafficTotal;
+	}
+
+	public void setTrafficTotal(long _trafficTotal) {
+		this._trafficTotal = _trafficTotal;
+	}
+
+	public long getLastCheckDateTime() {
+		return _lastCheckDateTime;
+	}
+
+	public void setLastCheckDateTime(long _lastCheckDateTime) {
+		this._lastCheckDateTime = _lastCheckDateTime;
 	}	
 
 }

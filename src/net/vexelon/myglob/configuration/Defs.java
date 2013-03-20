@@ -53,6 +53,11 @@ public class Defs {
 	public final static String PREFS_USER_NAME = "_USER_NAME";
 	public final static String PREFS_USER_PHONENUMBER = "_USER_PHONENUMBER";
 	public final static String PREFS_USER_PASSWORD = "_PASSWORD";
+	public final static String PREFS_USER_CHECKSTODAY = "_CHECKSTODAY";
+	public final static String PREFS_USER_CHECKSTOTAL = "_CHECKSTOTAL";
+	public final static String PREFS_USER_TRAFFICTODAY = "_TRAFFICTODAY";
+	public final static String PREFS_USER_TRAFFICTOTAL = "_TRAFFICTOTAL";
+	public final static String PREFS_USER_LASTCHECKDATETIME = "_LASTCHECKDATETIME";
 	
 	public final static int INTENT_ACCOUNT_ADD_RQ = 200;
 	public final static int INTENT_ACCOUNT_EDIT_RQ = 210;
