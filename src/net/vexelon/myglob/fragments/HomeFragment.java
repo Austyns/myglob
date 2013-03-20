@@ -10,6 +10,7 @@ import net.vexelon.myglob.actions.Action;
 import net.vexelon.myglob.configuration.AccountPreferencesActivity;
 import net.vexelon.myglob.configuration.Defs;
 import net.vexelon.myglob.configuration.GlobalSettings;
+import net.vexelon.myglob.users.User;
 import net.vexelon.myglob.users.UsersManager;
 import net.vexelon.myglob.utils.Utils;
 import android.app.Activity;
@@ -29,9 +30,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockFragment;
-
-public class HomeFragment extends SherlockFragment implements OnClickListener {
+public class HomeFragment extends BaseFragment implements OnClickListener {
 	// unique ID
 	public static final int TAB_ID = 0;
 	
@@ -51,12 +50,13 @@ public class HomeFragment extends SherlockFragment implements OnClickListener {
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
-		
 		this._activity = this.getActivity();
-		
-		View v = this.getView();
+	}
+	
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		View v = inflater.inflate(R.layout.main, container, false);
 		
 //      // init options spinner
 //      Spinner spinnerOptions = (Spinner) findViewById(R.id.SpinnerOptions);
@@ -103,11 +103,11 @@ public class HomeFragment extends SherlockFragment implements OnClickListener {
 //      //btnUpdate.getBackground().setColorFilter(0x2212FF00, Mode.LIGHTEN);
 //      btnUpdate.getBackground().setColorFilter(Defs.CLR_BUTTON_UPDATE, Mode.MULTIPLY);
 		
-      // load last saved operation info (if available)
-      if (GlobalSettings.getInstance().getLastCheckedInfo() != GlobalSettings.NO_INFO) {
-//      	TextView textContent = (TextView) v.findViewById(R.id.TextContent);
-//      	textContent.setText(Html.fromHtml(GlobalSettings.getInstance().getLastCheckedInfo()));
-      }
+		// load last saved operation info (if available)
+		if (GlobalSettings.getInstance().getLastCheckedInfo() != GlobalSettings.NO_INFO) {
+			TextView textContent = (TextView) v.findViewById(R.id.TextContent);
+			textContent.setText(Html.fromHtml(GlobalSettings.getInstance().getLastCheckedInfo()));
+		}
       
 //
 //      /**
@@ -154,12 +154,8 @@ public class HomeFragment extends SherlockFragment implements OnClickListener {
 //						dialog.dismiss();
 //					}
 //				}).show();
-//      }		
-	}
-	
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View v = inflater.inflate(R.layout.main, container, false);
+//      }				
+		
 		return v;
 	}
 	
@@ -197,7 +193,12 @@ public class HomeFragment extends SherlockFragment implements OnClickListener {
 //        	@Override
 //        	public void onNothingSelected(AdapterView<?> parentView) {
 //        	}
-//		});           
+//		});
+    	
+        // pre-select
+        if (GlobalSettings.getInstance().getLastSelectedAccount() != GlobalSettings.NO_ACCOUNT) {
+        	updateSelection(GlobalSettings.getInstance().getLastSelectedAccount());
+        }    	
     	
     	super.onStart();    	
     }	
@@ -242,6 +243,29 @@ public class HomeFragment extends SherlockFragment implements OnClickListener {
 //    public boolean Activity.onCreateOptionsMenu(android.view.Menu menu) {
 //    	return mSherlock.dispatchCreateOptionsMenu(menu);
 //    }
+    
+    /**
+     * Update all data with respect to selected account
+     */
+    private void updateSelection(String phoneNumber) {
+    	if (Defs.LOG_ENABLED)
+    		Log.i(Defs.LOG_TAG, "Updating selection for: " + phoneNumber);
+    	
+    	View v = getView();
+    	
+    	User user = UsersManager.getInstance().getUserByPhoneNumber(phoneNumber);
+    	if (user != null) {
+    		setText(v, R.id.tv_profile_number, user.getPhoneNumber());
+    		setText(v, R.id.tv_profile_name, user.getAccountName());
+    		setText(v, R.id.tv_checks_today, String.valueOf(user.getChecksToday()));
+    		setText(v, R.id.tv_checks_overal, String.valueOf(user.getChecksTotal()));
+    		setText(v, R.id.tv_traffic_today, String.valueOf(user.getTrafficToday()));
+    		setText(v, R.id.tv_traffic_overal, String.valueOf(user.getTrafficTotal()));
+    		
+    	} else {
+    		// TODO
+    	}
+    }
     
 
 	/**
@@ -403,8 +427,5 @@ public class HomeFragment extends SherlockFragment implements OnClickListener {
 
 		} // end if
 	}
-
-	protected String getResString(int id) {
-		return this.getResources().getString(id);
-	}		
+	
 }

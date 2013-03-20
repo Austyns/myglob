@@ -14,9 +14,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.actionbarsherlock.app.SherlockFragment;
-
-public class AboutFragment extends SherlockFragment implements OnClickListener {
+public class AboutFragment extends BaseFragment implements OnClickListener {
 	// unique ID	
 	public static final int TAB_ID = 1;
 
@@ -100,15 +98,4 @@ public class AboutFragment extends SherlockFragment implements OnClickListener {
 		// TODO Auto-generated method stub
 		
 	}
-	
-	void setText(View v, int id, String text) {
-		TextView tx = (TextView) v.findViewById(id);
-		if ( tx != null )
-			tx.setText(text);
-	}
-
-	String getResString(int id) {
-		return this.getResources().getString(id);
-	}	
-	
 }
