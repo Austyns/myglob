@@ -213,12 +213,9 @@ public class MainActivity extends SherlockFragmentActivity {
 			break;
 
 		case Defs.MENU_MANAGE_ACCOUNTS:
-//			showAccountsList();
-			break;
-
-		case Defs.MENU_ABOUT:
-//			intent = new Intent(this, AboutActivity.class);
-//			startActivity(intent);
+			if (_pager.getCurrentItem() == HomeFragment.TAB_ID) {
+				_homeFragment.editAccount();
+			}
 			break;
 		}
 

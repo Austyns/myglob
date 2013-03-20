@@ -39,7 +39,6 @@ public class Defs {
 	public final static int MENU_REFRESH = 10;
 	public final static int MENU_ADD_ACCOUNT = 20;
 	public final static int MENU_MANAGE_ACCOUNTS = 30;
-	public final static int MENU_ABOUT = 100;
 	
 	// save/load keys
 	public final static String PREFS_ALL_PREFS = "MyGlobAppPreferences";

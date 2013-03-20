@@ -19,6 +19,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -34,15 +35,13 @@ public class HomeFragment extends BaseFragment implements OnClickListener {
 	// unique ID
 	public static final int TAB_ID = 0;
 	
-	private Activity _activity;
+	private FragmentActivity _activity;
 	private AccountsArrayAdapter _adapterAccounts = null;
 	
 	public static HomeFragment newInstance() {
 		HomeFragment fragment = new HomeFragment();
 
         Bundle args = new Bundle();
-//        args.putString(Constants.User.USER_LOGIN, login);
-//        args.putString(Constants.User.USER_NAME, name);
         fragment.setArguments(args);
         
         return fragment;		
@@ -57,6 +56,11 @@ public class HomeFragment extends BaseFragment implements OnClickListener {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View v = inflater.inflate(R.layout.main, container, false);
+		
+		// attach event listeners
+
+		TextView tvPhoneNumber = (TextView) v.findViewById(R.id.tv_profile_number);
+		tvPhoneNumber.setOnClickListener(this);
 		
 //      // init options spinner
 //      Spinner spinnerOptions = (Spinner) findViewById(R.id.SpinnerOptions);
@@ -211,7 +215,22 @@ public class HomeFragment extends BaseFragment implements OnClickListener {
 	
 	@Override
 	public void onClick(View v) {
-		// TODO Auto-generated method stub
+		int id = v.getId();
+		
+		switch(id) {
+		case R.id.tv_profile_number:
+			
+			showAccountsList(new DialogInterface.OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					final String[] items = UsersManager.getInstance().getUsersPhoneNumbersList();
+					updateSelection(items[which]);
+				}
+			});
+			
+			break;
+		}
 		
 	}
 	
@@ -244,12 +263,32 @@ public class HomeFragment extends BaseFragment implements OnClickListener {
 //    	return mSherlock.dispatchCreateOptionsMenu(menu);
 //    }
     
+    public void editAccount() {
+
+    	showAccountsList(new DialogInterface.OnClickListener() {
+    		
+
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					final String[] items = UsersManager.getInstance().getUsersPhoneNumbersList();
+					
+					Intent intent = new Intent(_activity.getApplicationContext(), 
+							AccountPreferencesActivity.class);
+					intent.putExtra(Defs.INTENT_ACCOUNT_EDIT, true);
+					intent.putExtra(Defs.INTENT_ACCOUNT_PHONENUMBER, items[which]);
+					startActivityForResult(intent, Defs.INTENT_ACCOUNT_EDIT_RQ);
+
+					dialog.dismiss();
+				}
+			});
+    }
+    
     /**
      * Update all data with respect to selected account
      */
     private void updateSelection(String phoneNumber) {
     	if (Defs.LOG_ENABLED)
-    		Log.i(Defs.LOG_TAG, "Updating selection for: " + phoneNumber);
+    		Log.v(Defs.LOG_TAG, "Updating selection for: " + phoneNumber);
     	
     	View v = getView();
     	
@@ -271,11 +310,13 @@ public class HomeFragment extends BaseFragment implements OnClickListener {
 	/**
 	 * Show a list of user accounts
 	 */
-	private void showAccountsList() {
-
+	private void showAccountsList(DialogInterface.OnClickListener clickListener) {
+    	if (Defs.LOG_ENABLED)
+    		Log.v(Defs.LOG_TAG, "showAccountsList()");
+    	
 		final String[] items = UsersManager.getInstance().getUsersPhoneNumbersList();
 		if (items != null) {
-			AlertDialog.Builder builder = new AlertDialog.Builder(this.getActivity());
+			AlertDialog.Builder builder = new AlertDialog.Builder(_activity);
 			builder.setTitle(R.string.dlg_account_select_title);
 			builder.setCancelable(true);
 			builder.setNegativeButton(R.string.dlg_msg_cancel, new DialogInterface.OnClickListener() {
@@ -285,24 +326,15 @@ public class HomeFragment extends BaseFragment implements OnClickListener {
 					dialog.dismiss();
 				}
 			});
-			builder.setSingleChoiceItems(items, -1, new DialogInterface.OnClickListener() {
-
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					Intent intent = new Intent(_activity.getApplicationContext(), 
-							AccountPreferencesActivity.class);
-					intent.putExtra(Defs.INTENT_ACCOUNT_EDIT, true);
-					intent.putExtra(Defs.INTENT_ACCOUNT_PHONENUMBER, items[which]);
-					startActivityForResult(intent, Defs.INTENT_ACCOUNT_EDIT_RQ);
-
-					dialog.dismiss();
-				}
-			});
+//			builder.setSingleChoiceItems(items, -1, clickListener);
+			builder.setSingleChoiceItems(
+					new AccountsArrayAdapter(this.getActivity(), android.R.layout.select_dialog_singlechoice, items), 
+					-1, 
+					clickListener);			
 
 			AlertDialog alert = builder.create();
 			alert.show();
-		}
-		else {
+		} else {
 			Toast.makeText(this.getActivity().getApplicationContext(), 
 					R.string.text_account_no_account, Toast.LENGTH_SHORT).show();
 		}
@@ -393,17 +425,14 @@ public class HomeFragment extends BaseFragment implements OnClickListener {
 							}
 						});
 						
-					}
-					catch (InvalidCredentialsException e) {
+					} catch (InvalidCredentialsException e) {
 						// Show error dialog
 						Utils.showAlertDialog(_activity, R.string.dlg_error_msg_invalid_credentials, 
 								R.string.dlg_error_msg_title);
-					}
-					catch (SecureCodeRequiredException e) {
+					} catch (SecureCodeRequiredException e) {
 						// Show error dialog
 						Utils.showAlertDialog(_activity, R.string.dlg_error_msg_securecode, R.string.dlg_error_msg_title);
-					}
-					catch (Exception e) {
+					} catch (Exception e) {
 						Log.e(Defs.LOG_TAG, "Error updating status!", e);
 						// Show error dialog
 						final String msg = e.getMessage();
