@@ -30,6 +30,11 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+//		MainActivity mainActivity = (MainActivity) getSherlockActivity();
+//		mainActivity.invalidateOptionsMenu();
+//		setHasOptionsMenu(false);
+//		setMenuVisibility(false);
 	}
 	
 	@Override

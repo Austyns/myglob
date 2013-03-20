@@ -51,6 +51,7 @@ import android.view.View;
 
 public class MainActivity extends SherlockFragmentActivity {
 	
+	private SherlockFragmentActivity _activity;
 	private ActionBar _actionBar;
 	
 	// Pager handling
@@ -68,6 +69,8 @@ public class MainActivity extends SherlockFragmentActivity {
     	this.setTheme(Defs.THEME);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.view_pager);
+        
+        this._activity = this;
 
         /**
          * load preferences
@@ -131,59 +134,71 @@ public class MainActivity extends SherlockFragmentActivity {
 
     }
     
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-//		menu.clear();
-    	
-		menu.add(Menu.NONE, Defs.MENU_REFRESH, 0, R.string.text_refresh)
-		.setIcon(R.drawable.ic_refresh)
-		.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//
+//
+//		return true; //mSherlock.dispatchCreateOptionsMenu(menu);
+//    }
+
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		if (Defs.LOG_ENABLED)
+			Log.i(Defs.LOG_TAG, "onPrepareOptionsMenu() called");
 		
-		// Account Operations
-        SubMenu submenuOperations = menu.addSubMenu(R.string.operations_title);
-        
-        Operations[] operationsArray = new Operations[] {
-			Operations.CHECK_CURRENT_BALANCE,
-			Operations.CHECK_AVAIL_MINUTES,
-			Operations.CHECK_AVAIL_DATA,
-			Operations.CHECK_SMS_PACKAGE,
-			Operations.CHECK_CREDIT_LIMIT,
-			Operations.CHECK_ALL
-		};  
-        
-        for (Operations operation : operationsArray) {
-        	submenuOperations.add(5, operation.getId(), 0, operation.getResourceId());	
-		}
-
-        submenuOperations.getItem()
-        .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+		menu.clear();
 		
-        // App Menu
-        SubMenu submenuActions = menu.addSubMenu(R.string.text_menu);
+		if (_pager.getCurrentItem() == HomeFragment.TAB_ID) {
+			/* 
+			 * Home Menu
+			 */
+			
+			menu.add(Menu.NONE, Defs.MENU_REFRESH, 0, R.string.text_refresh)
+			.setIcon(R.drawable.ic_refresh)
+			.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+			
+			// Account Operations
+	        SubMenu submenuOperations = menu.addSubMenu(R.string.operations_title);
+	        
+	        Operations[] operationsArray = new Operations[] {
+				Operations.CHECK_CURRENT_BALANCE,
+				Operations.CHECK_AVAIL_MINUTES,
+				Operations.CHECK_AVAIL_DATA,
+				Operations.CHECK_SMS_PACKAGE,
+				Operations.CHECK_CREDIT_LIMIT,
+				Operations.CHECK_ALL
+			};  
+	        
+	        for (Operations operation : operationsArray) {
+	        	submenuOperations.add(5, operation.getId(), 0, operation.getResourceId());	
+			}
+	
+	        submenuOperations.getItem()
+	        .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+			
+	        // App Menu
+	        SubMenu submenuActions = menu.addSubMenu(R.string.text_menu);
+	        
+	        submenuActions.add(Menu.NONE, Defs.MENU_ADD_ACCOUNT, 0, R.string.menu_add_account)
+			.setIcon(R.drawable.ic_menu_invite)
+			.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+	        
+	        submenuActions.add(Menu.NONE, Defs.MENU_MANAGE_ACCOUNTS, 0, R.string.menu_manage_accounts)
+			.setIcon(R.drawable.ic_menu_manage)
+			.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+	        
+	//        submenuActions.add(Menu.NONE, Defs.MENU_ABOUT, 0, R.string.menu_about)
+	//		.setIcon(R.drawable.ic_menu_help)
+	//		.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);        
+	        
+	        submenuActions.getItem()
+	        .setIcon(R.drawable.ic_menu_moreoverflow_normal_holo_dark)
+	        .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         
-        submenuActions.add(Menu.NONE, Defs.MENU_ADD_ACCOUNT, 0, R.string.menu_add_account)
-		.setIcon(R.drawable.ic_menu_invite)
-		.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
-        
-        submenuActions.add(Menu.NONE, Defs.MENU_MANAGE_ACCOUNTS, 0, R.string.menu_manage_accounts)
-		.setIcon(R.drawable.ic_menu_manage)
-		.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
-        
-//        submenuActions.add(Menu.NONE, Defs.MENU_ABOUT, 0, R.string.menu_about)
-//		.setIcon(R.drawable.ic_menu_help)
-//		.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);        
-        
-        submenuActions.getItem()
-        .setIcon(R.drawable.ic_menu_moreoverflow_normal_holo_dark)
-        .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-
-		return true; //mSherlock.dispatchCreateOptionsMenu(menu);
-    }
-
-//	@Override
-//	public boolean onPrepareOptionsMenu(Menu menu) {
-//		return initMenu(menu);
-//	}
+		}        
+		
+		return super.onPrepareOptionsMenu(menu);
+	}
 
 	@Override
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
@@ -191,7 +206,6 @@ public class MainActivity extends SherlockFragmentActivity {
 		Intent intent = null;
 
 		switch(item.getItemId()) {
-
 		case Defs.MENU_ADD_ACCOUNT:
 			intent = new Intent(this, AccountPreferencesActivity.class);
 			intent.putExtra(Defs.INTENT_ACCOUNT_ADD, true);
@@ -236,7 +250,7 @@ public class MainActivity extends SherlockFragmentActivity {
 		@Override
 		public void onTabSelected(Tab tab, FragmentTransaction ft) {
 			if (Defs.LOG_ENABLED) 
-				Log.d(Defs.LOG_TAG, "Selectin tab id: " + this._tabId);
+				Log.d(Defs.LOG_TAG, "Selected tab id: " + this._tabId);
 			
 			_pager.setCurrentItem(_tabId);
 		}
@@ -268,6 +282,9 @@ public class MainActivity extends SherlockFragmentActivity {
 			
 			switch (position) {
 			case AboutFragment.TAB_ID:
+
+				_activity.invalidateOptionsMenu();
+				
 				_aboutFragment = AboutFragment.newInstance();
 				return _aboutFragment;		
 			}
