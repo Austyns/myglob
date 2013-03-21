@@ -23,6 +23,8 @@
  */
 package net.vexelon.myglob.fragments;
 
+import java.util.Calendar;
+
 import net.vexelon.mobileops.InvalidCredentialsException;
 import net.vexelon.mobileops.SecureCodeRequiredException;
 import net.vexelon.myglob.AccountsArrayAdapter;
@@ -44,6 +46,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.text.Html;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -71,7 +74,6 @@ public class HomeFragment extends BaseFragment implements OnClickListener, OnTou
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-//		this._activity = this.getActivity();
 	}
 	
 	@Override
@@ -149,16 +151,16 @@ public class HomeFragment extends BaseFragment implements OnClickListener, OnTou
 		
 		switch(id) {
 		case R.id.tv_profile_number:
-			
 			showAccountsList(new DialogInterface.OnClickListener() {
 				
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					final String[] items = UsersManager.getInstance().getUsersPhoneNumbersList();
 					updateProfileView(items[which]);
+					
+					dialog.dismiss();
 				}
 			});
-			
 			break;
 		}
 	}
@@ -265,6 +267,11 @@ public class HomeFragment extends BaseFragment implements OnClickListener, OnTou
     		setText(v, R.id.tv_traffic_today, String.valueOf(user.getTrafficToday()));
     		setText(v, R.id.tv_traffic_overal, String.valueOf(user.getTrafficTotal()));
     		
+    		Calendar calendar = Calendar.getInstance();
+    		calendar.setTimeInMillis(user.getLastCheckDateTime());
+    		String date = DateFormat.format("dd-MM-yy hh:mm", calendar).toString();
+    		setText(v, R.id.tv_profile_lastchecked_at, date);
+    		
     	} else {
 			Toast.makeText(this.getActivity().getApplicationContext(), 
 					R.string.text_account_not_found, Toast.LENGTH_SHORT).show();
@@ -306,54 +313,19 @@ public class HomeFragment extends BaseFragment implements OnClickListener, OnTou
 	}
 
 	/**
-	 * Fill accounts data in spinner
-	 */
-//	private void updateAccountsSpinner() {
-//		View v = this.getView();
-//		
-//		Spinner spinnerAccounts = (Spinner) v.findViewById(R.id.SpinnerUserAccounts);
-//		LinearLayout layout = (LinearLayout) v.findViewById(R.id.LayoutNoAccounts);
-//		final String[] items = UsersManager.getInstance().getUsersPhoneNumbersList();
-//
-//		if (items != null) {
-//			//_adapterAccounts = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, items);
-//			_adapterAccounts = new AccountsArrayAdapter(this.getActivity(), android.R.layout.simple_spinner_item, items);
-//			_adapterAccounts.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//	        spinnerAccounts.setAdapter(_adapterAccounts);
-//
-//	        // visualize component
-//	        spinnerAccounts.setVisibility(Spinner.VISIBLE);
-//	        layout.setVisibility(LinearLayout.INVISIBLE);
-//	        
-//	        // pre-select
-//	        if (GlobalSettings.getInstance().getLastSelectedAccount() != GlobalSettings.NO_ACCOUNT) {
-//		        spinnerAccounts.setSelection(
-//		        		_adapterAccounts.getItemPosition(GlobalSettings.getInstance().getLastSelectedAccount()));
-//	        }
-//		}
-//		else {
-//			// remove all items, if any
-////			if (_adapterAccounts != null) {
-////				_adapterAccounts.clear();
-////			}
-//
-//			// no accounts, no selection
-//			spinnerAccounts.setVisibility(Spinner.INVISIBLE);
-//			layout.setVisibility(LinearLayout.VISIBLE);
-//		}
-//	}
-
-	/**
 	 * Get selected spinner option and update view
 	 */
-	public void updateStatus() {
+	public void updateStatus(Operations operation) {
+    	if (Defs.LOG_ENABLED)
+    		Log.v(Defs.LOG_TAG, "updateStatus with opId= " + operation.getId());
+    	
 		View v = this.getView();
 		
 		final FragmentActivity activity = getActivity();
 		
 		if (UsersManager.getInstance().size() > 0) {
 
-			final Operations operation = Operations.CHECK_SMS_PACKAGE;
+			final Operations finalOperation = operation;
 			final TextView tvContent = (TextView) v.findViewById(R.id.tv_status_content);
 			final TextView tvPhoneNumber = (TextView) v.findViewById(R.id.tv_profile_number);
 			final String phoneNumber = (String) tvPhoneNumber.getText();
@@ -368,12 +340,12 @@ public class HomeFragment extends BaseFragment implements OnClickListener, OnTou
 				public void run() {
 
 					try {
-						Action action = new AccountStatusAction(operation,
+						Action action = new AccountStatusAction(finalOperation,
 								UsersManager.getInstance().getUserByPhoneNumber(phoneNumber));
 						
 						// remember last account and operation
 						GlobalSettings.getInstance().putLastSelectedAccount(phoneNumber);
-						GlobalSettings.getInstance().putLastSelectedOperation(operation);
+						GlobalSettings.getInstance().putLastSelectedOperation(finalOperation);
 						
 						final String data = action.execute().getString();
 						

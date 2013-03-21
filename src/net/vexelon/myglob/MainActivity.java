@@ -62,6 +62,8 @@ public class MainActivity extends SherlockFragmentActivity {
     private HomeFragment _homeFragment;
     private AboutFragment _aboutFragment;
     
+    // Others
+    private Operations[] _operationsArray;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -139,6 +141,16 @@ public class MainActivity extends SherlockFragmentActivity {
 //            getSupportActionBar().setSplitBackgroundDrawable(bgSplit);
 //        }        
 
+        // XXX Operations based on account ?
+        
+        _operationsArray = new Operations[] {
+			Operations.CHECK_CURRENT_BALANCE,
+			Operations.CHECK_AVAIL_MINUTES,
+			Operations.CHECK_AVAIL_DATA,
+			Operations.CHECK_SMS_PACKAGE,
+			Operations.CHECK_CREDIT_LIMIT,
+			Operations.CHECK_ALL
+		};          
 
     }
     
@@ -154,23 +166,14 @@ public class MainActivity extends SherlockFragmentActivity {
 			 * Home Menu
 			 */
 			
-			menu.add(Menu.NONE, Defs.MENU_REFRESH, 0, R.string.text_refresh)
-			.setIcon(R.drawable.ic_refresh)
-			.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+//			menu.add(Menu.NONE, Defs.MENU_REFRESH, 0, R.string.text_refresh)
+//			.setIcon(R.drawable.ic_refresh)
+//			.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 			
 			// Account Operations
-	        SubMenu submenuOperations = menu.addSubMenu(R.string.operations_title);
+	        SubMenu submenuOperations = menu.addSubMenu(Menu.NONE, Defs.MENU_REFRESH, 0, R.string.operations_title);
 	        
-	        Operations[] operationsArray = new Operations[] {
-				Operations.CHECK_CURRENT_BALANCE,
-				Operations.CHECK_AVAIL_MINUTES,
-				Operations.CHECK_AVAIL_DATA,
-				Operations.CHECK_SMS_PACKAGE,
-				Operations.CHECK_CREDIT_LIMIT,
-				Operations.CHECK_ALL
-			};  
-	        
-	        for (Operations operation : operationsArray) {
+	        for (Operations operation : _operationsArray) {
 	        	submenuOperations.add(5, operation.getId(), 0, operation.getResourceId());	
 			}
 	
@@ -202,19 +205,25 @@ public class MainActivity extends SherlockFragmentActivity {
 	}
 
 	@Override
-	public boolean onMenuItemSelected(int featureId, MenuItem item) {
-
+	public boolean onOptionsItemSelected(MenuItem item) {
+		
 		if (_currentPage == HomeFragment.TAB_ID) {
 			switch(item.getItemId()) {
-			case Defs.MENU_REFRESH:
-				_homeFragment.updateStatus();
-				break;
+//			case Defs.MENU_REFRESH:
+//				_homeFragment.updateStatus(Operations.CHECK_SMS_PACKAGE);
+//				break;
 			case Defs.MENU_ADD_ACCOUNT:
 				_homeFragment.showAddAccount();
 				break;
 			case Defs.MENU_MANAGE_ACCOUNTS:
 				_homeFragment.showEditAccount();
 				break;
+			}
+			// Refresh called
+			for (Operations operation : _operationsArray) {
+				if (item.getItemId() == operation.getId()) {
+					_homeFragment.updateStatus(operation);
+				}
 			}
 		}
 

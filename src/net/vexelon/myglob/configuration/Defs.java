@@ -36,9 +36,9 @@ public class Defs {
 	public final static int CLR_BUTTON_UPDATE = 0xFFA6D060;
 	public final static String CLR_TEXT_HIGHLIGHT = "#FF7F00"; //0xFFFF7F00;
 
-	public final static int MENU_REFRESH = 10;
-	public final static int MENU_ADD_ACCOUNT = 20;
-	public final static int MENU_MANAGE_ACCOUNTS = 30;
+	public final static int MENU_REFRESH = 100;
+	public final static int MENU_ADD_ACCOUNT = 200;
+	public final static int MENU_MANAGE_ACCOUNTS = 300;
 	
 	// save/load keys
 	public final static String PREFS_ALL_PREFS = "MyGlobAppPreferences";
