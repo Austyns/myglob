@@ -87,9 +87,6 @@ public class HomeFragment extends BaseFragment implements OnClickListener, OnTou
 		ImageView ivSelection = (ImageView) v.findViewById(R.id.iv_user_selection);
 		ivSelection.setImageResource(R.drawable.ab_default_holo_dark);		
 //
-//      //btnUpdate.getBackground().setColorFilter(0x2212FF00, Mode.LIGHTEN);
-//      btnUpdate.getBackground().setColorFilter(Defs.CLR_BUTTON_UPDATE, Mode.MULTIPLY);
-		
 		return v;
 	}
 	

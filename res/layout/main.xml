@@ -49,14 +49,16 @@
             android:autoLink="email"
             android:text="email" 
              />                 
-        <TextView
-            android:id="@+id/tv_profile_lastchecked_at"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="datetime"  
-             />
-         <!-- TextView
+	    <!--TextView
+	        android:id="@+id/tv_operation_label"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textAppearance="?android:attr/textAppearanceSmall"
+	        android:text="@string/text_status"
+	        android:layout_toRightOf="@+id/tv_status_label"
+	        android:paddingLeft="4dp"
+	        />  
+          TextView
              android:id="@+id/tv_location"
              android:layout_width="wrap_content"
              android:layout_height="wrap_content"
@@ -67,7 +69,11 @@
     <TableLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp" >
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp" 
+        >
         <TableRow
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
@@ -196,24 +202,36 @@
 </LinearLayout>
 <View
     android:layout_width="fill_parent"
-    android:layout_height="10dp" />
+    android:layout_height="8dp" />
 <LinearLayout
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:paddingLeft="16dp"
     android:paddingRight="16dp">
-    <TextView
-        android:id="@+id/tv_pub_repos_label"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/text_status" />
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+	    <TextView
+	        android:id="@+id/tv_status_label"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textAppearance="?android:attr/textAppearanceMedium"
+	        android:text="@string/text_status" />
+        <TextView
+            android:id="@+id/tv_profile_lastchecked_at"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="datetime"  
+            android:layout_toRightOf="@+id/tv_status_label"
+             />	    
+    </RelativeLayout>
     <View 
         android:id="@+id/v_repo_divider"
         android:layout_width="fill_parent"
         android:layout_height="1dp"
-        android:background="#ff0099cc" />
+        android:background="#ffa6d060" />
 </LinearLayout>
 <View
     android:layout_width="fill_parent"
