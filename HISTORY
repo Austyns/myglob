@@ -1,40 +1,43 @@
 MyGlob HISTORY file
 
-V2.1.2
+v3.0
+Improvement/Change: Redesigned the complete UI. 
+
+v2.1.2
 Fixed: (Issue #8) Cannot get bill info for other than one account
 
-V2.1.1
+v2.1.1
 Fixed: (Issue #7)Page does not exist (Страницата не съществува)
 Fixed: (Issue #6) No menu button on latest Android phones (Добавен меню бутон за телефони без хардуерен меню бутон)
 
-V2.1.0
+v2.1.0
 Important: App now requires Android SDK 7 (2.1).
 Feature: (Issue #4) MyGlob widget now available. The widget shows the last checked account status. You can refresh via the Refresh button. To change the account & operation tap the Widget and use the in-app dropdowns. Widget auto-updates every 2 hours. If there is no internet connection the last fetched info will be shown.
 Improvement/Change: The app now remembers the last selected account and operation.
 Improvement/Change: The app will now automatically show the last fetched info upon opening.
 Improvement/Change: Changed menu icons.
 
-V2.0.3
+v2.0.3
 Fix: Issue #1: When trying to refresh information, an error "The target server failed to respond." appeared. This issue only appeared on some phones and it's either due to the reverse DNS bug in Android or due to missing certificate chain on the phone.
 
 V2.0.1
 Fix: Issue #1: The target server failed to respond.
 Improvement/Change: The app can now be moved to SDCard storage. This is the default install location as well.
 
-V2.0.0
+v2.0.0
 Improvement/Change: (Issue #7) Multiple phone numbers checking support now available.
 Improvement/Change: Possibility to edit users.
 Improvement/Change: Encryption of user passwords changed. Users from V1.0.1 still supported.
 Improvement/Change: Layout and menus have been changed.
 
-V1.1.0
+v1.1.0
 Fixed: Issue 2: Fixed a bug where application used to crash if orientation was changed during account update.
 Improvement/Change: (Issue #6) All available checks can now be performed by a single selection available in the menu.
 Improvement/Change: Texts in the dropdown menu were changed to enhance the look & feel of the UI.
 
-V1.0.1
+v1.0.1
 Improvement/Change: All application icons updated.
 Fixed: Issue 1: Application failed to run on Froyo (API 2.1 and 2.2).
 
-V1.0.0
+v1.0.0
 Initial release
