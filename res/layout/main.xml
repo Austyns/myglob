@@ -23,28 +23,38 @@
         android:layout_marginRight="16dp"
         android:layout_marginTop="8dp" >
 
-      	<TextView
-             android:id="@+id/tv_profile_number"
-             android:layout_width="wrap_content"
-             android:layout_height="wrap_content"
-             android:textAppearance="?android:attr/textAppearanceLarge"
-             android:text="0899123456" 
-             />
-         <TextView
-             android:id="@+id/tv_profile_name"
-             android:layout_width="wrap_content"
-             android:layout_height="wrap_content"
-             android:textColorLink="@color/titletextcolor"
-             android:textAppearance="?android:attr/textAppearanceSmall"
-             android:autoLink="email"
-             android:text="email" 
+		<RelativeLayout 
+		    android:layout_width="fill_parent" 
+		    android:layout_height="wrap_content">
+	      	<TextView
+	             android:id="@+id/tv_profile_number"
+	             android:layout_alignParentLeft="true"
+	             android:layout_width="wrap_content"
+	             android:layout_height="wrap_content"
+	             android:textAppearance="?android:attr/textAppearanceLarge"
+	             android:text="0899123456" 
+	             />
+			<ImageView android:id="@+id/iv_user_selection" 
+			    android:layout_width="wrap_content" 
+			    android:layout_height="wrap_content" 
+			    android:layout_toRightOf="@+id/tv_profile_number"
+			    />       	
+      	</RelativeLayout>
+        <TextView
+            android:id="@+id/tv_profile_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColorLink="@color/titletextcolor"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:autoLink="email"
+            android:text="email" 
              />                 
-         <TextView
-             android:id="@+id/tv_profile_lastchecked_at"
-             android:layout_width="wrap_content"
-             android:layout_height="wrap_content"
-             android:textAppearance="?android:attr/textAppearanceSmall"
-             android:text="datetime"  
+        <TextView
+            android:id="@+id/tv_profile_lastchecked_at"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="datetime"  
              />
          <!-- TextView
              android:id="@+id/tv_location"
@@ -52,7 +62,6 @@
              android:layout_height="wrap_content"
              android:textAppearance="?android:attr/textAppearanceSmall"
              android:autoLink="map" / -->
-         
     </LinearLayout>    
     <!-- Stats -->
     <TableLayout

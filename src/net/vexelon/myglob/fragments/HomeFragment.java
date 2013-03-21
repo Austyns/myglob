@@ -46,13 +46,16 @@ import android.support.v4.app.FragmentActivity;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class HomeFragment extends BaseFragment implements OnClickListener {
+public class HomeFragment extends BaseFragment implements OnClickListener, OnTouchListener {
 	// unique ID
 	public static final int TAB_ID = 0;
 	
@@ -77,6 +80,10 @@ public class HomeFragment extends BaseFragment implements OnClickListener {
 		
 		TextView tvPhoneNumber = (TextView) v.findViewById(R.id.tv_profile_number);
 		tvPhoneNumber.setOnClickListener(this);
+		tvPhoneNumber.setOnTouchListener(this);
+		
+		ImageView ivSelection = (ImageView) v.findViewById(R.id.iv_user_selection);
+		ivSelection.setImageResource(R.drawable.ab_default_holo_dark);		
 //
 //      //btnUpdate.getBackground().setColorFilter(0x2212FF00, Mode.LIGHTEN);
 //      btnUpdate.getBackground().setColorFilter(Defs.CLR_BUTTON_UPDATE, Mode.MULTIPLY);
@@ -154,7 +161,29 @@ public class HomeFragment extends BaseFragment implements OnClickListener {
 			
 			break;
 		}
+	}
+	
+	@Override
+	public boolean onTouch(View v, MotionEvent event) {
+		int id = v.getId();
 		
+		switch(id) {
+		case R.id.tv_profile_number:
+			
+			ImageView ivSelection = (ImageView) getView().findViewById(R.id.iv_user_selection);
+			
+			switch (event.getAction()) {
+			case MotionEvent.ACTION_DOWN:
+				ivSelection.setImageResource(R.drawable.ab_pressed_holo_dark);				
+				return true;
+			case MotionEvent.ACTION_UP:
+				ivSelection.setImageResource(R.drawable.ab_default_holo_dark);	
+				onClick(v);
+				return true;
+			}
+		}
+		
+		return false;
 	}
 	
     @Override
