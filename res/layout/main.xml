@@ -223,7 +223,7 @@
 
   		
         <TextView
-            android:id="@+id/TextContent"
+            android:id="@+id/tv_status_content"
             android:textAppearance="@style/FontContent"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"

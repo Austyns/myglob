@@ -49,17 +49,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
-import android.widget.LinearLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class HomeFragment extends BaseFragment implements OnClickListener {
 	// unique ID
 	public static final int TAB_ID = 0;
-	
-	private FragmentActivity _activity;
-	private AccountsArrayAdapter _adapterAccounts = null;
 	
 	public static HomeFragment newInstance() {
 		HomeFragment fragment = new HomeFragment();
@@ -73,123 +68,24 @@ public class HomeFragment extends BaseFragment implements OnClickListener {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		this._activity = this.getActivity();
+//		this._activity = this.getActivity();
 	}
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View v = inflater.inflate(R.layout.main, container, false);
 		
-		// attach event listeners
-
 		TextView tvPhoneNumber = (TextView) v.findViewById(R.id.tv_profile_number);
 		tvPhoneNumber.setOnClickListener(this);
-		
-//      // init options spinner
-//      Spinner spinnerOptions = (Spinner) findViewById(R.id.SpinnerOptions);
-//      OperationsArrayAdapter adapter = new OperationsArrayAdapter(
-//      		getSupportActionBar().getThemedContext(), R.layout.sherlock_spinner_item,
-//      		new Operations[]{
-//      		Operations.CHECK_CURRENT_BALANCE,
-//				Operations.CHECK_AVAIL_MINUTES,
-//				Operations.CHECK_AVAIL_DATA,
-//				Operations.CHECK_SMS_PACKAGE,
-//				Operations.CHECK_CREDIT_LIMIT,
-//				Operations.CHECK_ALL,
-//      });
-//      adapter.setDropDownViewResource(R.layout.sherlock_spinner_dropdown_item);
-//      spinnerOptions.setAdapter(adapter);
-//      
-//      // pre-select Operation
-//      int pos = adapter.getItemPosition(GlobalSettings.getInstance().getLastSelectedOperation());
-//      if (pos != -1) {
-//      	spinnerOptions.setSelection(pos);
-//      }
-//
-//      // populate available accounts
-//      updateAccountsSpinner();
-//
-//      // create update button
-//      Button btnUpdate = (Button) findViewById(R.id.ButtonUpdate);
-//      btnUpdate.setOnClickListener(new OnClickListener() {
-//			@Override
-//			public void onClick(View v) {
-//				updateSelectedStatus();
-//			}
-//		});
-//      
-//   // create menu button
-//      Button btnMenu = (Button) findViewById(R.id.ButtonMenu);
-//      btnMenu.setOnClickListener(new OnClickListener() {
-//			@Override
-//			public void onClick(View v) {
-//				openOptionsMenu();
-//			}
-//		});        
 //
 //      //btnUpdate.getBackground().setColorFilter(0x2212FF00, Mode.LIGHTEN);
 //      btnUpdate.getBackground().setColorFilter(Defs.CLR_BUTTON_UPDATE, Mode.MULTIPLY);
-		
-		// load last saved operation info (if available)
-		if (GlobalSettings.getInstance().getLastCheckedInfo() != GlobalSettings.NO_INFO) {
-			TextView textContent = (TextView) v.findViewById(R.id.TextContent);
-			textContent.setText(Html.fromHtml(GlobalSettings.getInstance().getLastCheckedInfo()));
-		}
-      
-//
-//      /**
-//       * try to find legacy users and add them to UsersManager
-//       */
-//      final LegacySettings legacySettings = new LegacySettings();
-//      legacySettings.init(prefsGeneral);
-//      if (legacySettings.getPhoneNumber() != null) {
-//
-//			AlertDialog.Builder alertBuilder = new AlertDialog.Builder(_activity);
-//			alertBuilder.setTitle(R.string.dlg_legacyuser_title)
-//				.setMessage(String.format(getResString(R.string.dlg_legacyuser_msg), legacySettings.getPhoneNumber()))
-//				.setIcon(R.drawable.alert)
-//				.setPositiveButton(getResString(R.string.dlg_msg_yes), new DialogInterface.OnClickListener() {
-//
-//					@Override
-//					public void onClick(DialogInterface dialog, int which) {
-//						// Create & Add user
-//			        	User user = new User().setAccountName(legacySettings.getPhoneNumber())
-//							.setPhoneNumber(legacySettings.getPhoneNumber())
-//							.setAccountType(AccountType.Globul); //V1.1.0 has only Globul support
-//
-//			        	try {
-//				        	if (UsersManager.getInstance().isUserExists(legacySettings.getPhoneNumber()))
-//				        		throw new Exception(getResString(R.string.err_msg_user_already_exists));
-//
-//				        	UsersManager.getInstance().addUser(user);
-//			        		UsersManager.getInstance().setUserPassword(user, legacySettings.getPassword());
-//			        		UsersManager.getInstance().save(prefsUsers);
-//			        		updateAccountsSpinner();
-//			        	}
-//			        	catch(Exception e) {
-//			        		Utils.showAlertDialog(_activity, String.format(getResString(R.string.dlg_error_msg_legacy_user_failed), e.getMessage()), getResString(R.string.dlg_error_msg_title));
-//			        	}
-//			        	legacySettings.clear();
-//						dialog.dismiss();
-//					}
-//				})
-//				.setNegativeButton(getResString(R.string.dlg_msg_no), new DialogInterface.OnClickListener() {
-//
-//					@Override
-//					public void onClick(DialogInterface dialog, int which) {
-//						legacySettings.clear();
-//						dialog.dismiss();
-//					}
-//				}).show();
-//      }				
 		
 		return v;
 	}
 	
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		
-		//TODO showLoading
 	}
 	
     @Override
@@ -222,10 +118,14 @@ public class HomeFragment extends BaseFragment implements OnClickListener {
 //        	}
 //		});
     	
+		// load last saved operation info (if available)
+		if (GlobalSettings.getInstance().getLastCheckedInfo() != GlobalSettings.NO_INFO) {
+			TextView textContent = (TextView) getView().findViewById(R.id.tv_status_content);
+			textContent.setText(Html.fromHtml(GlobalSettings.getInstance().getLastCheckedInfo()));
+		}    	
+    	
+    	updateProfileView(GlobalSettings.getInstance().getLastSelectedAccount());
         // pre-select
-        if (GlobalSettings.getInstance().getLastSelectedAccount() != GlobalSettings.NO_ACCOUNT) {
-        	updateSelection(GlobalSettings.getInstance().getLastSelectedAccount());
-        }    	
     	
     	super.onStart();    	
     }	
@@ -248,7 +148,7 @@ public class HomeFragment extends BaseFragment implements OnClickListener {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					final String[] items = UsersManager.getInstance().getUsersPhoneNumbersList();
-					updateSelection(items[which]);
+					updateProfileView(items[which]);
 				}
 			});
 			
@@ -279,23 +179,35 @@ public class HomeFragment extends BaseFragment implements OnClickListener {
     		break;
     	}
 
-    	updateAccountsSpinner();
+        // pre-select
+        if (GlobalSettings.getInstance().getLastSelectedAccount() != GlobalSettings.NO_ACCOUNT) {
+        	updateProfileView(GlobalSettings.getInstance().getLastSelectedAccount());
+        }     	
     }
     
-//    public boolean Activity.onCreateOptionsMenu(android.view.Menu menu) {
-//    	return mSherlock.dispatchCreateOptionsMenu(menu);
-//    }
+    /**
+     * Show preferences Activity where new account may be added
+     */
+    public void showAddAccount() {
+    	Intent intent = new Intent(this.getActivity(), AccountPreferencesActivity.class);
+		intent.putExtra(Defs.INTENT_ACCOUNT_ADD, true);
+		startActivityForResult(intent, Defs.INTENT_ACCOUNT_ADD_RQ);    	
+    }
     
-    public void editAccount() {
+    /**
+     * Show list of accounts that can be edited
+     */
+    public void showEditAccount() {
+    	
+    	final FragmentActivity activity = this.getActivity();
 
     	showAccountsList(new DialogInterface.OnClickListener() {
-    		
 
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					final String[] items = UsersManager.getInstance().getUsersPhoneNumbersList();
 					
-					Intent intent = new Intent(_activity.getApplicationContext(), 
+					Intent intent = new Intent(activity.getApplicationContext(), 
 							AccountPreferencesActivity.class);
 					intent.putExtra(Defs.INTENT_ACCOUNT_EDIT, true);
 					intent.putExtra(Defs.INTENT_ACCOUNT_PHONENUMBER, items[which]);
@@ -309,7 +221,7 @@ public class HomeFragment extends BaseFragment implements OnClickListener {
     /**
      * Update all data with respect to selected account
      */
-    private void updateSelection(String phoneNumber) {
+    private void updateProfileView(String phoneNumber) {
     	if (Defs.LOG_ENABLED)
     		Log.v(Defs.LOG_TAG, "Updating selection for: " + phoneNumber);
     	
@@ -325,7 +237,8 @@ public class HomeFragment extends BaseFragment implements OnClickListener {
     		setText(v, R.id.tv_traffic_overal, String.valueOf(user.getTrafficTotal()));
     		
     	} else {
-    		// TODO
+			Toast.makeText(this.getActivity().getApplicationContext(), 
+					R.string.text_account_not_found, Toast.LENGTH_SHORT).show();
     	}
     }
     
@@ -339,7 +252,7 @@ public class HomeFragment extends BaseFragment implements OnClickListener {
     	
 		final String[] items = UsersManager.getInstance().getUsersPhoneNumbersList();
 		if (items != null) {
-			AlertDialog.Builder builder = new AlertDialog.Builder(_activity);
+			AlertDialog.Builder builder = new AlertDialog.Builder(this.getActivity());
 			builder.setTitle(R.string.dlg_account_select_title);
 			builder.setCancelable(true);
 			builder.setNegativeButton(R.string.dlg_msg_cancel, new DialogInterface.OnClickListener() {
@@ -364,63 +277,64 @@ public class HomeFragment extends BaseFragment implements OnClickListener {
 	}
 
 	/**
-	 * Prefill accounts data in spinner
+	 * Fill accounts data in spinner
 	 */
-	private void updateAccountsSpinner() {
-		View v = this.getView();
-		
-		Spinner spinnerAccounts = (Spinner) v.findViewById(R.id.SpinnerUserAccounts);
-		LinearLayout layout = (LinearLayout) v.findViewById(R.id.LayoutNoAccounts);
-		final String[] items = UsersManager.getInstance().getUsersPhoneNumbersList();
-
-		if (items != null) {
-			//_adapterAccounts = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, items);
-			_adapterAccounts = new AccountsArrayAdapter(this.getActivity(), android.R.layout.simple_spinner_item, items);
-			_adapterAccounts.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-	        spinnerAccounts.setAdapter(_adapterAccounts);
-
-	        // visualize component
-	        spinnerAccounts.setVisibility(Spinner.VISIBLE);
-	        layout.setVisibility(LinearLayout.INVISIBLE);
-	        
-	        // pre-select
-	        if (GlobalSettings.getInstance().getLastSelectedAccount() != GlobalSettings.NO_ACCOUNT) {
-		        spinnerAccounts.setSelection(
-		        		_adapterAccounts.getItemPosition(GlobalSettings.getInstance().getLastSelectedAccount()));
-	        }
-		}
-		else {
-			// remove all items, if any
-//			if (_adapterAccounts != null) {
-//				_adapterAccounts.clear();
-//			}
-
-			// no accounts, no selection
-			spinnerAccounts.setVisibility(Spinner.INVISIBLE);
-			layout.setVisibility(LinearLayout.VISIBLE);
-		}
-	}
+//	private void updateAccountsSpinner() {
+//		View v = this.getView();
+//		
+//		Spinner spinnerAccounts = (Spinner) v.findViewById(R.id.SpinnerUserAccounts);
+//		LinearLayout layout = (LinearLayout) v.findViewById(R.id.LayoutNoAccounts);
+//		final String[] items = UsersManager.getInstance().getUsersPhoneNumbersList();
+//
+//		if (items != null) {
+//			//_adapterAccounts = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, items);
+//			_adapterAccounts = new AccountsArrayAdapter(this.getActivity(), android.R.layout.simple_spinner_item, items);
+//			_adapterAccounts.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//	        spinnerAccounts.setAdapter(_adapterAccounts);
+//
+//	        // visualize component
+//	        spinnerAccounts.setVisibility(Spinner.VISIBLE);
+//	        layout.setVisibility(LinearLayout.INVISIBLE);
+//	        
+//	        // pre-select
+//	        if (GlobalSettings.getInstance().getLastSelectedAccount() != GlobalSettings.NO_ACCOUNT) {
+//		        spinnerAccounts.setSelection(
+//		        		_adapterAccounts.getItemPosition(GlobalSettings.getInstance().getLastSelectedAccount()));
+//	        }
+//		}
+//		else {
+//			// remove all items, if any
+////			if (_adapterAccounts != null) {
+////				_adapterAccounts.clear();
+////			}
+//
+//			// no accounts, no selection
+//			spinnerAccounts.setVisibility(Spinner.INVISIBLE);
+//			layout.setVisibility(LinearLayout.VISIBLE);
+//		}
+//	}
 
 	/**
 	 * Get selected spinner option and update view
 	 */
-	private void updateSelectedStatus() {
+	public void updateStatus() {
 		View v = this.getView();
 		
-		Spinner spinnerAccounts = (Spinner) v.findViewById(R.id.SpinnerUserAccounts);
+		final FragmentActivity activity = getActivity();
+		
+		if (UsersManager.getInstance().size() > 0) {
 
-		if (UsersManager.getInstance().size() > 0 && spinnerAccounts.getSelectedItemPosition() != Spinner.INVALID_POSITION) {
-
-			Spinner spinnerOptions = (Spinner) v.findViewById(R.id.SpinnerOptions);
-			final Operations operation = (Operations) spinnerOptions.getSelectedItem();
-			final TextView tx = (TextView) _activity.findViewById(R.id.TextContent);
-			final String phoneNumber = (String) spinnerAccounts.getItemAtPosition(spinnerAccounts.getSelectedItemPosition());
+			final Operations operation = Operations.CHECK_SMS_PACKAGE;
+			final TextView tvContent = (TextView) v.findViewById(R.id.tv_status_content);
+			final TextView tvPhoneNumber = (TextView) v.findViewById(R.id.tv_profile_number);
+			final String phoneNumber = (String) tvPhoneNumber.getText();
 
 			// show progress
-			final ProgressDialog myProgress = ProgressDialog.show(this.getActivity().getApplicationContext(), 
-					getResString(R.string.dlg_progress_title), getResString(R.string.dlg_progress_message), true);
+			final ProgressDialog myProgress = ProgressDialog.show(activity, 
+					getResString(R.string.dlg_progress_title), 
+					getResString(R.string.dlg_progress_message), 
+					true);
 
-			// do work
 			new Thread() {
 				public void run() {
 
@@ -434,36 +348,34 @@ public class HomeFragment extends BaseFragment implements OnClickListener {
 						
 						final String data = action.execute().getString();
 						
-						// save what was last found
+						// save last found 
 						GlobalSettings.getInstance().putLastCheckedInfo(data);
 
 						// update text field
-						_activity.runOnUiThread(new Runnable() {
+						activity.runOnUiThread(new Runnable() {
 
 							@Override
 							public void run() {
-								tx.setText(Html.fromHtml(data));
-								//WebView wv = (WebView) _activity.findViewById(R.id.TextContent);
-								//wv.loadData(data, "text/html", "utf-8");
+								tvContent.setText(Html.fromHtml(data));
 							}
 						});
 						
 					} catch (InvalidCredentialsException e) {
 						// Show error dialog
-						Utils.showAlertDialog(_activity, R.string.dlg_error_msg_invalid_credentials, 
+						Utils.showAlertDialog(activity, R.string.dlg_error_msg_invalid_credentials, 
 								R.string.dlg_error_msg_title);
 					} catch (SecureCodeRequiredException e) {
 						// Show error dialog
-						Utils.showAlertDialog(_activity, R.string.dlg_error_msg_securecode, R.string.dlg_error_msg_title);
+						Utils.showAlertDialog(activity, R.string.dlg_error_msg_securecode, R.string.dlg_error_msg_title);
 					} catch (Exception e) {
 						Log.e(Defs.LOG_TAG, "Error updating status!", e);
 						// Show error dialog
 						final String msg = e.getMessage();
-						Utils.showAlertDialog(_activity, msg, getResString(R.string.dlg_error_msg_title));
+						Utils.showAlertDialog(activity, msg, getResString(R.string.dlg_error_msg_title));
 					}
 
 					// close progress bar dialog
-					_activity.runOnUiThread(new Runnable() {
+					activity.runOnUiThread(new Runnable() {
 						@Override
 						public void run() {
 							myProgress.dismiss();
@@ -472,12 +384,11 @@ public class HomeFragment extends BaseFragment implements OnClickListener {
 				};
 			}.start();
 		} else  {
-
 			// show add user screen
 			Toast.makeText(this.getActivity().getApplicationContext(), 
 					R.string.text_account_add_new, Toast.LENGTH_SHORT).show();
 
-		} // end if
+		}
 	}
 	
 }

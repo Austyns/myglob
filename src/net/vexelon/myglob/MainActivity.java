@@ -30,13 +30,11 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
 
-import net.vexelon.myglob.configuration.AccountPreferencesActivity;
 import net.vexelon.myglob.configuration.Defs;
 import net.vexelon.myglob.configuration.GlobalSettings;
 import net.vexelon.myglob.fragments.AboutFragment;
 import net.vexelon.myglob.fragments.HomeFragment;
 import net.vexelon.myglob.users.UsersManager;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -58,6 +56,7 @@ public class MainActivity extends SherlockFragmentActivity {
 	private ViewPager _pager;
 	private PagerAdapter _adapter;
     private int _tabsCount;
+    private int _currentPage = 0;
     
     // Fragments
     private HomeFragment _homeFragment;
@@ -101,6 +100,15 @@ public class MainActivity extends SherlockFragmentActivity {
 			
 			@Override
 			public void onPageSelected(int arg0) {
+				_currentPage = arg0;
+				_activity.invalidateOptionsMenu();
+//				if (Build.VERSION.SDK_INT < 11) {
+//					MainActivity mainActivity = (MainActivity) _activity;
+//					mainActivity.invalidateOptionsMenu();
+//				} else {
+//					_activity.invalidateOptionsMenu();
+//				}	
+				
 				_actionBar.setSelectedNavigationItem(arg0);
 			}
 			
@@ -134,21 +142,14 @@ public class MainActivity extends SherlockFragmentActivity {
 
     }
     
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//
-//
-//		return true; //mSherlock.dispatchCreateOptionsMenu(menu);
-//    }
-
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		if (Defs.LOG_ENABLED)
-			Log.i(Defs.LOG_TAG, "onPrepareOptionsMenu() called");
+			Log.i(Defs.LOG_TAG, "onPrepareOptionsMenu() called. Current item = " + _pager.getCurrentItem());
 		
 		menu.clear();
 		
-		if (_pager.getCurrentItem() == HomeFragment.TAB_ID) {
+		if (_currentPage == HomeFragment.TAB_ID) {
 			/* 
 			 * Home Menu
 			 */
@@ -197,26 +198,24 @@ public class MainActivity extends SherlockFragmentActivity {
         
 		}        
 		
-		return super.onPrepareOptionsMenu(menu);
+		return true; //super.onPrepareOptionsMenu(menu);
 	}
 
 	@Override
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
 
-		Intent intent = null;
-
-		switch(item.getItemId()) {
-		case Defs.MENU_ADD_ACCOUNT:
-			intent = new Intent(this, AccountPreferencesActivity.class);
-			intent.putExtra(Defs.INTENT_ACCOUNT_ADD, true);
-			startActivityForResult(intent, Defs.INTENT_ACCOUNT_ADD_RQ);
-			break;
-
-		case Defs.MENU_MANAGE_ACCOUNTS:
-			if (_pager.getCurrentItem() == HomeFragment.TAB_ID) {
-				_homeFragment.editAccount();
+		if (_currentPage == HomeFragment.TAB_ID) {
+			switch(item.getItemId()) {
+			case Defs.MENU_REFRESH:
+				_homeFragment.updateStatus();
+				break;
+			case Defs.MENU_ADD_ACCOUNT:
+				_homeFragment.showAddAccount();
+				break;
+			case Defs.MENU_MANAGE_ACCOUNTS:
+				_homeFragment.showEditAccount();
+				break;
 			}
-			break;
 		}
 
 		return true;
@@ -279,9 +278,6 @@ public class MainActivity extends SherlockFragmentActivity {
 			
 			switch (position) {
 			case AboutFragment.TAB_ID:
-
-				_activity.invalidateOptionsMenu();
-				
 				_aboutFragment = AboutFragment.newInstance();
 				return _aboutFragment;		
 			}

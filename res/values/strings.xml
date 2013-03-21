@@ -81,4 +81,5 @@
 <string name="text_tab_home">Начало</string>
 <string name="text_tab_about">Относно</string>
 <string name="text_status">Статус</string>
+<string name="text_account_not_found">Не е открит потребител с този номер!</string>
 </resources>

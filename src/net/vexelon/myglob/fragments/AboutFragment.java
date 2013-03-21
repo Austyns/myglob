@@ -52,16 +52,19 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+    	if (Defs.LOG_ENABLED)
+    		Log.v(Defs.LOG_TAG, "onCreate()");
+    	
 		super.onCreate(savedInstanceState);
-		
-//		MainActivity mainActivity = (MainActivity) getSherlockActivity();
-//		mainActivity.invalidateOptionsMenu();
 //		setHasOptionsMenu(false);
 //		setMenuVisibility(false);
 	}
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    	if (Defs.LOG_ENABLED)
+    		Log.v(Defs.LOG_TAG, "onCreateView()");
+    	
 		View v = inflater.inflate(R.layout.about, container, false);
 		
 		ImageView icLogo = (ImageView) v.findViewById(R.id.about_logo);
@@ -110,15 +113,12 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
 	}
 	
 	public void onActivityCreated(Bundle savedInstanceState) {
+	   	if (Defs.LOG_ENABLED)
+    		Log.v(Defs.LOG_TAG, "onActivityCreated()");
+	   	
 		super.onActivityCreated(savedInstanceState);
 		
 		//TODO showLoading
-	}
-	
-	@Override
-	public void onResume() {
-		super.onResume();
-		// app resumed
 	}
 	
 	@Override
