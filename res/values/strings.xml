@@ -21,7 +21,7 @@
 <string name="menu_signout">Отписване</string>
 <string name="dlg_progress_title">Моля изчакайте</string>
 <string name="dlg_progress_message">Изпращане на заявка към сървъра&#8230;</string>
-<string name="err_msg_username_missing">Празно или невалидно потребителско име! (Пример: 0896123456)</string>
+<string name="err_msg_username_missing">Празно или невалидно име на профил! (Пример: 0896123456)</string>
 <string name="err_msg_password_missing">Празна или невалидна парола!</string>
 <string name="dlg_error_msg_encrypt_failed">Невъзможно криптиране на паролата! Паролата, която сте въвели ще бъде съхранена некриптирана на устройството. Искате ли да продължите ?</string>
 <string name="dlg_error_msg_decrypt_failed">Неуспешно декриптиране на запазената парола!</string>
@@ -30,10 +30,9 @@
 <string name="dlg_msg_no">Не</string>
 <string name="text_refresh">Обнови</string>
 <string name="btn_msg_login">Влизане</string>
-<string name="text_username">Потребителско име/номер:</string>
+<string name="text_username">Профил/номер:</string>
 <string name="text_password">Парола:</string>
 <string name="text_rememberme">Запомни името и паролата</string>
-<string name="text_ssl_secured">SSL сигурност</string>
 <style parent="@android:style/TextAppearance" name="FontLogin"><item name="android:textColor">#D3D3D3</item><item name="android:textSize">16sp</item></style>
 <style name="FontLoginError" parent="@android:style/TextAppearance"><item name="android:textColor">#FF1F1F</item><item name="android:textSize">16sp</item><item name="android:textStyle">bold</item></style>
 <string name="dlg_msg_ssl">Връзката към сайта на оператора е защитена през SSL канал за сигурност.</string><style parent="@android:style/TextAppearance" name="FontContent"><item name="android:textColor">#D3D3D3</item><item name="android:textSize">16sp</item>
@@ -50,25 +49,25 @@
 <string name="menu_add_account">Добави номер</string>
 <string name="menu_manage_accounts">Редактирай номер</string>
 <string name="dlg_msg_cancel">Отказ</string>
-<string name="text_selectaccount">Изберете потребител</string>
+<string name="text_selectaccount">Изберете профил</string>
 <string name="text_no_accounts">Няма зададени номера! Моля добавете номер.</string>
-<string name="dlg_error_msg_legacy_user_failed">Грешка (%s) при записване на потребителя! Ще се наложи да добавите нов потребител.</string>
+<string name="dlg_error_msg_legacy_user_failed">Грешка (%s) при записване на профил! Налага се да добавите нов профил.</string>
 <string name="dlg_legacyuser_title">Намерен номер</string>
 <string name="dlg_legacyuser_msg">Искате ли да добавите номер %s ?</string>
-<string name="text_account_created">Потребителят е създаден.</string>
-<string name="text_account_saved">Потребителят е записан.</string>
-<string name="text_account_removed">Потребителят е премахнат.</string>
+<string name="text_account_created">Профилът е създаден.</string>
+<string name="text_account_saved">Профилът е записан.</string>
+<string name="text_account_removed">Профилът е премахнат.</string>
 <string name="dlg_account_select_title">Изберете номер</string>
-<string name="text_account_no_account">Няма създадени потребители.</string>
-<string name="text_account_add_new">Добавете потребител. Използвайте менюто.</string>
-<string name="dlg_account_delete_title">Изтриване на потребител</string>
-<string name="dlg_account_delete_msg">Искате ли да изтриете този потребител ?</string>
+<string name="text_account_no_account">Няма въведени профили.</string>
+<string name="text_account_add_new">Добавете профил. Използвайте менюто.</string>
+<string name="dlg_account_delete_title">Изтриване на профил</string>
+<string name="dlg_account_delete_msg">Искате ли да изтриете този профил?</string>
 <string name="dlg_account_validate_title">Грешка при валидиране</string>
 
-<string name="dlg_account_validate_msg">Някои от настройките не са въведени. Потребителят няма да бъде създаден. Желаете ли да продължите ?</string>
-<string name="err_msg_user_already_exists">Потребител с този номер вече съществува</string>
+<string name="dlg_account_validate_msg">Някои от настройките не са въведени. Профилът няма да бъде създаден! Желаете ли да продължите?</string>
+<string name="err_msg_user_already_exists">Профил с този номер вече съществува!</string>
 <string name="about_thanks">Благодарности на:</string>
-<string name="text_account_invalid">Изберете потребител/номер!</string>
+<string name="text_account_invalid">Изберете профил/номер!</string>
 <string name="text_error">Грешка</string>
 <string name="widget_4x1">MyGlob (4x1)</string>
 <string name="widget_4x2">MyGlob (4x2)</string>
@@ -81,5 +80,5 @@
 <string name="text_tab_home">Начало</string>
 <string name="text_tab_about">Относно</string>
 <string name="text_status">Статус</string>
-<string name="text_account_not_found">Не е открит потребител с този номер!</string>
+<string name="text_account_not_found">Не е открит профил с този номер!</string>
 </resources>
