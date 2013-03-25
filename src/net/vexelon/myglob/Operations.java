@@ -23,6 +23,7 @@
  */
 package net.vexelon.myglob;
 
+import net.vexelon.myglob.configuration.Defs;
 import android.content.Context;
 
 public enum Operations {
@@ -52,5 +53,9 @@ public enum Operations {
 	
 	public int getResourceId() {
 		return this.resId;
+	}
+	
+	public int getMenuId() {
+		return Defs.MENU_REFRESH + 1 + this.id;
 	}
 }

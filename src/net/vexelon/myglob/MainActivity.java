@@ -176,7 +176,7 @@ public class MainActivity extends SherlockFragmentActivity {
 	        SubMenu submenuOperations = menu.addSubMenu(Menu.NONE, Defs.MENU_REFRESH, 0, R.string.operations_title);
 	        
 	        for (Operations operation : _operationsArray) {
-	        	submenuOperations.add(5, operation.getId(), 0, operation.getResourceId());	
+	        	submenuOperations.add(5, operation.getMenuId(), 0, operation.getResourceId());	
 			}
 	
 	        submenuOperations.getItem()
@@ -208,6 +208,7 @@ public class MainActivity extends SherlockFragmentActivity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+		Log.d(Defs.LOG_TAG,"menu = " + item.getItemId());
 		
 		if (_currentPage == HomeFragment.TAB_ID) {
 			switch(item.getItemId()) {
@@ -223,7 +224,7 @@ public class MainActivity extends SherlockFragmentActivity {
 			}
 			// Refresh called
 			for (Operations operation : _operationsArray) {
-				if (item.getItemId() == operation.getId()) {
+				if (item.getItemId() == operation.getMenuId()) {
 					_homeFragment.updateStatus(operation);
 				}
 			}
