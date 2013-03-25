@@ -49,7 +49,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.text.Html;
-import android.text.format.DateFormat;
+import android.text.Layout;
 import android.text.format.Formatter;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -59,6 +59,7 @@ import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -100,34 +101,6 @@ public class HomeFragment extends BaseFragment implements OnClickListener, OnTou
 	
     @Override
     public void onStart() {
-//    	// trap Operations selection
-//    	Spinner spinnerOptions = (Spinner) findViewById(R.id.SpinnerOptions);
-//        spinnerOptions.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//        	@Override
-//        	public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-//        		Operations operation = (Operations) parentView.getSelectedItem();
-//        		GlobalSettings.getInstance().putLastSelectedOperation(operation);
-//        	}
-//        	
-//        	@Override
-//        	public void onNothingSelected(AdapterView<?> parentView) {
-//        	}
-//		});   
-//        
-//        // trap phone number selection
-//        Spinner spinnerAccounts = (Spinner) findViewById(R.id.SpinnerUserAccounts);
-//        spinnerAccounts.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//        	@Override
-//        	public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-//        		String phoneNumber = (String) parentView.getSelectedItem();
-//        		GlobalSettings.getInstance().putLastSelectedAccount(phoneNumber);
-//        	}
-//        	
-//        	@Override
-//        	public void onNothingSelected(AdapterView<?> parentView) {
-//        	}
-//		});
-    	
 		// load last saved operation info (if available)
 		if (GlobalSettings.getInstance().getLastCheckedInfo() != GlobalSettings.NO_INFO) {
 			TextView textContent = (TextView) getView().findViewById(R.id.tv_status_content);
@@ -135,7 +108,6 @@ public class HomeFragment extends BaseFragment implements OnClickListener, OnTou
 		}    	
     	
     	updateProfileView(GlobalSettings.getInstance().getLastSelectedAccount());
-        // pre-select
     	
     	super.onStart();    	
     }	
@@ -212,9 +184,7 @@ public class HomeFragment extends BaseFragment implements OnClickListener, OnTou
     	}
 
         // pre-select
-        if (GlobalSettings.getInstance().getLastSelectedAccount() != GlobalSettings.NO_ACCOUNT) {
-        	updateProfileView(GlobalSettings.getInstance().getLastSelectedAccount());
-        }     	
+    	updateProfileView(GlobalSettings.getInstance().getLastSelectedAccount());
     }
     
     /**
@@ -258,9 +228,12 @@ public class HomeFragment extends BaseFragment implements OnClickListener, OnTou
     		Log.v(Defs.LOG_TAG, "Updating selection for: " + phoneNumber);
     	
     	View v = getView();
+    	LinearLayout profileLayout = (LinearLayout) v.findViewById(R.id.ly_profile);
     	
     	User user = UsersManager.getInstance().getUserByPhoneNumber(phoneNumber);
     	if (user != null) {
+    		profileLayout.setVisibility(View.VISIBLE);
+    		
     		setText(v, R.id.tv_profile_number, user.getPhoneNumber());
     		setText(v, R.id.tv_profile_name, user.getAccountName());
     		setText(v, R.id.tv_checks_today, String.valueOf(user.getChecksToday()));
@@ -276,10 +249,14 @@ public class HomeFragment extends BaseFragment implements OnClickListener, OnTou
     		StringBuilder dateText = new StringBuilder(100);
     		dateText.append(getString(R.string.text_from))
     		.append(" ")
-    		.append(new SimpleDateFormat("dd-MM-yy HH:mm").format(calendar.getTime()));
+    		.append(new SimpleDateFormat ("dd-MM-yy HH:mm").format(calendar.getTime()));
     		
     		setText(v, R.id.tv_profile_lastchecked_at, dateText.toString());
     		
+    	} else if (UsersManager.getInstance().getUsersCount() == 0) {
+    		profileLayout.setVisibility(View.GONE);
+			TextView textContent = (TextView) getView().findViewById(R.id.tv_status_content);
+			textContent.setText(R.string.text_no_accounts);        		
     	} else {
 			Toast.makeText(this.getActivity().getApplicationContext(), 
 					R.string.text_account_not_found, Toast.LENGTH_SHORT).show();

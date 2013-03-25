@@ -170,7 +170,11 @@ public class AccountPreferencesActivity extends PreferenceActivity {
 		// save all users
 		SharedPreferences prefs = this.getSharedPreferences(Defs.PREFS_USER_PREFS, 0);
 		UsersManager.getInstance().save(prefs);
+		
+		// set default selected
+		GlobalSettings.getInstance().putLastSelectedAccount(phoneNumber);
 	}
+	
 	
 	private boolean isSettingsValid() {
 		return !TextUtils.isEmpty(_accountNamePref.getText()) &&

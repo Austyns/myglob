@@ -126,6 +126,10 @@ public class UsersManager {
 		_users.remove(getUserByPhoneNumber(phoneNumber));
 	}
 	
+	public int getUsersCount() {
+		return _users.size();
+	}
+	
 	/**
 	 * 
 	 * @param user
