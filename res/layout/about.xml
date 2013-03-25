@@ -4,9 +4,7 @@
   android:layout_width="fill_parent"
   android:layout_height="fill_parent"
   android:padding="4sp"
-  android:orientation="vertical"
-  android:gravity="center_vertical" 
-  >
+  android:orientation="vertical">
 	<View
 	    android:layout_width="fill_parent"
 	    android:layout_height="10dp" />  
@@ -16,7 +14,7 @@
 		android:fillViewport="true">  
 		<LinearLayout
 			android:orientation="vertical"
-			android:gravity="center_horizontal"
+			android:gravity="center"
 		    android:layout_width="fill_parent"
 		    android:layout_height="wrap_content">
 		
