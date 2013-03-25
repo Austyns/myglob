@@ -81,4 +81,6 @@
 <string name="text_tab_about">Относно</string>
 <string name="text_status">Статус</string>
 <string name="text_account_not_found">Не е открит профил с този номер!</string>
+<string name="text_empty">&lt;n/a&gt;</string>
+<string name="text_from">към</string>
 </resources>

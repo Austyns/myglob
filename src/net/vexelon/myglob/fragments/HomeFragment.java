@@ -24,6 +24,7 @@
 package net.vexelon.myglob.fragments;
 
 import java.util.Calendar;
+import java.util.Date;
 
 import net.vexelon.mobileops.InvalidCredentialsException;
 import net.vexelon.mobileops.SecureCodeRequiredException;
@@ -43,6 +44,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.text.Html;
@@ -266,8 +268,13 @@ public class HomeFragment extends BaseFragment implements OnClickListener, OnTou
     		
     		Calendar calendar = Calendar.getInstance();
     		calendar.setTimeInMillis(user.getLastCheckDateTime());
-    		String date = DateFormat.format("dd-MM-yy hh:mm", calendar).toString();
-    		setText(v, R.id.tv_profile_lastchecked_at, date);
+    		
+    		StringBuilder dateText = new StringBuilder(100);
+    		dateText.append(getString(R.string.text_from))
+    		.append(" ")
+    		.append(DateFormat.format("dd-MM-yy hh:mm", calendar).toString());
+    		
+    		setText(v, R.id.tv_profile_lastchecked_at, dateText.toString());
     		
     	} else {
 			Toast.makeText(this.getActivity().getApplicationContext(), 
@@ -337,8 +344,9 @@ public class HomeFragment extends BaseFragment implements OnClickListener, OnTou
 				public void run() {
 
 					try {
-						Action action = new AccountStatusAction(finalOperation,
-								UsersManager.getInstance().getUserByPhoneNumber(phoneNumber));
+						User user = UsersManager.getInstance().getUserByPhoneNumber(phoneNumber);
+						
+						Action action = new AccountStatusAction(finalOperation, user);
 						
 						// remember last account and operation
 						GlobalSettings.getInstance().putLastSelectedAccount(phoneNumber);
@@ -348,6 +356,11 @@ public class HomeFragment extends BaseFragment implements OnClickListener, OnTou
 						
 						// save last found 
 						GlobalSettings.getInstance().putLastCheckedInfo(data);
+						
+						// save updated user info
+						user.updateChecks(new Date(), 1);
+						SharedPreferences prefs = activity.getSharedPreferences(Defs.PREFS_USER_PREFS, 0);
+						UsersManager.getInstance().save(prefs);
 
 						// update text field
 						activity.runOnUiThread(new Runnable() {
@@ -355,6 +368,7 @@ public class HomeFragment extends BaseFragment implements OnClickListener, OnTou
 							@Override
 							public void run() {
 								tvContent.setText(Html.fromHtml(data));
+								updateProfileView(phoneNumber);
 							}
 						});
 						
