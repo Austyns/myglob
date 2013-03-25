@@ -192,8 +192,17 @@ public class GLBClient implements IClient {
 	
 	@Override
 	public long getDownloadedBytesCount() {
+		Log.d(Defs.LOG_TAG, "Get KBs: " + bytesDownloaded / 1024.0f);
+		
 		return bytesDownloaded;
-	}	
+	}
+	
+	private void addDownloadedBytesCount(long bytesCount) {
+		if (Defs.LOG_ENABLED)
+			Log.d(Defs.LOG_TAG, "Added bytes: " + bytesCount);
+		
+		bytesDownloaded += bytesCount;
+	}
 
 	// ---
 
@@ -270,6 +279,8 @@ public class GLBClient implements IClient {
 
 		HttpPost httpPost = createPostRequest(fullUrl.toString(), qparams);
 		HttpResponse resp;
+		BufferedReader reader = null;
+		long bytesCount = 0;
 		
 		try {
 			resp = httpClient.execute(httpPost);
@@ -280,36 +291,43 @@ public class GLBClient implements IClient {
 		StatusLine status = resp.getStatusLine();
 
 		if ( status.getStatusCode() == HttpStatus.SC_OK ) {
-			
-			// retrieve contents of the reply
-			HttpEntity entity = resp.getEntity();
-			ByteArrayOutputStream baos = null;
 			try {
-				baos = new ByteArrayOutputStream(DEFAULT_BUFFER_SIZE);
-				entity.writeTo(baos);
-			} catch (IOException e) {
-				throw new HttpClientException("Failed to load response! " + e.getMessage(), e);
-			} finally {
-				if (baos != null) try { baos.close(); } catch (IOException e) {};
-			}
-			
-			// bytes downloaded
-			bytesDownloaded += baos.size();
-
-			String content = baos.toString();
-			
-			// if the username is not present in the content, then we're obviously not logged in
-			if ( content.indexOf("action=pdetails") == -1 || content.indexOf("action=chpass") == -1 ) {
-				//check if secure code image is sent
-				if ( content.indexOf("/mg/my/GetImage?refid=") != -1 ) {
-					//TODO: retrieve image url
-					//<img class="code" alt="Ако се затруднявате с разчитането на кода от картинката, моля кликнете
-					//върху нея за да я смените." src="/mg/my/GetImage?refid=b7b8fa558b461f1e2d400ae0f3348f2f">
-					throw new SecureCodeRequiredException("");
+				reader = new BufferedReader(new InputStreamReader(resp.getEntity().getContent()));
+				
+				boolean loggedIn = false;
+				String line = null;
+				
+				while((line = reader.readLine()) != null) {	
+					
+					bytesCount += line.length();
+					
+					if (line.indexOf("action=pdetails") != -1 || line.indexOf("action=chpass") != -1) {
+						// if the username is not present in the content, then we're obviously not logged in
+						loggedIn = true;
+						break;
+					}
+					
+					//check if secure code image is sent
+					if (line.indexOf("/mg/my/GetImage?refid=") != -1) {
+						//TODO: retrieve image url
+						//<img class="code" alt="Ако се затруднявате с разчитането на кода от картинката, моля кликнете
+						//върху нея за да я смените." src="/mg/my/GetImage?refid=b7b8fa558b461f1e2d400ae0f3348f2f">
+						throw new SecureCodeRequiredException("");
+					}
 				}
-
-				throw new InvalidCredentialsException();
+				
+				if (!loggedIn) {
+					throw new InvalidCredentialsException();
+				}
+				
+			} catch (IOException e) {
+				throw new HttpClientException(status.getReasonPhrase(), status.getStatusCode());				
+			} finally {
+				if (reader != null) try { reader.close(); } catch (IOException e) {};
+				// bytes downloaded
+				addDownloadedBytesCount(bytesCount);
 			}
+			
 		} else if ( status.getStatusCode() == HttpStatus.SC_MOVED_TEMPORARILY || 
 				status.getStatusCode() == HttpStatus.SC_MOVED_PERMANENTLY || 
 				status.getStatusCode() == HttpStatus.SC_SEE_OTHER ||
@@ -336,7 +354,7 @@ public class GLBClient implements IClient {
 				// bytes downloaded
 				// XXX This could be misleading!
 				if (resp.getEntity().getContentLength() > 0) {
-					bytesDownloaded += resp.getEntity().getContentLength();
+					addDownloadedBytesCount(resp.getEntity().getContentLength());
 				}
 				
 			} catch (IOException e) {
@@ -358,6 +376,7 @@ public class GLBClient implements IClient {
 			.append(GLBRequestType.PAGE_BILLCHECK.getParams());
 
 		BufferedReader reader = null;
+		long bytesCount = 0;
 		
 		try {
 			HttpGet httpGet = new HttpGet(fullUrl.toString());
@@ -375,7 +394,7 @@ public class GLBClient implements IClient {
 				while((line = reader.readLine()) != null) {
 					
 					// bytes downloaded
-					bytesDownloaded += line.length();
+					bytesCount += line.length();
 					
 					if (line.contains("performAjaxRequest")) {
 						// reset hash code expect, since we obviously passed the last one
@@ -402,6 +421,11 @@ public class GLBClient implements IClient {
 							
 							continue;
 						}
+					} else if (line.contains("successfullContentLocation")) {
+						// XXX 
+						// A convenient hack that allows us to stop processing the stream
+						// and waste bandwidth after the hash codes are loaded.
+						break;
 					}
 					
 					if (inParam) {
@@ -440,6 +464,8 @@ public class GLBClient implements IClient {
 			throw new HttpClientException("Client error!" + e.getMessage(), e);
 		} finally {
 			if (reader != null) try { reader.close(); } catch (IOException e) {};
+			
+			addDownloadedBytesCount(bytesCount);
 		}
 		
 		return result;
@@ -490,7 +516,7 @@ public class GLBClient implements IClient {
 		}
 		
 		// bytes downloaded
-		bytesDownloaded += baos.size();				
+		addDownloadedBytesCount(baos.size());
 
 		try {
 			return new String(baos.toByteArray(), RESPONSE_ENCODING);
