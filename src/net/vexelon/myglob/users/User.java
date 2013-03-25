@@ -112,31 +112,21 @@ public class User {
 	
 	// --- 20.03 ---
 	public void updateChecks(Date when, int amount) {
-		
-		if (DateUtils.equalDates(new Date(this._lastCheckDateTime), when)) {
-			setChecksToday(getChecksToday() + amount);
-		} else {
-			// new day
-			setChecksToday(amount);
-		}
-		
+		setChecksToday(getChecksToday(when) + amount);
 		setChecksTotal(getChecksTotal() + amount);
 	}
 	
 	public void updateTraffic(Date when, long amount) {
-		
-		if (DateUtils.equalDates(new Date(this._lastCheckDateTime), when)) {
-			setTrafficToday(getTrafficToday() + amount);
-		} else {
-			// new day
-			setTrafficToday(amount);
-		}
-		
+		setTrafficToday(getTrafficToday(when) + amount);
 		setTrafficTotal(getTrafficTotal() + amount);
 	}	
 	
-	public long getChecksToday() {
-		return _checksToday;
+	public long getChecksToday(Date when) {
+		if (DateUtils.equalDates(when, new Date(this._lastCheckDateTime))) {
+			return _checksToday;
+		}
+		// new day
+		return 0;
 	}
 
 	public void setChecksToday(long checksToday) {
@@ -151,8 +141,12 @@ public class User {
 		this._checksTotal = checksTotal;
 	}
 
-	public long getTrafficToday() {
-		return _trafficToday;
+	public long getTrafficToday(Date when) {
+		if (DateUtils.equalDates(when, new Date(this._lastCheckDateTime))) {
+			return _trafficToday;
+		}
+		// new day
+		return 0;		
 	}
 
 	public void setTrafficToday(long trafficToday) {

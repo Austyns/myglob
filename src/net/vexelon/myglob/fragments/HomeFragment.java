@@ -25,6 +25,7 @@ package net.vexelon.myglob.fragments;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 import net.vexelon.mobileops.InvalidCredentialsException;
 import net.vexelon.mobileops.SecureCodeRequiredException;
@@ -49,7 +50,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.text.Html;
-import android.text.Layout;
 import android.text.format.Formatter;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -234,12 +234,14 @@ public class HomeFragment extends BaseFragment implements OnClickListener, OnTou
     	if (user != null) {
     		profileLayout.setVisibility(View.VISIBLE);
     		
+    		Date today = new Date();
+    		
     		setText(v, R.id.tv_profile_number, user.getPhoneNumber());
     		setText(v, R.id.tv_profile_name, user.getAccountName());
-    		setText(v, R.id.tv_checks_today, String.valueOf(user.getChecksToday()));
+    		setText(v, R.id.tv_checks_today, String.valueOf(user.getChecksToday(today)));
     		setText(v, R.id.tv_checks_overal, String.valueOf(user.getChecksTotal()));
     		setText(v, R.id.tv_traffic_today, 
-    				Formatter.formatFileSize(this.getActivity(), user.getTrafficToday())); 
+    				Formatter.formatFileSize(this.getActivity(), user.getTrafficToday(today))); 
     		setText(v, R.id.tv_traffic_overal, 
     				Formatter.formatFileSize(this.getActivity(), user.getTrafficTotal())); 
     		
@@ -249,7 +251,7 @@ public class HomeFragment extends BaseFragment implements OnClickListener, OnTou
     		StringBuilder dateText = new StringBuilder(100);
     		dateText.append(getString(R.string.text_from))
     		.append(" ")
-    		.append(new SimpleDateFormat ("dd-MM-yy HH:mm").format(calendar.getTime()));
+    		.append(new SimpleDateFormat("dd-MM-yy HH:mm").format(calendar.getTime()));
     		
     		setText(v, R.id.tv_profile_lastchecked_at, dateText.toString());
     		
