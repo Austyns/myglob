@@ -23,6 +23,7 @@
  */
 package net.vexelon.mobileops;
 
+@SuppressWarnings("serial")
 public class SecureCodeRequiredException extends Exception {
 
 	private String secureCodeImageUrl;

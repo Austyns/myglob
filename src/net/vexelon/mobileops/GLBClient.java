@@ -72,7 +72,7 @@ import org.apache.http.protocol.HttpContext;
 
 import android.util.Log;
 
-public class GLBHttpClient implements Client {
+public class GLBClient implements IClient {
 
 	private final String HTTP_MYGLOBUL_SITE = "https://my.globul.bg";
 
@@ -87,7 +87,7 @@ public class GLBHttpClient implements Client {
 	
 	private HashMap<GLBRequestType, String> operationsHash;
 
-	public GLBHttpClient(String username, String password) {
+	public GLBClient(String username, String password) {
 		this.username = username;
 		this.password = password;
 

@@ -8,7 +8,7 @@ import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.CoreProtocolPNames;
 import org.apache.http.params.HttpParams;
 
-public class MTLHttpClient implements Client {
+public class MTLClient implements IClient {
 	
 	private final String HTTP_MYMTEL_SITE = "https://www.mtel.bg/my";
 	private final String HTTP_USER_AGENT = "Mozilla/5.0 (Windows; U; Windows NT 5.1; ro; rv:1.9.2.8) Gecko/20100722 Firefox/3.6.8";
@@ -20,7 +20,7 @@ public class MTLHttpClient implements Client {
 	private DefaultHttpClient httpClient = null;
 	private CookieStore httpCookieStore = null;
 
-	public MTLHttpClient(String username, String password) {
+	public MTLClient(String username, String password) {
 		this.username = username;
 		this.password = password;
 		

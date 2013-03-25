@@ -26,8 +26,8 @@ package net.vexelon.myglob.actions;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.vexelon.mobileops.Client;
-import net.vexelon.mobileops.GLBHttpClient;
+import net.vexelon.mobileops.IClient;
+import net.vexelon.mobileops.GLBClient;
 import net.vexelon.myglob.Operations;
 import net.vexelon.myglob.configuration.Defs;
 import net.vexelon.myglob.users.User;
@@ -49,7 +49,7 @@ public class AccountStatusAction implements Action {
 		
 		ActionResult result = new ActionResult();
 		String tmpResult = "";
-		Client client = new GLBHttpClient(_user.getPhoneNumber(), UsersManager.getInstance().getUserPassword(_user));
+		IClient client = new GLBClient(_user.getPhoneNumber(), UsersManager.getInstance().getUserPassword(_user));
 		//Log.v(Defs.LOG_TAG, "Logging in using " + user.getPhoneNumber() + " and pass: " + UsersManager.getInstance().getUserPassword(user));
 		
 		try {

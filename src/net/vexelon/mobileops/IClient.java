@@ -23,7 +23,13 @@
  */
 package net.vexelon.mobileops;
 
-public interface Client {
+/**
+ * Client interface
+ * 
+ * @author p.petrov
+ *
+ */
+public interface IClient {
 
 	public void login()
 		throws HttpClientException, InvalidCredentialsException, SecureCodeRequiredException;

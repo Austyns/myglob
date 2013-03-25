@@ -23,6 +23,7 @@
  */
 package net.vexelon.mobileops;
 
+@SuppressWarnings("serial")
 public class InvalidCredentialsException extends Exception {
 	
 }
