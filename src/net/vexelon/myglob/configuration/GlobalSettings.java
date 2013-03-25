@@ -49,11 +49,11 @@ public class GlobalSettings {
 		_prefs = prefs;
 	}
 	
-	public String getLastSelectedAccount() {
+	public String getLastSelectedPhoneNumber() {
 		return _prefs.getString(Defs.PREFS_LAST_SELECTED_ACCOUNT, NO_ACCOUNT);
 	}
 	
-	public void putLastSelectedAccount(String value) {
+	public void setLastSelectedPhoneNumber(String value) {
 		SharedPreferences.Editor editor = _prefs.edit();
 		editor.putString(Defs.PREFS_LAST_SELECTED_ACCOUNT, value);
 		editor.commit();
@@ -68,7 +68,7 @@ public class GlobalSettings {
 				_prefs.getString(Defs.PREFS_LAST_SELECTED_OPERATION, Operations.CHECK_CURRENT_BALANCE.name()));
 	}
 	
-	public void putLastSelectedOperation(Operations operation) {
+	public void setLastSelectedOperation(Operations operation) {
 		SharedPreferences.Editor editor = _prefs.edit();
 		editor.putString(Defs.PREFS_LAST_SELECTED_OPERATION, operation.name());
 		editor.commit();
@@ -83,7 +83,7 @@ public class GlobalSettings {
 	 * @param value
 	 * @remark Maximum is 8192 characters (8k)
 	 */
-	public void putLastCheckedInfo(String value) {
+	public void setLastCheckedInfo(String value) {
 		SharedPreferences.Editor editor = _prefs.edit();
 		editor.putString(Defs.PREFS_LAST_CHECKED_INFO, value);
 		editor.commit();		

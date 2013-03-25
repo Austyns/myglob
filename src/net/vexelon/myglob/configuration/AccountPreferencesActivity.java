@@ -172,7 +172,7 @@ public class AccountPreferencesActivity extends PreferenceActivity {
 		UsersManager.getInstance().save(prefs);
 		
 		// set default selected
-		GlobalSettings.getInstance().putLastSelectedAccount(phoneNumber);
+		GlobalSettings.getInstance().setLastSelectedPhoneNumber(phoneNumber);
 	}
 	
 	

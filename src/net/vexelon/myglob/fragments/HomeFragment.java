@@ -107,7 +107,7 @@ public class HomeFragment extends BaseFragment implements OnClickListener, OnTou
 			textContent.setText(Html.fromHtml(GlobalSettings.getInstance().getLastCheckedInfo()));
 		}    	
     	
-    	updateProfileView(GlobalSettings.getInstance().getLastSelectedAccount());
+    	updateProfileView(GlobalSettings.getInstance().getLastSelectedPhoneNumber());
     	
     	super.onStart();    	
     }	
@@ -184,7 +184,7 @@ public class HomeFragment extends BaseFragment implements OnClickListener, OnTou
     	}
 
         // pre-select
-    	updateProfileView(GlobalSettings.getInstance().getLastSelectedAccount());
+    	updateProfileView(GlobalSettings.getInstance().getLastSelectedPhoneNumber());
     }
     
     /**
@@ -330,13 +330,13 @@ public class HomeFragment extends BaseFragment implements OnClickListener, OnTou
 						Action action = new AccountStatusAction(finalOperation, user);
 						
 						// remember last account and operation
-						GlobalSettings.getInstance().putLastSelectedAccount(phoneNumber);
-						GlobalSettings.getInstance().putLastSelectedOperation(finalOperation);
+						GlobalSettings.getInstance().setLastSelectedPhoneNumber(phoneNumber);
+						GlobalSettings.getInstance().setLastSelectedOperation(finalOperation);
 						
 						final ActionResult actionResult = action.execute();
 						
 						// save last found 
-						GlobalSettings.getInstance().putLastCheckedInfo(actionResult.getString());
+						GlobalSettings.getInstance().setLastCheckedInfo(actionResult.getString());
 						
 						// update user info
 						UsersManager.getInstance().setUserResult(user, actionResult);

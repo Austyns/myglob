@@ -59,7 +59,7 @@ public class UpdateWidgetService extends Service {
         SharedPreferences prefsGeneral = this.getSharedPreferences(Defs.PREFS_ALL_PREFS, 0);
         GlobalSettings.getInstance().init(prefsGeneral);
         
-        String account = GlobalSettings.getInstance().getLastSelectedAccount();
+        String account = GlobalSettings.getInstance().getLastSelectedPhoneNumber();
         if (Defs.LOG_ENABLED) {
         	Log.d(Defs.LOG_TAG, "Last acccount loaded = " + account);
         }
@@ -79,7 +79,7 @@ public class UpdateWidgetService extends Service {
 				resultData = actionResult.getString();
 				
 				// save last found 
-				GlobalSettings.getInstance().putLastCheckedInfo(resultData);
+				GlobalSettings.getInstance().setLastCheckedInfo(resultData);
 				
 				// update user info
 				UsersManager.getInstance().setUserResult(user, actionResult);
@@ -87,7 +87,7 @@ public class UpdateWidgetService extends Service {
 				UsersManager.getInstance().save(prefs);
                 
             	// save result
-            	GlobalSettings.getInstance().putLastCheckedInfo(resultData);
+            	GlobalSettings.getInstance().setLastCheckedInfo(resultData);
 
         	} else {
         		resultData = getResString(R.string.text_account_invalid);
