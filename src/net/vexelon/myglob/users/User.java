@@ -42,7 +42,7 @@ public class User {
 	private long _checksTotal = 0;
 	private long _trafficToday = 0L;
 	private long _trafficTotal = 0L;
-	private long _lastCheckDateTime = 0L;
+	private long _lastCheckDateTime = new Date().getTime();
 	
 	public User() {
 		// Empty
@@ -57,7 +57,7 @@ public class User {
 		_checksTotal = prefs.getLong(Defs.PREFS_USER_CHECKSTOTAL + id, 0);
 		_trafficToday = prefs.getLong(Defs.PREFS_USER_TRAFFICTODAY + id, 0);
 		_trafficTotal = prefs.getLong(Defs.PREFS_USER_TRAFFICTOTAL + id, 0);
-		_lastCheckDateTime = prefs.getLong(Defs.PREFS_USER_LASTCHECKDATETIME + id, 0);
+		_lastCheckDateTime = prefs.getLong(Defs.PREFS_USER_LASTCHECKDATETIME + id, new Date().getTime());
 		return this;
 	}
 	
