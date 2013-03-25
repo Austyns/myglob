@@ -24,7 +24,6 @@
 package net.vexelon.myglob.users;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 import net.vexelon.myglob.actions.ActionResult;
 import net.vexelon.myglob.configuration.Defs;
