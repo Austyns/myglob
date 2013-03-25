@@ -23,25 +23,45 @@
  */
 package net.vexelon.myglob.actions;
 
+import java.util.Date;
+
 public class ActionResult {
 	
 	private String stringResult;
-	private int intResult;
+//	private int intResult;
+	private long downloadedBytesCount;
+	private Date checkedOn;
 
 	public String getString() {
 		return stringResult;
 	}
 	
-	public int getInt() {
-		return intResult;
-	}	
+//	public int getInt() {
+//		return intResult;
+//	}	
 
 	public void setResult(String stringResult) {
 		this.stringResult = stringResult;
 	}
 	
-	public void setResult(int intResult) {
-		this.intResult = intResult;
+	public long getBytesCount() {
+		return downloadedBytesCount;
+	}
+
+	public void setBytesCount(long bytesFetched) {
+		this.downloadedBytesCount = bytesFetched;
+	}
+
+	public Date getCheckedOn() {
+		return checkedOn;
+	}
+
+	public void setCheckedOn(Date checkedOn) {
+		this.checkedOn = checkedOn;
 	}	
+	
+//	public void setResult(int intResult) {
+//		this.intResult = intResult;
+//	}	
 
 }

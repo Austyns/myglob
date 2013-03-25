@@ -23,7 +23,10 @@
  */
 package net.vexelon.myglob.users;
 
+import java.util.Date;
+
 import net.vexelon.myglob.configuration.Defs;
+import net.vexelon.myglob.utils.DateUtils;
 import android.content.SharedPreferences;
 
 public class User {
@@ -108,45 +111,68 @@ public class User {
 	}	
 	
 	// --- 20.03 ---
+	public void updateChecks(Date when, int amount) {
+		
+		if (DateUtils.equalDates(new Date(this._lastCheckDateTime), when)) {
+			setChecksToday(getChecksToday() + amount);
+		} else {
+			// new day
+			setChecksToday(amount);
+		}
+		
+		setChecksTotal(getChecksTotal() + amount);
+	}
+	
+	public void updateTraffic(Date when, long amount) {
+		
+		if (DateUtils.equalDates(new Date(this._lastCheckDateTime), when)) {
+			setTrafficToday(getTrafficToday() + amount);
+		} else {
+			// new day
+			setTrafficToday(amount);
+		}
+		
+		setTrafficTotal(getTrafficTotal() + amount);
+	}	
 	
 	public long getChecksToday() {
 		return _checksToday;
 	}
 
-	public void setChecksToday(long _checksToday) {
-		this._checksToday = _checksToday;
+	public void setChecksToday(long checksToday) {
+		this._checksToday = checksToday;
 	}
 
 	public long getChecksTotal() {
 		return _checksTotal;
 	}
 
-	public void setChecksTotal(long _checksTotal) {
-		this._checksTotal = _checksTotal;
+	public void setChecksTotal(long checksTotal) {
+		this._checksTotal = checksTotal;
 	}
 
 	public long getTrafficToday() {
 		return _trafficToday;
 	}
 
-	public void setTrafficToday(long _trafficToday) {
-		this._trafficToday = _trafficToday;
+	public void setTrafficToday(long trafficToday) {
+		this._trafficToday = trafficToday;
 	}
 
 	public long getTrafficTotal() {
 		return _trafficTotal;
 	}
 
-	public void setTrafficTotal(long _trafficTotal) {
-		this._trafficTotal = _trafficTotal;
+	public void setTrafficTotal(long trafficTotal) {
+		this._trafficTotal = trafficTotal;
 	}
 
 	public long getLastCheckDateTime() {
 		return _lastCheckDateTime;
 	}
 
-	public void setLastCheckDateTime(long _lastCheckDateTime) {
-		this._lastCheckDateTime = _lastCheckDateTime;
+	public void setLastCheckDateTime(long lastCheckDateTime) {
+		this._lastCheckDateTime = lastCheckDateTime;
 	}	
 
 }

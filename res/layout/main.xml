@@ -87,7 +87,7 @@
                         android:id="@+id/tv_checks_today"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
                         android:text="@string/text_empty" />                    
                 </TableRow>
                 <TableRow>
@@ -109,7 +109,7 @@
                         android:id="@+id/tv_checks_overal"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
                         android:text="@string/text_empty" />                    
                 </TableRow>
                 <TableRow>
@@ -131,7 +131,7 @@
                         android:id="@+id/tv_traffic_today"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
                         android:text="@string/text_empty" />                    
                 </TableRow>
                 <TableRow>
@@ -154,7 +154,7 @@
                         android:id="@+id/tv_traffic_overal"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
                         android:text="@string/text_empty" />                    
                 </TableRow>
                 <TableRow>
@@ -228,12 +228,12 @@
             android:paddingLeft="6dp"
              />	    
     </RelativeLayout>
+</LinearLayout>
     <View 
         android:id="@+id/v_repo_divider"
         android:layout_width="fill_parent"
         android:layout_height="1dp"
-        android:background="#ff2f3c44" />
-</LinearLayout>
+        android:background="#ff0099cc" />
 <View
     android:layout_width="fill_parent"
     android:layout_height="10dp" />    

@@ -27,8 +27,10 @@ import net.vexelon.mobileops.InvalidCredentialsException;
 import net.vexelon.mobileops.SecureCodeRequiredException;
 import net.vexelon.myglob.actions.AccountStatusAction;
 import net.vexelon.myglob.actions.Action;
+import net.vexelon.myglob.actions.ActionResult;
 import net.vexelon.myglob.configuration.Defs;
 import net.vexelon.myglob.configuration.GlobalSettings;
+import net.vexelon.myglob.users.User;
 import net.vexelon.myglob.users.UsersManager;
 
 import android.app.PendingIntent;
@@ -62,41 +64,54 @@ public class UpdateWidgetService extends Service {
         	Log.d(Defs.LOG_TAG, "Last acccount loaded = " + account);
         }
         
-        String result = "";
+        String resultData = "";
         try {
         	if (account == GlobalSettings.NO_ACCOUNT) {
-        		result = getResString(R.string.text_account_no_account);
+        		resultData = getResString(R.string.text_account_no_account);
+        		
         	} else if (UsersManager.getInstance().isUserExists(account)) {
+        		User user = UsersManager.getInstance().getUserByPhoneNumber(account);
                 Action action = new AccountStatusAction(
                 		GlobalSettings.getInstance().getLastSelectedOperation(),
-                		UsersManager.getInstance().getUserByPhoneNumber(account));
-            	result = action.execute().getString();
+                		user);
             	
+				final ActionResult actionResult = action.execute();
+				resultData = actionResult.getString();
+				
+				// save last found 
+				GlobalSettings.getInstance().putLastCheckedInfo(resultData);
+				
+				// update user info
+				UsersManager.getInstance().setUserResult(user, actionResult);
+				SharedPreferences prefs = this.getSharedPreferences(Defs.PREFS_USER_PREFS, 0);
+				UsersManager.getInstance().save(prefs);
+                
             	// save result
-            	GlobalSettings.getInstance().putLastCheckedInfo(result);
-            	
+            	GlobalSettings.getInstance().putLastCheckedInfo(resultData);
+
         	} else {
-        		result = getResString(R.string.text_account_invalid);
+        		resultData = getResString(R.string.text_account_invalid);
         	}
         	
-        	return result; // All fine
+        	return resultData; // All fine
+        	
         } catch (InvalidCredentialsException e) {
-        	result = getResString(R.string.dlg_error_msg_invalid_credentials);
+        	resultData = getResString(R.string.dlg_error_msg_invalid_credentials);
 		} catch (SecureCodeRequiredException e) {
-			result = getResString(R.string.dlg_error_msg_securecode);
+			resultData = getResString(R.string.dlg_error_msg_securecode);
 		} catch (Exception e) {
 			Log.e(Defs.LOG_TAG, "Error updating status!", e);
 //			result = getResString(R.string.text_error) + e.getMessage();
-			result = getResString(R.string.dlg_error_msg_title);
+			resultData = getResString(R.string.dlg_error_msg_title);
 		}
         
         // instead of writing error message just spit the last saved nfo
         String lastInfo = GlobalSettings.getInstance().getLastCheckedInfo();
         if (!lastInfo.equals(GlobalSettings.NO_INFO)) {
-        	result = lastInfo;
+        	resultData = lastInfo;
         }
         
-        return result; // Error msg or backup nfo
+        return resultData; // Error msg or backup nfo
 	}
 	
 	@Override

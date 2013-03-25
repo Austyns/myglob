@@ -23,6 +23,7 @@
  */
 package net.vexelon.myglob.actions;
 
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -50,7 +51,12 @@ public class AccountStatusAction implements Action {
 		ActionResult result = new ActionResult();
 		String tmpResult = "";
 		IClient client = new GLBClient(_user.getPhoneNumber(), UsersManager.getInstance().getUserPassword(_user));
-		//Log.v(Defs.LOG_TAG, "Logging in using " + user.getPhoneNumber() + " and pass: " + UsersManager.getInstance().getUserPassword(user));
+		
+//		Log.v(Defs.LOG_TAG, "Logging in using " + user.getPhoneNumber() 
+//				+ " and pass: " + UsersManager.getInstance().getUserPassword(user));
+		
+		// start checking Now
+		result.setCheckedOn(new Date());
 		
 		try {
 			client.login();
@@ -101,6 +107,7 @@ public class AccountStatusAction implements Action {
 			}
 			m.appendTail(sb);
 			
+			result.setBytesCount(client.getDownloadedBytesCount());
 			result.setResult(sb.toString());
 
 			client.logout();

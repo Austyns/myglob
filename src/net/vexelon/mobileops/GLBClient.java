@@ -86,6 +86,8 @@ public class GLBClient implements IClient {
 	private CookieStore httpCookieStore = null;
 	
 	private HashMap<GLBRequestType, String> operationsHash;
+	
+	private long bytesDownloaded = 0;
 
 	public GLBClient(String username, String password) {
 		this.username = username;
@@ -187,6 +189,11 @@ public class GLBClient implements IClient {
 
 		return doPostRequest(GLBRequestType.GET_MSPACKAGE);
 	}
+	
+	@Override
+	public long getDownloadedBytesCount() {
+		return bytesDownloaded;
+	}	
 
 	// ---
 
@@ -273,7 +280,7 @@ public class GLBClient implements IClient {
 		StatusLine status = resp.getStatusLine();
 
 		if ( status.getStatusCode() == HttpStatus.SC_OK ) {
-
+			
 			// retrieve contents of the reply
 			HttpEntity entity = resp.getEntity();
 			ByteArrayOutputStream baos = null;
@@ -285,6 +292,9 @@ public class GLBClient implements IClient {
 			} finally {
 				if (baos != null) try { baos.close(); } catch (IOException e) {};
 			}
+			
+			// bytes downloaded
+			bytesDownloaded += baos.size();
 
 			String content = baos.toString();
 			
@@ -322,6 +332,13 @@ public class GLBClient implements IClient {
 			
 			try {
 				resp.getEntity().consumeContent();
+				
+				// bytes downloaded
+				// XXX This could be misleading!
+				if (resp.getEntity().getContentLength() > 0) {
+					bytesDownloaded += resp.getEntity().getContentLength();
+				}
+				
 			} catch (IOException e) {
 				throw new HttpClientException("Could not consume MOVED_TEMPORARILY content!", e);
 			}			
@@ -356,6 +373,9 @@ public class GLBClient implements IClient {
 				GLBRequestType reqType = null;
 				
 				while((line = reader.readLine()) != null) {
+					
+					// bytes downloaded
+					bytesDownloaded += line.length();
 					
 					if (line.contains("performAjaxRequest")) {
 						// reset hash code expect, since we obviously passed the last one
@@ -468,6 +488,9 @@ public class GLBClient implements IClient {
 		} finally {
 			if (baos != null) try { baos.close(); } catch (IOException e) {};
 		}
+		
+		// bytes downloaded
+		bytesDownloaded += baos.size();				
 
 		try {
 			return new String(baos.toByteArray(), RESPONSE_ENCODING);

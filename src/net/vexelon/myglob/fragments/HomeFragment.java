@@ -33,6 +33,7 @@ import net.vexelon.myglob.Operations;
 import net.vexelon.myglob.R;
 import net.vexelon.myglob.actions.AccountStatusAction;
 import net.vexelon.myglob.actions.Action;
+import net.vexelon.myglob.actions.ActionResult;
 import net.vexelon.myglob.configuration.AccountPreferencesActivity;
 import net.vexelon.myglob.configuration.Defs;
 import net.vexelon.myglob.configuration.GlobalSettings;
@@ -49,6 +50,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.text.Html;
 import android.text.format.DateFormat;
+import android.text.format.Formatter;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -263,8 +265,10 @@ public class HomeFragment extends BaseFragment implements OnClickListener, OnTou
     		setText(v, R.id.tv_profile_name, user.getAccountName());
     		setText(v, R.id.tv_checks_today, String.valueOf(user.getChecksToday()));
     		setText(v, R.id.tv_checks_overal, String.valueOf(user.getChecksTotal()));
-    		setText(v, R.id.tv_traffic_today, String.valueOf(user.getTrafficToday()));
-    		setText(v, R.id.tv_traffic_overal, String.valueOf(user.getTrafficTotal()));
+    		setText(v, R.id.tv_traffic_today, 
+    				Formatter.formatFileSize(this.getActivity(), user.getTrafficToday())); 
+    		setText(v, R.id.tv_traffic_overal, 
+    				Formatter.formatFileSize(this.getActivity(), user.getTrafficTotal())); 
     		
     		Calendar calendar = Calendar.getInstance();
     		calendar.setTimeInMillis(user.getLastCheckDateTime());
@@ -352,13 +356,13 @@ public class HomeFragment extends BaseFragment implements OnClickListener, OnTou
 						GlobalSettings.getInstance().putLastSelectedAccount(phoneNumber);
 						GlobalSettings.getInstance().putLastSelectedOperation(finalOperation);
 						
-						final String data = action.execute().getString();
+						final ActionResult actionResult = action.execute();
 						
 						// save last found 
-						GlobalSettings.getInstance().putLastCheckedInfo(data);
+						GlobalSettings.getInstance().putLastCheckedInfo(actionResult.getString());
 						
-						// save updated user info
-						user.updateChecks(new Date(), 1);
+						// update user info
+						UsersManager.getInstance().setUserResult(user, actionResult);
 						SharedPreferences prefs = activity.getSharedPreferences(Defs.PREFS_USER_PREFS, 0);
 						UsersManager.getInstance().save(prefs);
 
@@ -367,7 +371,7 @@ public class HomeFragment extends BaseFragment implements OnClickListener, OnTou
 
 							@Override
 							public void run() {
-								tvContent.setText(Html.fromHtml(data));
+								tvContent.setText(Html.fromHtml(actionResult.getString()));
 								updateProfileView(phoneNumber);
 							}
 						});

@@ -24,7 +24,9 @@
 package net.vexelon.myglob.users;
 
 import java.util.ArrayList;
+import java.util.Date;
 
+import net.vexelon.myglob.actions.ActionResult;
 import net.vexelon.myglob.configuration.Defs;
 import net.vexelon.myglob.crypto.PasswordEngine;
 import net.vexelon.myglob.crypto.PasswordEngineImpl2;
@@ -141,6 +143,17 @@ public class UsersManager {
 	
 	public void setUserPassword(User user, String rawPassword) throws Exception {
 		user.setEncodedPassword(_passwordEngine.encryptAndEncode(rawPassword));
+	}
+	
+	/**
+	 * 
+	 * @param user
+	 * @param result
+	 */
+	public void setUserResult(User user, ActionResult result) {
+		user.updateChecks(result.getCheckedOn(), 1);
+		user.updateTraffic(result.getCheckedOn(), result.getBytesCount());
+		user.setLastCheckDateTime(result.getCheckedOn().getTime());
 	}
 	
 //	private byte[] loadKey() throws Exception {

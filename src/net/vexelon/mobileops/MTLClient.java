@@ -48,6 +48,12 @@ public class MTLClient implements IClient {
 		if ( httpClient != null )
 			httpClient.getConnectionManager().shutdown();
 	}
+	
+	@Override
+	public long getDownloadedBytesCount() {
+		// TODO Auto-generated method stub
+		return 0;
+	}	
 
 	@Override
 	public String getAvailableInternetBandwidth() throws HttpClientException {

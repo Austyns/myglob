@@ -37,6 +37,12 @@ public interface IClient {
 	public void logout()
 		throws HttpClientException;
 	
+	/**
+	 * Get count of downloaded bytes up to this moment
+	 * @return
+	 */
+	public long getDownloadedBytesCount();
+	
 	public String getCurrentBalance() 
 		throws HttpClientException;
 	
