@@ -46,18 +46,18 @@
 <string name="operation_check_all">Всички</string>
 
 
-<string name="menu_add_account">Добави номер</string>
-<string name="menu_manage_accounts">Редактирай номер</string>
+<string name="menu_add_account">Добави профил</string>
+<string name="menu_manage_accounts">Редактирай профил</string>
 <string name="dlg_msg_cancel">Отказ</string>
 <string name="text_selectaccount">Изберете профил</string>
-<string name="text_no_accounts">Няма зададени номера! Моля добавете номер.</string>
+<string name="text_no_accounts">Няма зададени профили! Моля добавете профил.</string>
 <string name="dlg_error_msg_legacy_user_failed">Грешка (%s) при записване на профил! Налага се да добавите нов профил.</string>
 <string name="dlg_legacyuser_title">Намерен номер</string>
 <string name="dlg_legacyuser_msg">Искате ли да добавите номер %s ?</string>
 <string name="text_account_created">Профилът е създаден.</string>
 <string name="text_account_saved">Профилът е записан.</string>
 <string name="text_account_removed">Профилът е премахнат.</string>
-<string name="dlg_account_select_title">Изберете номер</string>
+<string name="dlg_account_select_title">Изберете профил</string>
 <string name="text_account_no_account">Няма въведени профили.</string>
 <string name="text_account_add_new">Добавете профил. Използвайте менюто.</string>
 <string name="dlg_account_delete_title">Изтриване на профил</string>
