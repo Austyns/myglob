@@ -23,14 +23,47 @@
  */
 package net.vexelon.myglob.actions;
 
+import net.vexelon.myglob.R;
+
 @SuppressWarnings("serial")
 public class ActionExecuteException extends Exception {
 	
-	public ActionExecuteException(String message) {
-		super(message);
+	protected int errorResId;
+	protected int errorTitleResId;
+	
+//	public ActionExecuteException(String message) {
+//		super(message);
+//	}
+	
+	public ActionExecuteException(int errorResId, int errorTitleResId) {
+		super("");
+		this.errorResId = errorResId;
+		this.errorTitleResId = errorTitleResId;
 	}
 	
-	public ActionExecuteException(String message, Throwable t) {
-		super(message, t);
+	public ActionExecuteException(int errorResId, int errorTitleResId, Throwable t) {
+		super("", t);
+		this.errorResId = errorResId;
+		this.errorTitleResId = errorTitleResId;		
 	}
+	
+	public ActionExecuteException(int errorResId) {
+		super("");
+		this.errorResId = errorResId;
+		this.errorTitleResId = R.string.dlg_error_msg_title;
+	}
+	
+	public ActionExecuteException(int errorResId, Throwable t) {
+		super("", t);
+		this.errorResId = errorResId;
+		this.errorTitleResId = R.string.dlg_error_msg_title;		
+	}	
+	
+	public int getErrorResId() {
+		return this.errorResId;
+	}
+	
+	public int getErrorTitleResId() {
+		return this.errorTitleResId;
+	}	
 }

@@ -108,6 +108,8 @@ public class UpdateWidgetService extends Service {
         	resultData = lastUserData;
         }
         
+        resultData = account + "<br>" + resultData;
+        
         return resultData; // Error msg or backup nfo
 	}
 	
