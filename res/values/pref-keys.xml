@@ -6,8 +6,8 @@
 <string name="pref_account_delete">pref_account_delete</string>
 <string name="pref_account_password">pref_account_password</string>
 <string name="pref_account_save_password">pref_account_save_password</string>
-<string name="pref_text_account_name">Потребител</string>
-<string name="pref_text_account_name_summary">Име на потребител</string>
+<string name="pref_text_account_name">Профил</string>
+<string name="pref_text_account_name_summary">Име на профил</string>
 <string name="pref_text_account_operator">Оператор</string>
 <string name="pref_text_account_operator_summary">Мобилен оператор</string>
 <string name="pref_text_account_phonenumber">Номер</string>
@@ -16,10 +16,10 @@
 <string name="pref_text_account_password_dialog_title">Въведете парола</string>
 <string name="pref_text_account_password_dialog_msg">Паролата трябва да е същата, която използвате за достъп до уеб системата на оператора.</string>
 <string name="pref_text_account_delete">Изтриване</string>
-<string name="pref_text_account_delete_summary">Изтриване на потребител</string>
+<string name="pref_text_account_delete_summary">Изтриване на профил</string>
 <string name="pref_text_account_phonenumber_msg">Въведете номера на мобилния си телефон.</string>
 <string name="pref_text_account_phonenumber_summary">Мобилен номер</string>
 <string name="pref_name_attributes">Настройки</string>
 <string name="pref_name_operations">Операции</string>
-<string name="pref_name_prefs">Конфигуриране</string>
+<string name="pref_name_prefs">Настройване</string>
 </resources>
