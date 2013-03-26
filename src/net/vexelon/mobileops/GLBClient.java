@@ -192,7 +192,8 @@ public class GLBClient implements IClient {
 	
 	@Override
 	public long getDownloadedBytesCount() {
-		Log.d(Defs.LOG_TAG, "Get KBs: " + bytesDownloaded / 1024.0f);
+		if (Defs.LOG_ENABLED)
+			Log.d(Defs.LOG_TAG, "Get KBs: " + bytesDownloaded / 1024.0f);
 		
 		return bytesDownloaded;
 	}
