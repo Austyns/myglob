@@ -101,7 +101,7 @@ public class AccountPreferencesActivity extends PreferenceActivity {
 					AlertDialog.Builder alertBuilder = new AlertDialog.Builder(_activity);
 					alertBuilder.setTitle(R.string.dlg_account_delete_title)
 						.setMessage(R.string.dlg_account_delete_msg)
-						.setIcon(R.drawable.alert)
+						.setIcon(R.drawable.ic_dialog_alert)
 						.setPositiveButton(getResString(R.string.dlg_msg_yes), new OnClickListener() {
 							
 							@Override
@@ -232,7 +232,7 @@ public class AccountPreferencesActivity extends PreferenceActivity {
 				AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
 				alertBuilder.setTitle(R.string.dlg_account_validate_title)
 					.setMessage(R.string.dlg_account_validate_msg)
-					.setIcon(R.drawable.alert)
+					.setIcon(R.drawable.ic_dialog_alert)
 					.setPositiveButton(getResString(R.string.dlg_msg_yes), new OnClickListener() {
 						
 						@Override

@@ -241,7 +241,7 @@ public class Utils {
 		AlertDialog.Builder alertBuilder = new AlertDialog.Builder(context);
 		
 		return alertBuilder.setTitle(title).setMessage(message).setIcon(
-				R.drawable.alert).setOnKeyListener(
+				R.drawable.ic_dialog_alert).setOnKeyListener(
 				new DialogInterface.OnKeyListener() {
 
 					@Override
