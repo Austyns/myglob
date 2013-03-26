@@ -173,7 +173,7 @@ public class MainActivity extends SherlockFragmentActivity {
 //			.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 			
 			// Account Operations
-	        SubMenu submenuOperations = menu.addSubMenu(Menu.NONE, Defs.MENU_REFRESH, 0, R.string.operations_title);
+	        SubMenu submenuOperations = menu.addSubMenu(Menu.NONE, Defs.MENU_OPTIONS_BASE, 0, R.string.operations_title);
 	        
 	        for (Operations operation : _operationsArray) {
 	        	submenuOperations.add(5, operation.getMenuId(), 0, operation.getResourceId());	
@@ -208,8 +208,6 @@ public class MainActivity extends SherlockFragmentActivity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		Log.d(Defs.LOG_TAG,"menu = " + item.getItemId());
-		
 		if (_currentPage == HomeFragment.TAB_ID) {
 			switch(item.getItemId()) {
 //			case Defs.MENU_REFRESH:

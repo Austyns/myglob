@@ -56,6 +56,6 @@ public enum Operations {
 	}
 	
 	public int getMenuId() {
-		return Defs.MENU_REFRESH + 1 + this.id;
+		return Defs.MENU_OPTIONS_BASE + 1 + this.id;
 	}
 }
