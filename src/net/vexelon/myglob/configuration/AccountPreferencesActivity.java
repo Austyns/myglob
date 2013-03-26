@@ -150,8 +150,8 @@ public class AccountPreferencesActivity extends PreferenceActivity {
 //			UsersManager.getInstance().addUser(user);
 			if (UsersManager.getInstance().isUserExists(phoneNumber)) 
 				throw new Exception(getResString(R.string.err_msg_user_already_exists));
-		}
-		else {
+			
+		} else {
 			user = _editUser; // get instance of user being edited
 			user.setAccountName(_accountNamePref.getText());
 			user.setAccountType(getAccountTypeFromListPrefs());
@@ -180,8 +180,7 @@ public class AccountPreferencesActivity extends PreferenceActivity {
 		return !TextUtils.isEmpty(_accountNamePref.getText()) &&
 			!TextUtils.isEmpty(_accountNumberPref.getText()) &&
 			!TextUtils.isEmpty(_accountOperatorPref.getValue()) &&
-			!TextUtils.isEmpty(_accountPasswordPref.getText())
-			;
+			!TextUtils.isEmpty(_accountPasswordPref.getText());
 	}
 	
 	private AccountType getAccountTypeFromListPrefs() {
@@ -206,8 +205,7 @@ public class AccountPreferencesActivity extends PreferenceActivity {
 					saveSettings();
 					setResult(RESULT_OK);
 					finish();					
-				}
-				catch(Exception e) {
+				} catch(Exception e) {
 					// show error msg & exit
 					
 					AlertDialog dialog = Utils.createAlertDialog(this, e.getMessage(), getResString(R.string.dlg_error_msg_title));
@@ -228,8 +226,7 @@ public class AccountPreferencesActivity extends PreferenceActivity {
 					});
 					dialog.show();
 				}
-			}
-			else {
+			} else {
 				// One or more obligatory settings is missing. Show continue yes/no dialog.
 				
 				AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
