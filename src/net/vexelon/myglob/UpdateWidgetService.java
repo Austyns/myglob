@@ -101,9 +101,9 @@ public class UpdateWidgetService extends Service {
     		resultData = getResString(R.string.text_account_invalid);
     	}
     	
-        resultData = account + "<br>" + resultData;
+//        resultData = account + "<br>" + resultData;
         
-        return resultData; // Error msg or backup nfo
+        return resultData;
 	}
 	
 	@Override
