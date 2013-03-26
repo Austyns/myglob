@@ -31,7 +31,7 @@
         android:layout_alignParentRight="true"
         android:layout_alignWithParentIfMissing="false"
         android:layout_centerVertical="true"
-        android:src="@drawable/icon_refresh"
+        android:src="@drawable/ic_refresh_inverse"
          />
 
 </RelativeLayout>
