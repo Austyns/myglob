@@ -23,10 +23,9 @@
  */
 package net.vexelon.myglob;
 
-import net.vexelon.mobileops.InvalidCredentialsException;
-import net.vexelon.mobileops.SecureCodeRequiredException;
 import net.vexelon.myglob.actions.AccountStatusAction;
 import net.vexelon.myglob.actions.Action;
+import net.vexelon.myglob.actions.ActionExecuteException;
 import net.vexelon.myglob.actions.ActionResult;
 import net.vexelon.myglob.configuration.Defs;
 import net.vexelon.myglob.configuration.GlobalSettings;
@@ -65,49 +64,43 @@ public class UpdateWidgetService extends Service {
         }
         
         String resultData = GlobalSettings.NO_INFO;
-        String lastUserData = GlobalSettings.NO_INFO;
-        try {
-        	if (account == GlobalSettings.NO_ACCOUNT) {
-        		resultData = getResString(R.string.text_account_no_account);
-        		
-        	} else if (UsersManager.getInstance().isUserExists(account)) {
-        		User user = UsersManager.getInstance().getUserByPhoneNumber(account);
-        		
-        		lastUserData = user.getLastCheckData();
-        		
-                Action action = new AccountStatusAction(
-                		GlobalSettings.getInstance().getLastSelectedOperation(),
-                		user);
-            	
-				final ActionResult actionResult = action.execute();
+        
+    	if (account == GlobalSettings.NO_ACCOUNT) {
+    		resultData = getResString(R.string.text_account_no_account);
+    		
+    	} else if (UsersManager.getInstance().isUserExists(account)) {
+    		
+    		User user = UsersManager.getInstance().getUserByPhoneNumber(account);
+            Action action = new AccountStatusAction(
+            		this,
+            		GlobalSettings.getInstance().getLastSelectedOperation(),
+            		user);
+            
+            // get last known good info
+            resultData = user.getLastCheckData();
+        	
+            try {
+				ActionResult actionResult = action.execute();
 				resultData = actionResult.getString();
 				
-				// update user info
-				UsersManager.getInstance().setUserResult(user, actionResult);
-				SharedPreferences prefs = this.getSharedPreferences(Defs.PREFS_USER_PREFS, 0);
-				UsersManager.getInstance().save(prefs);
-                
-        	} else {
-        		resultData = getResString(R.string.text_account_invalid);
-        	}
-        	
-        	return resultData; // All fine
-        	
-        } catch (InvalidCredentialsException e) {
-        	resultData = getResString(R.string.dlg_error_msg_invalid_credentials);
-		} catch (SecureCodeRequiredException e) {
-			resultData = getResString(R.string.dlg_error_msg_securecode);
-		} catch (Exception e) {
-			Log.e(Defs.LOG_TAG, "Error updating status!", e);
-//			result = getResString(R.string.text_error) + e.getMessage();
-			resultData = getResString(R.string.dlg_error_msg_title);
-		}
-        
-        // instead of writing error message just spit the last saved nfo
-        if (!lastUserData.equals(GlobalSettings.NO_INFO)) {
-        	resultData = lastUserData;
-        }
-        
+            } catch (ActionExecuteException e) {
+            	Log.e(Defs.LOG_TAG, "Error updating widget status!", e);
+            	
+            	// only show error if no user info is available
+            	if (resultData.length() == 0) {
+	            	if (e.isErrorResIdAvailable()) {
+	            		resultData = getString(e.getErrorResId());
+	            	} else {
+	            		resultData = getResString(R.string.dlg_error_msg_title);
+	//            		resultData = e.getMessage();
+	            	}
+            	}
+            }                
+            
+    	} else {
+    		resultData = getResString(R.string.text_account_invalid);
+    	}
+    	
         resultData = account + "<br>" + resultData;
         
         return resultData; // Error msg or backup nfo

@@ -27,9 +27,16 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+
+import net.vexelon.mobileops.HttpClientException;
 import net.vexelon.mobileops.IClient;
 import net.vexelon.mobileops.GLBClient;
+import net.vexelon.mobileops.InvalidCredentialsException;
+import net.vexelon.mobileops.SecureCodeRequiredException;
 import net.vexelon.myglob.Operations;
+import net.vexelon.myglob.R;
 import net.vexelon.myglob.configuration.Defs;
 import net.vexelon.myglob.users.User;
 import net.vexelon.myglob.users.UsersManager;
@@ -37,20 +44,28 @@ import net.vexelon.myglob.utils.Utils;
 
 public class AccountStatusAction implements Action {
 	
+	protected Context _context;
 	protected Operations _operation;
 	protected User _user;
 	
-	public AccountStatusAction(Operations operation, User user) {
+	public AccountStatusAction(Context context, Operations operation, User user) {
+		_context = context;
 		_operation = operation;
 		_user = user;
 	}
 
 	@Override
-	public ActionResult execute() throws Exception {
+	public ActionResult execute() throws ActionExecuteException {
 		
 		ActionResult result = new ActionResult();
 		String tmpResult = "";
-		IClient client = new GLBClient(_user.getPhoneNumber(), UsersManager.getInstance().getUserPassword(_user));
+		IClient client;
+		
+		try {
+			client = new GLBClient(_user.getPhoneNumber(), UsersManager.getInstance().getUserPassword(_user));
+		} catch (Exception e) {
+			throw new ActionExecuteException(R.string.dlg_error_msg_decrypt_failed, e);
+		}
 		
 //		Log.v(Defs.LOG_TAG, "Logging in using " + user.getPhoneNumber() 
 //				+ " and pass: " + UsersManager.getInstance().getUserPassword(user));
@@ -97,7 +112,7 @@ public class AccountStatusAction implements Action {
 				break;
 			}
 
-			// colorfy money values
+			// colorfy important values
 			Pattern p = Pattern.compile("(-*\\d+(,\\d+)*\\s*лв\\.*)|(\\d+:\\d+\\s*(ч\\.*|мин\\.*))", Pattern.CASE_INSENSITIVE);
 			Matcher m = p.matcher(tmpResult);
 			StringBuffer sb = new StringBuffer(tmpResult.length() + tmpResult.length());
@@ -111,10 +126,20 @@ public class AccountStatusAction implements Action {
 			result.setResult(sb.toString());
 
 			client.logout();
-		} catch(Exception e) {
-//			Log.e(Defs.LOG_TAG, "Login exception!", e);
-//			throw new ActionExecuteException("Could not execute account update action!", e);
-			throw e;
+			
+			// update user info
+			UsersManager.getInstance().setUserResult(_user, result);
+			SharedPreferences prefs = _context.getSharedPreferences(Defs.PREFS_USER_PREFS, 0);
+			UsersManager.getInstance().save(prefs);			
+			
+		} catch (InvalidCredentialsException e) {
+			throw new ActionExecuteException(R.string.dlg_error_msg_invalid_credentials, 
+					R.string.dlg_error_msg_title);
+		} catch (SecureCodeRequiredException e) {
+			throw new ActionExecuteException(R.string.dlg_error_msg_securecode, 
+					R.string.dlg_error_msg_title);			
+		} catch(HttpClientException e) {
+			throw new ActionExecuteException(e);	
 		} finally {
 			if (client != null)
 				client.close();

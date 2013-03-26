@@ -28,12 +28,13 @@ import net.vexelon.myglob.R;
 @SuppressWarnings("serial")
 public class ActionExecuteException extends Exception {
 	
-	protected int errorResId;
-	protected int errorTitleResId;
+	protected int errorResId = -1;
+	protected int errorTitleResId = -1;
 	
-//	public ActionExecuteException(String message) {
-//		super(message);
-//	}
+	public ActionExecuteException(Throwable t) {
+		super(t);
+		this.errorTitleResId = R.string.dlg_error_msg_title;
+	}
 	
 	public ActionExecuteException(int errorResId, int errorTitleResId) {
 		super("");
@@ -42,7 +43,7 @@ public class ActionExecuteException extends Exception {
 	}
 	
 	public ActionExecuteException(int errorResId, int errorTitleResId, Throwable t) {
-		super("", t);
+		super(t);
 		this.errorResId = errorResId;
 		this.errorTitleResId = errorTitleResId;		
 	}
@@ -54,7 +55,7 @@ public class ActionExecuteException extends Exception {
 	}
 	
 	public ActionExecuteException(int errorResId, Throwable t) {
-		super("", t);
+		super(t);
 		this.errorResId = errorResId;
 		this.errorTitleResId = R.string.dlg_error_msg_title;		
 	}	
@@ -66,4 +67,8 @@ public class ActionExecuteException extends Exception {
 	public int getErrorTitleResId() {
 		return this.errorTitleResId;
 	}	
+	
+	public boolean isErrorResIdAvailable() {
+		return this.errorResId != -1;
+	}
 }

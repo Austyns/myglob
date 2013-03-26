@@ -27,13 +27,12 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import net.vexelon.mobileops.InvalidCredentialsException;
-import net.vexelon.mobileops.SecureCodeRequiredException;
 import net.vexelon.myglob.AccountsArrayAdapter;
 import net.vexelon.myglob.Operations;
 import net.vexelon.myglob.R;
 import net.vexelon.myglob.actions.AccountStatusAction;
 import net.vexelon.myglob.actions.Action;
+import net.vexelon.myglob.actions.ActionExecuteException;
 import net.vexelon.myglob.actions.ActionResult;
 import net.vexelon.myglob.configuration.AccountPreferencesActivity;
 import net.vexelon.myglob.configuration.Defs;
@@ -46,7 +45,6 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.text.Html;
@@ -329,23 +327,17 @@ public class HomeFragment extends BaseFragment implements OnClickListener, OnTou
 
 			new Thread() {
 				public void run() {
-
 					try {
 						User user = UsersManager.getInstance().getUserByPhoneNumber(phoneNumber);
 						
-						Action action = new AccountStatusAction(finalOperation, user);
-						
-						// remember last account and operation
-						GlobalSettings.getInstance().setLastSelectedPhoneNumber(phoneNumber);
-						GlobalSettings.getInstance().setLastSelectedOperation(finalOperation);
+						Action action = new AccountStatusAction(activity, finalOperation, user);	
 						
 						final ActionResult actionResult = action.execute();
 						
-						// update user info
-						UsersManager.getInstance().setUserResult(user, actionResult);
-						SharedPreferences prefs = activity.getSharedPreferences(Defs.PREFS_USER_PREFS, 0);
-						UsersManager.getInstance().save(prefs);
-
+						// remember last account and operation
+						GlobalSettings.getInstance().setLastSelectedPhoneNumber(phoneNumber);
+						GlobalSettings.getInstance().setLastSelectedOperation(finalOperation);	
+						
 						// update text field
 						activity.runOnUiThread(new Runnable() {
 
@@ -356,27 +348,32 @@ public class HomeFragment extends BaseFragment implements OnClickListener, OnTou
 							}
 						});
 						
-					} catch (InvalidCredentialsException e) {
-						// Show error dialog
-						Utils.showAlertDialog(activity, R.string.dlg_error_msg_invalid_credentials, 
-								R.string.dlg_error_msg_title);
-					} catch (SecureCodeRequiredException e) {
-						// Show error dialog
-						Utils.showAlertDialog(activity, R.string.dlg_error_msg_securecode, R.string.dlg_error_msg_title);
-					} catch (Exception e) {
+						// close progress bar dialog
+						activity.runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								myProgress.dismiss();
+							}
+						});							
+						
+					} catch (ActionExecuteException e) {
 						Log.e(Defs.LOG_TAG, "Error updating status!", e);
+						
+						// close progress bar dialog
+						activity.runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								myProgress.dismiss();
+							}
+						});							
+						
 						// Show error dialog
-						final String msg = e.getMessage();
-						Utils.showAlertDialog(activity, msg, getResString(R.string.dlg_error_msg_title));
+						if (e.isErrorResIdAvailable()) {
+							Utils.showAlertDialog(activity, e.getErrorResId(), e.getErrorTitleResId());
+						} else {
+							Utils.showAlertDialog(activity, e.getMessage(), getResString(e.getErrorTitleResId()));
+						}						
 					}
-
-					// close progress bar dialog
-					activity.runOnUiThread(new Runnable() {
-						@Override
-						public void run() {
-							myProgress.dismiss();
-						}
-					});
 				};
 			}.start();
 		} else  {
