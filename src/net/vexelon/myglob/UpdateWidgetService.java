@@ -64,13 +64,17 @@ public class UpdateWidgetService extends Service {
         	Log.d(Defs.LOG_TAG, "Last acccount loaded = " + account);
         }
         
-        String resultData = "";
+        String resultData = GlobalSettings.NO_INFO;
+        String lastUserData = GlobalSettings.NO_INFO;
         try {
         	if (account == GlobalSettings.NO_ACCOUNT) {
         		resultData = getResString(R.string.text_account_no_account);
         		
         	} else if (UsersManager.getInstance().isUserExists(account)) {
         		User user = UsersManager.getInstance().getUserByPhoneNumber(account);
+        		
+        		lastUserData = user.getLastCheckData();
+        		
                 Action action = new AccountStatusAction(
                 		GlobalSettings.getInstance().getLastSelectedOperation(),
                 		user);
@@ -78,17 +82,11 @@ public class UpdateWidgetService extends Service {
 				final ActionResult actionResult = action.execute();
 				resultData = actionResult.getString();
 				
-				// save last found 
-				GlobalSettings.getInstance().setLastCheckedInfo(resultData);
-				
 				// update user info
 				UsersManager.getInstance().setUserResult(user, actionResult);
 				SharedPreferences prefs = this.getSharedPreferences(Defs.PREFS_USER_PREFS, 0);
 				UsersManager.getInstance().save(prefs);
                 
-            	// save result
-            	GlobalSettings.getInstance().setLastCheckedInfo(resultData);
-
         	} else {
         		resultData = getResString(R.string.text_account_invalid);
         	}
@@ -106,9 +104,8 @@ public class UpdateWidgetService extends Service {
 		}
         
         // instead of writing error message just spit the last saved nfo
-        String lastInfo = GlobalSettings.getInstance().getLastCheckedInfo();
-        if (!lastInfo.equals(GlobalSettings.NO_INFO)) {
-        	resultData = lastInfo;
+        if (!lastUserData.equals(GlobalSettings.NO_INFO)) {
+        	resultData = lastUserData;
         }
         
         return resultData; // Error msg or backup nfo

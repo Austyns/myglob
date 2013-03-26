@@ -57,6 +57,7 @@ public class Defs {
 	public final static String PREFS_USER_TRAFFICTODAY = "_TRAFFICTODAY";
 	public final static String PREFS_USER_TRAFFICTOTAL = "_TRAFFICTOTAL";
 	public final static String PREFS_USER_LASTCHECKDATETIME = "_LASTCHECKDATETIME";
+	public final static String PREFS_USER_LASTCHECKDATA = "_LASTCHECKDATA";
 	
 	public final static int INTENT_ACCOUNT_ADD_RQ = 200;
 	public final static int INTENT_ACCOUNT_EDIT_RQ = 210;

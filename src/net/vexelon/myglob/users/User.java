@@ -43,6 +43,7 @@ public class User {
 	private long _trafficToday = 0L;
 	private long _trafficTotal = 0L;
 	private long _lastCheckDateTime = new Date().getTime();
+	private String _lastCheckData = "";
 	
 	public User() {
 		// Empty
@@ -58,6 +59,7 @@ public class User {
 		_trafficToday = prefs.getLong(Defs.PREFS_USER_TRAFFICTODAY + id, 0);
 		_trafficTotal = prefs.getLong(Defs.PREFS_USER_TRAFFICTOTAL + id, 0);
 		_lastCheckDateTime = prefs.getLong(Defs.PREFS_USER_LASTCHECKDATETIME + id, new Date().getTime());
+		_lastCheckData = prefs.getString(Defs.PREFS_USER_LASTCHECKDATA + id, "");
 		return this;
 	}
 	
@@ -71,6 +73,7 @@ public class User {
 		editor.putLong(Defs.PREFS_USER_TRAFFICTODAY + id, _trafficToday);
 		editor.putLong(Defs.PREFS_USER_TRAFFICTOTAL + id, _trafficTotal);
 		editor.putLong(Defs.PREFS_USER_LASTCHECKDATETIME + id, _lastCheckDateTime);
+		editor.putString(Defs.PREFS_USER_LASTCHECKDATA + id, _lastCheckData);
 		return this;
 	}
 	
@@ -168,5 +171,18 @@ public class User {
 	public void setLastCheckDateTime(long lastCheckDateTime) {
 		this._lastCheckDateTime = lastCheckDateTime;
 	}	
+	
+	public String getLastCheckData() {
+		return this._lastCheckData;
+	}
+	
+	/**
+	 * 
+	 * @param data
+	 * @remark Maximum is 8192 characters (8k)
+	 */
+	public void setLastCheckData(String data) {
+		this._lastCheckData = data;
+	}
 
 }

@@ -90,8 +90,8 @@ public class HomeFragment extends BaseFragment implements OnClickListener, OnTou
 		tvPhoneNumber.setOnTouchListener(this);
 		
 		ImageView ivSelection = (ImageView) v.findViewById(R.id.iv_user_selection);
-		ivSelection.setImageResource(R.drawable.ab_default_holo_dark);		
-//
+		ivSelection.setImageResource(R.drawable.ab_default_holo_dark);
+		
 		return v;
 	}
 	
@@ -101,14 +101,7 @@ public class HomeFragment extends BaseFragment implements OnClickListener, OnTou
 	
     @Override
     public void onStart() {
-		// load last saved operation info (if available)
-		if (GlobalSettings.getInstance().getLastCheckedInfo() != GlobalSettings.NO_INFO) {
-			TextView textContent = (TextView) getView().findViewById(R.id.tv_status_content);
-			textContent.setText(Html.fromHtml(GlobalSettings.getInstance().getLastCheckedInfo()));
-		}    	
-    	
     	updateProfileView(GlobalSettings.getInstance().getLastSelectedPhoneNumber());
-    	
     	super.onStart();    	
     }	
 	
@@ -130,6 +123,9 @@ public class HomeFragment extends BaseFragment implements OnClickListener, OnTou
 				public void onClick(DialogInterface dialog, int which) {
 					final String[] items = UsersManager.getInstance().getUsersPhoneNumbersList();
 					updateProfileView(items[which]);
+					
+					// we are displaying this account's props. Therefore, this is the last selected one
+					GlobalSettings.getInstance().setLastSelectedPhoneNumber(items[which]);
 					
 					dialog.dismiss();
 				}
@@ -175,8 +171,7 @@ public class HomeFragment extends BaseFragment implements OnClickListener, OnTou
     		if (resultCode == Activity.RESULT_OK) {
     			Toast.makeText(this.getActivity().getApplicationContext(), 
     					R.string.text_account_saved, Toast.LENGTH_SHORT).show();
-    		}
-    		else if (resultCode == Defs.INTENT_RESULT_ACCOUT_DELETED) {
+    		} else if (resultCode == Defs.INTENT_RESULT_ACCOUT_DELETED) {
     			Toast.makeText(this.getActivity().getApplicationContext(), 
     					R.string.text_account_removed, Toast.LENGTH_SHORT).show();
     		}
@@ -209,8 +204,7 @@ public class HomeFragment extends BaseFragment implements OnClickListener, OnTou
 				public void onClick(DialogInterface dialog, int which) {
 					final String[] items = UsersManager.getInstance().getUsersPhoneNumbersList();
 					
-					Intent intent = new Intent(activity.getApplicationContext(), 
-							AccountPreferencesActivity.class);
+					Intent intent = new Intent(activity.getApplicationContext(), AccountPreferencesActivity.class);
 					intent.putExtra(Defs.INTENT_ACCOUNT_EDIT, true);
 					intent.putExtra(Defs.INTENT_ACCOUNT_PHONENUMBER, items[which]);
 					startActivityForResult(intent, Defs.INTENT_ACCOUNT_EDIT_RQ);
@@ -232,8 +226,6 @@ public class HomeFragment extends BaseFragment implements OnClickListener, OnTou
     	
     	User user = UsersManager.getInstance().getUserByPhoneNumber(phoneNumber);
     	if (user != null) {
-    		profileLayout.setVisibility(View.VISIBLE);
-    		
     		Date today = new Date();
     		
     		setText(v, R.id.tv_profile_number, user.getPhoneNumber());
@@ -255,8 +247,20 @@ public class HomeFragment extends BaseFragment implements OnClickListener, OnTou
     		
     		setText(v, R.id.tv_profile_lastchecked_at, dateText.toString());
     		
+    		TextView textContent = (TextView) v.findViewById(R.id.tv_status_content);
+    		if (user.getLastCheckData().length() > 0) {
+    			textContent.setText(Html.fromHtml(user.getLastCheckData()));
+    		} else {
+    			textContent.setText(R.string.text_no_data);
+    		}
+			
+			// make profile layout pane visible
+			profileLayout.setVisibility(View.VISIBLE);
+    		
     	} else if (UsersManager.getInstance().getUsersCount() == 0) {
+    		// hide profile layout pane, since no user data is available
     		profileLayout.setVisibility(View.GONE);
+    		
 			TextView textContent = (TextView) getView().findViewById(R.id.tv_status_content);
 			textContent.setText(R.string.text_no_accounts);        		
     	} else {
@@ -336,9 +340,6 @@ public class HomeFragment extends BaseFragment implements OnClickListener, OnTou
 						GlobalSettings.getInstance().setLastSelectedOperation(finalOperation);
 						
 						final ActionResult actionResult = action.execute();
-						
-						// save last found 
-						GlobalSettings.getInstance().setLastCheckedInfo(actionResult.getString());
 						
 						// update user info
 						UsersManager.getInstance().setUserResult(user, actionResult);
