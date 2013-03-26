@@ -82,22 +82,19 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
 		StringBuilder sb = new StringBuilder(500);
 		sb.append(getResString(R.string.app_name));
 		sb.append("\n");
-		sb.append(getResString(R.string.about_tagline));
-		sb.append("\n");
 		if ( pinfo != null ) {
 			sb.append(getResString(R.string.about_version));
 			sb.append(" ");
 			sb.append(pinfo.versionName);
 			sb.append("\n");
 		}
-		sb.append(getResString(R.string.about_author))
+		sb.append("\n")
+		.append(getResString(R.string.about_tagline))
+		.append("\n")
+		.append("\n")
+		.append(getResString(R.string.about_author))
 		.append("\n")
 		.append("http://code.google.com/p/myglob")
-		.append("\n")
-		.append("\n")
-		.append(getResString(R.string.about_icons_info))
-		.append("\n")
-		.append("http://www.famfamfam.com")
 		.append("\n")
 		.append("\n")
 		.append(getResString(R.string.about_thanks))
