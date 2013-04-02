@@ -5,9 +5,10 @@
 <string name="operation_check_balance">Текуща сметка и задължения</string>
 <string name="operation_check_avail_minutes">Пакет минути</string>
 <string name="operation_check_avail_data">Пакет данни (МВ)</string>
-
+<string name="operation_check_travelnsurf">Travel&amp;Surf за интернет в роуминг</string>
 <string name="operation_check_sms_pack">Пакет SMS/MMS</string>
 <string name="operation_check_credit_limit">Кредитен лимит</string>
+<string name="operation_check_all">Всички</string>
 <string name="about_tagline">Проверете сметката си към мобилния оператор</string>
 <string name="about_version">Версия: </string>
 <string name="about_author">Автор - Petar Petrov</string>
@@ -43,7 +44,6 @@
 </style>
 <string name="text_no_data">Няма заредени данни. Моля обновете!</string>
 <string name="text_selectitem">Проверка на</string>
-<string name="operation_check_all">Всички</string>
 
 
 <string name="menu_add_account">Добави профил</string>

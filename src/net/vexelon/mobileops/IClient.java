@@ -52,6 +52,9 @@ public interface IClient {
 	public String getAvailableInternetBandwidth()
 		throws HttpClientException;
 	
+	public String getTravelAndSurfBandwidth() 
+			throws HttpClientException;	
+	
 	public String getCreditLimit()
 		throws HttpClientException;
 

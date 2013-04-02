@@ -177,6 +177,12 @@ public class GLBClient implements IClient {
 
 		return doPostRequest(GLBRequestType.GET_BANDWIDTH);
 	}
+	
+	public String getTravelAndSurfBandwidth() 
+			throws HttpClientException {
+		
+		return doPostRequest(GLBRequestType.GET_TRAVELNSURF);
+	}
 
 	public String getCreditLimit()
 		throws HttpClientException {

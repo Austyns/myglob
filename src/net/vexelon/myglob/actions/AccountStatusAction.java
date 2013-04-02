@@ -93,6 +93,10 @@ public class AccountStatusAction implements Action {
 				tmpResult = client.getAvailableInternetBandwidth();
 				tmpResult = Utils.stripHtml(tmpResult);
 				break;
+			case CHECK_AVAIL_TRAVELNSURF:
+				tmpResult = client.getTravelAndSurfBandwidth();
+				tmpResult = Utils.stripHtml(tmpResult);				
+				break;
 			case CHECK_SMS_PACKAGE:
 				tmpResult = client.getAvailableMSPackage();
 				tmpResult = Utils.stripHtml(tmpResult);
@@ -106,6 +110,8 @@ public class AccountStatusAction implements Action {
 				.append(Utils.stripHtml(client.getCreditLimit()))
 				.append("<br><br>")
 				.append(Utils.stripHtml(client.getAvailableInternetBandwidth()))
+				.append("<br><br>")
+				.append(Utils.stripHtml(client.getTravelAndSurfBandwidth()))				
 				.append("<br><br>")
 				.append(Utils.stripHtml(client.getAvailableMSPackage()));
 				tmpResult = sb.toString();

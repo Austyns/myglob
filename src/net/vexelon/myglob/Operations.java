@@ -31,6 +31,7 @@ public enum Operations {
 	CHECK_CURRENT_BALANCE(10, R.string.operation_check_balance),
 	CHECK_AVAIL_MINUTES(12, R.string.operation_check_avail_minutes),
 	CHECK_AVAIL_DATA(14, R.string.operation_check_avail_data),
+	CHECK_AVAIL_TRAVELNSURF(15, R.string.operation_check_travelnsurf),
 	CHECK_SMS_PACKAGE(16, R.string.operation_check_sms_pack),
 	CHECK_CREDIT_LIMIT(18, R.string.operation_check_credit_limit)
 	;

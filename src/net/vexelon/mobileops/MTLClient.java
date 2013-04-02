@@ -60,6 +60,12 @@ public class MTLClient implements IClient {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	@Override
+	public String getTravelAndSurfBandwidth() throws HttpClientException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 	@Override
 	public String getAvailableMSPackage() throws HttpClientException {
