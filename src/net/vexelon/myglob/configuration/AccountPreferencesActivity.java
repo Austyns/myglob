@@ -77,7 +77,7 @@ public class AccountPreferencesActivity extends PreferenceActivity {
 		Intent intent = getIntent();
 		if (intent.getBooleanExtra(Defs.INTENT_ACCOUNT_ADD, false)) {
 			_accountNamePref.setText("");
-			_accountNumberPref.setText("");
+			_accountNumberPref.setText("089");
 			_accountOperatorPref.setValueIndex(0);
 			_accountPasswordPref.setText("");
 //			_accountSavePasswordPref.setChecked(false);

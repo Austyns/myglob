@@ -1,6 +1,10 @@
 MyGlob HISTORY file
 
-v3.0
+v3.0.1
+Fix: Fixed a problem where app could not be moved to SDCard storage. (Приложнието отново може да се инсталира на SD картата).
+Improvement/Change: Added Travel&Surf internet bandwidth check operation. (Добавена проверка на Travel&Surf моб.интернет трафик).
+
+v3.0.0
 Improvement/Change: Redesigned the complete UI. (Цялостен редизайн на приложението)
 
 v2.1.2
