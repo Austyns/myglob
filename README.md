@@ -9,7 +9,7 @@ MyGlob is an Android application that allows you to quickly check your current b
 
 # Requirements
 
-  * Requires Android 2.2 [API Level 8](http://developer.android.com/about/versions/android-2.2.html) or above
+  * Requires Android 2.2 [API Level 7](http://developer.android.com/about/versions/android-2.2.html) or above
   * Requires Internet connection
 
 # Dependencies
@@ -18,7 +18,7 @@ As of version 3.0 MyGlob depends on the [ActionBarSherlock](https://github.com/J
 
 # Files
 
- * Please check [HISTORY]() for latest release changes.
- * Please check [LICENSE]() for licensing topics.
- * Please check [CREDITS]() for contributed code.
+ * Please check [HISTORY](HISTORY) for latest release changes.
+ * Please check [LICENSE](LICENSE) for licensing topics.
+ * Please check [CREDITS](CREDITS) for contributed code.
 
