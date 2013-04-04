@@ -32,15 +32,30 @@ import org.apache.http.message.BasicNameValuePair;
 public enum GLBRequestType {
 	
 	LOGIN("/mg/myglobul.portal", ""),
+	LOGOUT("/mg/myglobul.portal", "action=logout"),
+	
+	/*
+	 * Status checks
+	 */
+	
 	PAGE_BILLCHECK("/mg/myglobul.bch", "action=billcheck"),
+	
 	GET_BALANCE("/mg/myglobul.bch", "action=billcheckperform"),
 	GET_MINUTES("/mg/myglobul.bch", "action=bundlecheckperform"),
 	GET_BANDWIDTH("/mg/myglobul.bch", "action=gprscheckperform"),
 	GET_TRAVELNSURF("/mg/myglobul.bch", "action=drpCheckPerform"),
 	GET_CREDITLIMIT("/mg/myglobul.bch", "action=creditlimitcheckperform"),
 	GET_MSPACKAGE("/mg/myglobul.bch", "action=smsmmsCheckPerform"),
-	LOGOUT("/mg/myglobul.portal", "action=logout");
-
+	
+	/*
+	 * Invoice check
+	 */
+	PAGE_INVOCECHECK("/mg/myglobul.e2i", "action=export"),
+	
+	GET_INVOICE("mg/ei2/EI2Export", "")
+	
+	;
+	
 	private final String path;
 	private final String params;
 	private List<NameValuePair> list ;
