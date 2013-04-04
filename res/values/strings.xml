@@ -77,8 +77,9 @@
 <string name="text_traffic_today">Трафик днес</string>
 <string name="text_traffic_overal">Трафик общо</string>
 <string name="operations_title">Операции</string>
-<string name="text_tab_home">Начало</string>
+<string name="text_tab_home">Състояние</string>
 <string name="text_tab_about">Относно</string>
+<string name="text_tab_invoice">Фактури</string>
 <string name="text_status">Състояние</string>
 <string name="text_account_not_found">Не е открит профил с този номер!</string>
 <string name="text_empty">&lt;n/a&gt;</string>

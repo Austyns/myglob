@@ -39,7 +39,7 @@ import android.widget.TextView;
 
 public class AboutFragment extends BaseFragment implements OnClickListener {
 	// unique ID	
-	public static final int TAB_ID = 1;
+	public static final int TAB_ID = 2;
 
 	public static AboutFragment newInstance() {
 		AboutFragment fragment = new AboutFragment();

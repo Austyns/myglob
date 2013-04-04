@@ -34,6 +34,7 @@ import net.vexelon.myglob.configuration.Defs;
 import net.vexelon.myglob.configuration.GlobalSettings;
 import net.vexelon.myglob.fragments.AboutFragment;
 import net.vexelon.myglob.fragments.HomeFragment;
+import net.vexelon.myglob.fragments.InvoiceFragment;
 import net.vexelon.myglob.users.UsersManager;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -60,6 +61,7 @@ public class MainActivity extends SherlockFragmentActivity {
     
     // Fragments
     private HomeFragment _homeFragment;
+    private InvoiceFragment _invoiceFragment;
     private AboutFragment _aboutFragment;
     
     // Others
@@ -94,7 +96,7 @@ public class MainActivity extends SherlockFragmentActivity {
         this._actionBar.setDisplayShowHomeEnabled(false);
         this._actionBar.setDisplayHomeAsUpEnabled(true);            
         
-        this._tabsCount = 2;
+        this._tabsCount = 3;
         
         this._adapter = new PageAdapter(getSupportFragmentManager());
         this._pager = (ViewPager) findViewById(R.id.pager);
@@ -129,9 +131,14 @@ public class MainActivity extends SherlockFragmentActivity {
         		.setTabListener(new MyTabListener(_pager, HomeFragment.TAB_ID));
         _actionBar.addTab(tab, true);
         
+        tab = _actionBar.newTab().setText(R.string.text_tab_invoice)
+        		.setTabListener(new MyTabListener(_pager, InvoiceFragment.TAB_ID));
+        _actionBar.addTab(tab);
+        
         tab = _actionBar.newTab().setText(R.string.text_tab_about)
         		.setTabListener(new MyTabListener(_pager, AboutFragment.TAB_ID));
-        _actionBar.addTab(tab);                
+        _actionBar.addTab(tab);
+        
         
 //        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
 //            BitmapDrawable bg = (BitmapDrawable)getResources().getDrawable(R.drawable.bg_striped);
@@ -193,10 +200,6 @@ public class MainActivity extends SherlockFragmentActivity {
 	        submenuActions.add(Menu.NONE, Defs.MENU_MANAGE_ACCOUNTS, 0, R.string.menu_manage_accounts)
 			.setIcon(R.drawable.ic_menu_manage)
 			.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
-	        
-	//        submenuActions.add(Menu.NONE, Defs.MENU_ABOUT, 0, R.string.menu_about)
-	//		.setIcon(R.drawable.ic_menu_help)
-	//		.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);        
 	        
 	        submenuActions.getItem()
 	        .setIcon(R.drawable.ic_menu_moreoverflow_normal_holo_dark)
@@ -290,7 +293,10 @@ public class MainActivity extends SherlockFragmentActivity {
 			switch (position) {
 			case AboutFragment.TAB_ID:
 				_aboutFragment = AboutFragment.newInstance();
-				return _aboutFragment;		
+				return _aboutFragment;
+			case InvoiceFragment.TAB_ID:
+				_invoiceFragment = InvoiceFragment.newInstance();
+				return _invoiceFragment;
 			}
 				
 			// default (Home)
