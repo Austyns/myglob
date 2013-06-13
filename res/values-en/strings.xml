@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <string name="app_name">MyGlob</string>
+<string name="operation_check_balance">Current Balance</string>
+<string name="operation_check_avail_minutes">Available Minutes</string>
+<string name="operation_check_avail_data">Available Data (МВ)</string>
+<string name="operation_check_travelnsurf">Travel&amp;Surf Internet</string>
+<string name="operation_check_sms_pack">Available SMS/MMS</string>
+<string name="operation_check_credit_limit">Credit Limit</string>
+<string name="operation_check_all">All</string>
+<string name="about_tagline">Check your mobile provider bill</string>
+<string name="about_version">Version: </string>
+<string name="about_author">by Petar Petrov</string>
+<string name="about_icons_info">Free icons from</string>
+<string name="dlg_error_msg_title">An error occured! Check your Internet connection.</string>
+
+
+<string name="dlg_error_msg_invalid_credentials">Грешно потребителско име или парола.</string>
+<string name="dlg_error_msg_securecode">Операторът изисква да се въведе код за сигурност! За съжаление текущата версия на тази програма не поддържа тази възможност. Моля, опитайте да обновите пак след няколко минути.</string>
+<string name="menu_signin">Sign in</string>
+<string name="menu_signout">Sign out</string>
+<string name="dlg_progress_title">Please wait</string>
+<string name="dlg_progress_message">Sending request to server ...</string>
+<string name="err_msg_username_missing">Empty or invalid profile name! (e.g. 0896123456)</string>
+<string name="err_msg_password_missing">Empty or invalid password!</string>
+<string name="dlg_error_msg_encrypt_failed">Невъзможно криптиране на паролата! Паролата, която сте въвели ще бъде съхранена некриптирана на устройството. Искате ли да продължите ?</string>
+<string name="dlg_error_msg_decrypt_failed">Password could not be decrypted!</string>
+<string name="dlg_error_msg_create_key_failed">Creating encryption key failed!</string>
+<string name="dlg_msg_yes">Yes</string>
+<string name="dlg_msg_no">No</string>
+<string name="text_refresh">Refresh</string>
+<string name="btn_msg_login">Login</string>
+<string name="text_username">Account/Number:</string>
+<string name="text_password">Password:</string>
+<string name="text_rememberme">Remember me</string>
+<style parent="@android:style/TextAppearance" name="FontLogin"><item name="android:textColor">#D3D3D3</item><item name="android:textSize">16sp</item></style>
+<style name="FontLoginError" parent="@android:style/TextAppearance"><item name="android:textColor">#FF1F1F</item><item name="android:textSize">16sp</item><item name="android:textStyle">bold</item></style>
+<string name="dlg_msg_ssl">SSL protection</string><style parent="@android:style/TextAppearance" name="FontContent"><item name="android:textColor">#D3D3D3</item><item name="android:textSize">16sp</item>
+
+
+
+
+</style>
+<string name="text_no_data">Information not available. Please refresh.</string>
+<string name="text_selectitem">Check</string>
+
+
+<string name="menu_add_account">Add Account</string>
+<string name="menu_manage_accounts">Edit Account</string>
+<string name="dlg_msg_cancel">Cancel</string>
+<string name="text_selectaccount">Select Account</string>
+<string name="text_no_accounts">No profiles exist! Please add a profile.</string>
+<string name="dlg_error_msg_legacy_user_failed">Error (%s) while saving profile! Please create a new profile.</string>
+<string name="dlg_legacyuser_title">Found phone number</string>
+<string name="dlg_legacyuser_msg">Would you like to add phone number %s ?</string>
+<string name="text_account_created">Profile created.</string>
+<string name="text_account_saved">Profile saved.</string>
+<string name="text_account_removed">Profile deleted.</string>
+<string name="dlg_account_select_title">Select a profile</string>
+<string name="text_account_no_account">No profiles exist.</string>
+<string name="text_account_add_new">Add a profile. Use menu options.</string>
+<string name="dlg_account_delete_title">Delete profile</string>
+<string name="dlg_account_delete_msg">Do you want to delete this profile?</string>
+<string name="dlg_account_validate_title">Validation error</string>
+
+<string name="dlg_account_validate_msg">Missing required parameters! Profile will not be created. Would you like to continue?</string>
+<string name="err_msg_user_already_exists">Profile with the same phone number already exists!</string>
+<string name="about_thanks">Thanks to:</string>
+<string name="text_account_invalid">Choose a profile/number!</string>
+<string name="text_error">Error</string>
+<string name="widget_4x1">MyGlob (4x1)</string>
+<string name="widget_4x2">MyGlob (4x2)</string>
+<string name="text_menu">Menu</string>
+<string name="text_checks_today">Checks today</string>
+<string name="text_checks_overal">All checks</string>
+<string name="text_traffic_today">Traffic today</string>
+<string name="text_traffic_overal">All traffic</string>
+<string name="operations_title">Операции</string>
+<string name="text_tab_home">Status</string>
+<string name="text_tab_about">About</string>
+<string name="text_tab_invoice">Invoice</string>
+<string name="text_status">Status</string>
+<string name="text_account_not_found">Could not find a profile with this phone number!</string>
+<string name="text_empty">&lt;n/a&gt;</string>
+<string name="text_from">until</string>
+</resources>
