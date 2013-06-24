@@ -33,6 +33,7 @@ import java.security.InvalidAlgorithmParameterException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -194,6 +195,15 @@ public class GLBClient implements IClient {
 		throws HttpClientException {
 
 		return doPostRequest(GLBRequestType.GET_MSPACKAGE);
+	}
+	
+	@Override
+	public List<Map<String, String>> getInvoiceInfo()
+			throws HttpClientException {
+		
+		// TODO
+		
+		return null;
 	}
 	
 	@Override

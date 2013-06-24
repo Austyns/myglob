@@ -1,5 +1,8 @@
 package net.vexelon.mobileops;
 
+import java.util.List;
+import java.util.Map;
+
 import org.apache.http.HttpVersion;
 import org.apache.http.client.CookieStore;
 import org.apache.http.impl.client.BasicCookieStore;
@@ -87,6 +90,13 @@ public class MTLClient implements IClient {
 
 	@Override
 	public String getCurrentBalance() throws HttpClientException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public List<Map<String, String>> getInvoiceInfo()
+			throws HttpClientException {
 		// TODO Auto-generated method stub
 		return null;
 	}
