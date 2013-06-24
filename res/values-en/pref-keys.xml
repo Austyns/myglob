@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<string name="pref_account_name">pref_account_name</string>
+<string name="pref_account_phonenumber">pref_account_phonenumber</string>
+<string name="pref_account_operator">pref_account_operator</string>
+<string name="pref_account_delete">pref_account_delete</string>
+<string name="pref_account_password">pref_account_password</string>
+<string name="pref_account_save_password">pref_account_save_password</string>
+<string name="pref_text_account_name">Profile</string>
+<string name="pref_text_account_name_summary">Profile alias</string>
+<string name="pref_text_account_operator">Carrier</string>
+<string name="pref_text_account_operator_summary">Select mobile carrier</string>
+<string name="pref_text_account_phonenumber">Phone Number</string>
+<string name="pref_text_account_password">Password</string>
+<string name="pref_text_account_password_summary">Password to access services</string>
+<string name="pref_text_account_password_dialog_title">Enter password</string>
+<string name="pref_text_account_password_dialog_msg">Enter the password that you use to access the web services of the selected mobile carrier</string>
+<string name="pref_text_account_delete">Delete</string>
+<string name="pref_text_account_delete_summary">Remove all profile data</string>
+<string name="pref_text_account_phonenumber_msg">Enter your mobile phone number</string>
+<string name="pref_text_account_phonenumber_summary">Mobile phone number</string>
+<string name="pref_name_attributes">Profile settings</string>
+<string name="pref_name_operations">Operations</string>
+<string name="pref_name_prefs">Configuration</string>
+</resources>
