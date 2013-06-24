@@ -13,18 +13,18 @@
 <string name="about_version">Version: </string>
 <string name="about_author">by Petar Petrov</string>
 <string name="about_icons_info">Free icons from</string>
-<string name="dlg_error_msg_title">An error occured! Check your Internet connection.</string>
+<string name="dlg_error_msg_title">An error occurred! Check your Internet connection.</string>
 
 
-<string name="dlg_error_msg_invalid_credentials">Грешно потребителско име или парола.</string>
+<string name="dlg_error_msg_invalid_credentials">Wrong profile name or password.</string>
 <string name="dlg_error_msg_securecode">Операторът изисква да се въведе код за сигурност! За съжаление текущата версия на тази програма не поддържа тази възможност. Моля, опитайте да обновите пак след няколко минути.</string>
 <string name="menu_signin">Sign in</string>
 <string name="menu_signout">Sign out</string>
 <string name="dlg_progress_title">Please wait</string>
-<string name="dlg_progress_message">Sending request to server ...</string>
+<string name="dlg_progress_message">Sending request to server &#8230;</string>
 <string name="err_msg_username_missing">Empty or invalid profile name! (e.g. 0896123456)</string>
 <string name="err_msg_password_missing">Empty or invalid password!</string>
-<string name="dlg_error_msg_encrypt_failed">Невъзможно криптиране на паролата! Паролата, която сте въвели ще бъде съхранена некриптирана на устройството. Искате ли да продължите ?</string>
+<string name="dlg_error_msg_encrypt_failed">Password encryption failed! Your password will be saved unencrypted. Do you want to continue?</string>
 <string name="dlg_error_msg_decrypt_failed">Password could not be decrypted!</string>
 <string name="dlg_error_msg_create_key_failed">Creating encryption key failed!</string>
 <string name="dlg_msg_yes">Yes</string>
@@ -76,7 +76,7 @@
 <string name="text_checks_overal">All checks</string>
 <string name="text_traffic_today">Traffic today</string>
 <string name="text_traffic_overal">All traffic</string>
-<string name="operations_title">Операции</string>
+<string name="operations_title">Actions &#8230;</string>
 <string name="text_tab_home">Status</string>
 <string name="text_tab_about">About</string>
 <string name="text_tab_invoice">Invoice</string>
