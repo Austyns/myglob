@@ -31,7 +31,7 @@
 <string name="dlg_msg_no">No</string>
 <string name="text_refresh">Refresh</string>
 <string name="btn_msg_login">Login</string>
-<string name="text_username">Account/Number:</string>
+<string name="text_username">Profile/Number:</string>
 <string name="text_password">Password:</string>
 <string name="text_rememberme">Remember me</string>
 <style parent="@android:style/TextAppearance" name="FontLogin"><item name="android:textColor">#D3D3D3</item><item name="android:textSize">16sp</item></style>
@@ -46,10 +46,10 @@
 <string name="text_selectitem">Check</string>
 
 
-<string name="menu_add_account">Add Account</string>
-<string name="menu_manage_accounts">Edit Account</string>
+<string name="menu_add_account">Add Profile</string>
+<string name="menu_manage_accounts">Edit Profile</string>
 <string name="dlg_msg_cancel">Cancel</string>
-<string name="text_selectaccount">Select Account</string>
+<string name="text_selectaccount">Select Profile</string>
 <string name="text_no_accounts">No profiles exist! Please add a profile.</string>
 <string name="dlg_error_msg_legacy_user_failed">Error (%s) while saving profile! Please create a new profile.</string>
 <string name="dlg_legacyuser_title">Found phone number</string>
