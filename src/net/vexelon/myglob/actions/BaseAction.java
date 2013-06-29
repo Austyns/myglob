@@ -42,9 +42,6 @@ public abstract class BaseAction implements Action {
 					R.string.dlg_error_msg_title);			
 		} catch(HttpClientException e) {
 			throw new ActionExecuteException(e);	
-		} finally {
-			if (client != null)
-				client.close();
 		}
 	}
 	
