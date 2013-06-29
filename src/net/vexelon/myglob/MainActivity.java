@@ -175,7 +175,6 @@ public class MainActivity extends SherlockFragmentActivity {
 			/* 
 			 * Home Menu
 			 */
-			
 //			menu.add(Menu.NONE, Defs.MENU_REFRESH, 0, R.string.text_refresh)
 //			.setIcon(R.drawable.ic_refresh)
 //			.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
@@ -209,9 +208,8 @@ public class MainActivity extends SherlockFragmentActivity {
 			/* 
 			 * Invoice Menu
 			 */
-			
 	        SubMenu submenuOperations = menu.addSubMenu(Menu.NONE, Defs.MENU_OPTIONS_BASE, 0, R.string.operations_title);
-	        submenuOperations.add(5, Defs.MENU_UPDATE_INVOICE, 0, getResString(R.string.text_menu_invoice));	
+	        submenuOperations.add(6, Defs.MENU_UPDATE_INVOICE, 0, getResString(R.string.text_menu_invoice));	
 	        
 	        submenuOperations.getItem()
 	        .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);	        
@@ -233,15 +231,18 @@ public class MainActivity extends SherlockFragmentActivity {
 			case Defs.MENU_MANAGE_ACCOUNTS:
 				_homeFragment.showEditAccount();
 				break;
-			case Defs.MENU_UPDATE_INVOICE:
-				_invoiceFragment.update();
-				break;
 			}
 			// Refresh called
 			for (Operations operation : _operationsArray) {
 				if (item.getItemId() == operation.getMenuId()) {
 					_homeFragment.updateStatus(operation);
 				}
+			}
+		} else if (_currentPage == InvoiceFragment.TAB_ID) {
+			switch (item.getItemId()) {
+			case Defs.MENU_UPDATE_INVOICE:
+				_invoiceFragment.update();
+				break;
 			}
 		}
 

@@ -23,13 +23,28 @@
  */
 package net.vexelon.myglob.fragments;
 
+import net.vexelon.myglob.Operations;
 import net.vexelon.myglob.R;
+import net.vexelon.myglob.actions.AccountStatusAction;
+import net.vexelon.myglob.actions.Action;
+import net.vexelon.myglob.actions.ActionExecuteException;
+import net.vexelon.myglob.actions.ActionResult;
+import net.vexelon.myglob.actions.InvoiceUpdateAction;
 import net.vexelon.myglob.configuration.Defs;
+import net.vexelon.myglob.configuration.GlobalSettings;
+import net.vexelon.myglob.users.User;
+import net.vexelon.myglob.users.UsersManager;
+import net.vexelon.myglob.utils.Utils;
+import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.Toast;
 
 public class InvoiceFragment extends BaseFragment {
 	// unique ID	
@@ -66,6 +81,73 @@ public class InvoiceFragment extends BaseFragment {
 			Log.d(Defs.LOG_TAG, "Updating invoice ...");
 		}
 		
-		// TODO
+		View v = this.getView();
+		
+		final FragmentActivity activity = getActivity();
+		
+		if (UsersManager.getInstance().size() > 0) {
+
+			// show progress
+			final ProgressDialog myProgress = ProgressDialog.show(activity, 
+					getResString(R.string.dlg_progress_title), 
+					getResString(R.string.dlg_progress_message), 
+					true);
+
+			new Thread() {
+				public void run() {
+					try {
+//						User user = UsersManager.getInstance().getUserByPhoneNumber(phoneNumber);
+						
+						final ActionResult actionResult = new InvoiceUpdateAction()
+								.execute();
+//						
+//						// remember last account and operation
+//						GlobalSettings.getInstance().setLastSelectedPhoneNumber(phoneNumber);
+//						GlobalSettings.getInstance().setLastSelectedOperation(finalOperation);	
+						
+						// update text field
+						activity.runOnUiThread(new Runnable() {
+
+							@Override
+							public void run() {
+//								tvContent.setText(Html.fromHtml(actionResult.getString()));
+//								updateProfileView(phoneNumber);
+							}
+						});
+						
+						// close progress bar dialog
+						activity.runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								myProgress.dismiss();
+							}
+						});							
+						
+					} catch (ActionExecuteException e) {
+						Log.e(Defs.LOG_TAG, "Error updating invoice!", e);
+						
+						// close progress bar dialog
+						activity.runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								myProgress.dismiss();
+							}
+						});							
+						
+						// Show error dialog
+						if (e.isErrorResIdAvailable()) {
+							Utils.showAlertDialog(activity, e.getErrorResId(), e.getErrorTitleResId());
+						} else {
+							Utils.showAlertDialog(activity, e.getMessage(), getResString(e.getErrorTitleResId()));
+						}						
+					}
+				};
+			}.start();
+		} else  {
+			// show add user screen
+			Toast.makeText(this.getActivity().getApplicationContext(), 
+					R.string.text_account_add_new, Toast.LENGTH_SHORT).show();
+
+		}		
 	}
 }
