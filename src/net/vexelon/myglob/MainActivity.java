@@ -205,7 +205,17 @@ public class MainActivity extends SherlockFragmentActivity {
 	        .setIcon(R.drawable.ic_menu_moreoverflow_normal_holo_dark)
 	        .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         
-		}        
+		} else if (_currentPage == InvoiceFragment.TAB_ID) {
+			/* 
+			 * Invoice Menu
+			 */
+			
+	        SubMenu submenuOperations = menu.addSubMenu(Menu.NONE, Defs.MENU_OPTIONS_BASE, 0, R.string.operations_title);
+	        submenuOperations.add(5, Defs.MENU_UPDATE_INVOICE, 0, getResString(R.string.text_menu_invoice));	
+	        
+	        submenuOperations.getItem()
+	        .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);	        
+		}
 		
 		return true; //super.onPrepareOptionsMenu(menu);
 	}
@@ -222,6 +232,9 @@ public class MainActivity extends SherlockFragmentActivity {
 				break;
 			case Defs.MENU_MANAGE_ACCOUNTS:
 				_homeFragment.showEditAccount();
+				break;
+			case Defs.MENU_UPDATE_INVOICE:
+				_invoiceFragment.update();
 				break;
 			}
 			// Refresh called

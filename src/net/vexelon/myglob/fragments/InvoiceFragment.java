@@ -60,4 +60,12 @@ public class InvoiceFragment extends BaseFragment {
 		
 		return v;
 	}
+	
+	public void update() {
+		if (Defs.LOG_ENABLED) {
+			Log.d(Defs.LOG_TAG, "Updating invoice ...");
+		}
+		
+		// TODO
+	}
 }

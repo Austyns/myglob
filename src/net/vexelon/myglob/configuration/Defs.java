@@ -39,6 +39,7 @@ public class Defs {
 	public final static int MENU_OPTIONS_BASE = 100;
 	public final static int MENU_ADD_ACCOUNT = 200;
 	public final static int MENU_MANAGE_ACCOUNTS = 300;
+	public final static int MENU_UPDATE_INVOICE = 400;
 	
 	// save/load keys
 	public final static String PREFS_ALL_PREFS = "MyGlobAppPreferences";
