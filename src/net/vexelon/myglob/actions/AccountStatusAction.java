@@ -32,50 +32,35 @@ import android.content.SharedPreferences;
 
 import net.vexelon.mobileops.HttpClientException;
 import net.vexelon.mobileops.IClient;
-import net.vexelon.mobileops.GLBClient;
-import net.vexelon.mobileops.InvalidCredentialsException;
-import net.vexelon.mobileops.SecureCodeRequiredException;
 import net.vexelon.myglob.Operations;
-import net.vexelon.myglob.R;
 import net.vexelon.myglob.configuration.Defs;
 import net.vexelon.myglob.users.User;
 import net.vexelon.myglob.users.UsersManager;
 import net.vexelon.myglob.utils.Utils;
 
-public class AccountStatusAction implements Action {
+public class AccountStatusAction extends BaseAction {
 	
-	protected Context _context;
 	protected Operations _operation;
-	protected User _user;
 	
 	public AccountStatusAction(Context context, Operations operation, User user) {
-		_context = context;
+		super(context, user);
 		_operation = operation;
-		_user = user;
 	}
 
 	@Override
 	public ActionResult execute() throws ActionExecuteException {
 		
-		ActionResult result = new ActionResult();
 		String tmpResult = "";
-		IClient client;
 		
-		try {
-			client = new GLBClient(_user.getPhoneNumber(), UsersManager.getInstance().getUserPassword(_user));
-		} catch (Exception e) {
-			throw new ActionExecuteException(R.string.dlg_error_msg_decrypt_failed, e);
-		}
-		
-//		Log.v(Defs.LOG_TAG, "Logging in using " + user.getPhoneNumber() 
-//				+ " and pass: " + UsersManager.getInstance().getUserPassword(user));
-		
-		// start checking Now
+		ActionResult result = new ActionResult();
 		result.setCheckedOn(new Date());
 		
+		IClient client = newClient();
+//		Log.v(Defs.LOG_TAG, "Logging in using " + user.getPhoneNumber() 
+//				+ " and pass: " + UsersManager.getInstance().getUserPassword(user));
+		clientLogin(client);
+		
 		try {
-			client.login();
-
 			switch(_operation) {
 			case CHECK_CURRENT_BALANCE:
 				tmpResult = client.getCurrentBalance();
@@ -118,7 +103,7 @@ public class AccountStatusAction implements Action {
 				break;
 			}
 
-			// colorfy important values
+			// colorify important values
 			Pattern p = Pattern.compile("(-*\\d+(,\\d+)*\\s*лв\\.*)|(\\d+:\\d+\\s*(ч\\.*|мин\\.*))", Pattern.CASE_INSENSITIVE);
 			Matcher m = p.matcher(tmpResult);
 			StringBuffer sb = new StringBuffer(tmpResult.length() + tmpResult.length());
@@ -130,20 +115,15 @@ public class AccountStatusAction implements Action {
 			
 			result.setBytesCount(client.getDownloadedBytesCount());
 			result.setResult(sb.toString());
-
-			client.logout();
 			
 			// update user info
 			UsersManager.getInstance().setUserResult(_user, result);
 			SharedPreferences prefs = _context.getSharedPreferences(Defs.PREFS_USER_PREFS, 0);
-			UsersManager.getInstance().save(prefs);			
+			UsersManager.getInstance().save(prefs);				
+
+			// XXX Perhaps we need to invoke it after the 'finally' block!
+			clientLogout(client);
 			
-		} catch (InvalidCredentialsException e) {
-			throw new ActionExecuteException(R.string.dlg_error_msg_invalid_credentials, 
-					R.string.dlg_error_msg_title);
-		} catch (SecureCodeRequiredException e) {
-			throw new ActionExecuteException(R.string.dlg_error_msg_securecode, 
-					R.string.dlg_error_msg_title);			
 		} catch(HttpClientException e) {
 			throw new ActionExecuteException(e);	
 		} finally {
@@ -153,53 +133,4 @@ public class AccountStatusAction implements Action {
 		
 		return result;
 	}
-	
-//	private String getAccountStatus(Operations operation, User user) throws Exception {
-//	String result = "<td class=\"txt_order_SMS\">" +
-//    		 "<p>Вашата текуща сметка:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> 1,45 лв.</span> без ДДС</p>" +
-//             "<p>Задължения по ф-ра за периода 18.08-17.09.2010г:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> -0,23 лв.</span> с ДДС</p>" +
-//             "<p>Данните са актуални към:<span style=\"font-weight: bold;\"> 07 Октомври, 21:15ч.</span>" +
-//             "</p></td>" +
-//             "<td class=\"txt_order_SMS\">" +
-//    		 "<p>Вашата текуща сметка:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> 1,45 лв.</span> без ДДС</p>" +
-//             "<p>Задължения по ф-ра за периода 18.08-17.09.2010г:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> -0,23 лв.</span> с ДДС</p>" +
-//             "<p>Данните са актуални към:<span style=\"font-weight: bold;\"> 07 Октомври, 21:15ч.</span>" +
-//             "</p></td>" +
-//             "<td class=\"txt_order_SMS\">" +
-//    		 "<p>Вашата текуща сметка:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> 1,45лв.</span> без ДДС</p>" +
-//             "<p>Задължения по ф-ра за периода 18.08-17.09.2010г:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> -0,23 лв.</span> с ДДС</p>" +
-//             "<p>Данните са актуални към:<span style=\"font-weight: bold;\"> 07 Октомври, 21:15ч.</span>" +
-//             "</p></td>" +
-//             "<td class=\"txt_order_SMS\">" +
-//    		 "<p>Вашата текуща сметка:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> 1,45 лв.</span> без ДДС</p>" +
-//             "<p>Задължения по ф-ра за периода 18.08-17.09.2010г:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> -0,23 лв.</span> с ДДС</p>" +
-//             "<p>Данните са актуални към:<span style=\"font-weight: bold;\"> 07 Октомври, 21:15ч.</span>" +
-//             "</p></td>" +
-//             "<td class=\"txt_order_SMS\">" +
-//    		 "<p>Вашата текуща сметка:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> 1,45 лв.</span> без ДДС</p>" +
-//             "<p>Задължения по ф-ра за периода 18.08-17.09.2010г:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> -0,23 лв.</span> с ДДС</p>" +
-//             "<p>Данните са актуални към:<span style=\"font-weight: bold;\"> 07 Октомври, 21:15ч.</span>" +
-//             "</p></td>" +
-//             "<td class=\"txt_order_SMS\">" +
-//    		 "<p>Вашата текуща сметка:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> 1,45лв.</span> без ДДС</p>" +
-//             "<p>Задължения по ф-ра за периода 18.08-17.09.2010г:<span style=\"color: rgb(221, 0, 57); font-weight: bold;\"> -0,23 лв.</span> с ДДС</p>" +
-//             "<p>Данните са актуални към:<span style=\"font-weight: bold;\"> 07 Октомври, 21:15ч.</span>" +
-//             "</p></td>";
-//
-//	result = result.replaceAll("(<.[^>]*>)|(</.[^>]*>)", "");
-//	result = result.replaceAll("\\t|\\n|\\r", "");
-//	result = result.trim();
-//
-//	Pattern p = Pattern.compile("(-*\\d+,\\d+\\s*лв\\.*)", Pattern.CASE_INSENSITIVE);
-//	Matcher m = p.matcher(result);
-//	StringBuffer sb = new StringBuffer();
-//	while (m.find()) {
-//		m.appendReplacement(sb, "<b><font color=\"#1FAF1F\">" + m.group() + "</font></b>");
-//		//Log.v(Defs.LOG_TAG, "GR: " + sb.toString());
-//	}
-//	m.appendTail(sb);
-//	//Log.v(Defs.LOG_TAG, "GR: " + sb.toString());
-//
-//	return sb.toString();
-//}	
 }
