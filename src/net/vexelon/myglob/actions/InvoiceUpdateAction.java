@@ -1,8 +1,11 @@
 package net.vexelon.myglob.actions;
 
+import java.util.List;
+import java.util.Map;
+
 import android.content.Context;
+import net.vexelon.mobileops.HttpClientException;
 import net.vexelon.mobileops.IClient;
-import net.vexelon.myglob.R;
 import net.vexelon.myglob.users.User;
 
 public class InvoiceUpdateAction extends BaseAction {
@@ -17,11 +20,18 @@ public class InvoiceUpdateAction extends BaseAction {
 		IClient client = this.newClient();
 		
 		clientLogin(client);
-		// TODO Auto-generated method stub
 		
-		clientLogout(client);
-
-		throw new ActionExecuteException(R.string.dlg_error_msg_decrypt_failed);
+		try {
+			List<Map<String, String>> invoiceInfo = client.getInvoiceInfo();
+			result.setResult(invoiceInfo);
+		} catch (HttpClientException e) {
+			throw new ActionExecuteException(e);
+		} finally {
+			// Make sure we (attempt to) logout.
+			clientLogout(client);
+		}
+		
+		return result;
 	}
 
 }

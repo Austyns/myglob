@@ -24,6 +24,7 @@
 package net.vexelon.myglob.actions;
 
 import java.util.Date;
+import java.util.List;
 
 public class ActionResult {
 	
@@ -31,6 +32,7 @@ public class ActionResult {
 //	private int intResult;
 	private long downloadedBytesCount;
 	private Date checkedOn;
+	private List<?> listResult; 
 
 	public String getString() {
 		return stringResult;
@@ -63,5 +65,13 @@ public class ActionResult {
 //	public void setResult(int intResult) {
 //		this.intResult = intResult;
 //	}	
+	
+	public List<?> getListResult() {
+		return listResult;
+	}
+
+	public void setResult(List<?> listResult) {
+		this.listResult = listResult;
+	}	
 
 }

@@ -120,15 +120,12 @@ public class AccountStatusAction extends BaseAction {
 			UsersManager.getInstance().setUserResult(_user, result);
 			SharedPreferences prefs = _context.getSharedPreferences(Defs.PREFS_USER_PREFS, 0);
 			UsersManager.getInstance().save(prefs);				
-
-			// XXX Perhaps we need to invoke it after the 'finally' block!
-			clientLogout(client);
 			
 		} catch(HttpClientException e) {
-			throw new ActionExecuteException(e);	
+			throw new ActionExecuteException(e);
 		} finally {
-			if (client != null)
-				client.close();
+			// Make sure we (attempt to) logout.
+			clientLogout(client);
 		}
 		
 		return result;
