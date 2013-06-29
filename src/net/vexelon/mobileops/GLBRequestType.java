@@ -30,30 +30,23 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
 public enum GLBRequestType {
-	
 	LOGIN("/mg/myglobul.portal", ""),
 	LOGOUT("/mg/myglobul.portal", "action=logout"),
-	
 	/*
 	 * Status checks
 	 */
-	
 	PAGE_BILLCHECK("/mg/myglobul.bch", "action=billcheck"),
-	
 	GET_BALANCE("/mg/myglobul.bch", "action=billcheckperform"),
 	GET_MINUTES("/mg/myglobul.bch", "action=bundlecheckperform"),
 	GET_BANDWIDTH("/mg/myglobul.bch", "action=gprscheckperform"),
 	GET_TRAVELNSURF("/mg/myglobul.bch", "action=drpCheckPerform"),
 	GET_CREDITLIMIT("/mg/myglobul.bch", "action=creditlimitcheckperform"),
 	GET_MSPACKAGE("/mg/myglobul.bch", "action=smsmmsCheckPerform"),
-	
 	/*
 	 * Invoice check
 	 */
-	PAGE_INVOCECHECK("/mg/myglobul.e2i", "action=export"),
-	
+	PAGE_INVOCECHECK("/mg/myglobul.e2i", "action=export&pkey=217&jkey=235&brand=&model=0"),
 	GET_INVOICE("mg/ei2/EI2Export", "")
-	
 	;
 	
 	private final String path;
