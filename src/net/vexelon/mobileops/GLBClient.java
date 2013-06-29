@@ -131,8 +131,6 @@ public class GLBClient implements IClient {
 			
 			handleLogin(qparams);
 			
-			operationsHash = findOperationsHashCodes();
-			
 		} catch (UnsupportedEncodingException e) {
 			throw new HttpClientException("Failed to create url! " + e.getMessage(), e);
 		}
@@ -164,17 +162,26 @@ public class GLBClient implements IClient {
 	public String getCurrentBalance()
 		throws HttpClientException {
 
+		if (operationsHash == null)
+			operationsHash = findOperationsHashCodes();
+		
 		return doPostRequest(GLBRequestType.GET_BALANCE);
 	}
 
 	public String getAvailableMinutes()
 		throws HttpClientException {
+		
+		if (operationsHash == null)
+			operationsHash = findOperationsHashCodes();		
 
 		return doPostRequest(GLBRequestType.GET_MINUTES);
 	}
 
 	public String getAvailableInternetBandwidth()
 		throws HttpClientException {
+		
+		if (operationsHash == null)
+			operationsHash = findOperationsHashCodes();		
 
 		return doPostRequest(GLBRequestType.GET_BANDWIDTH);
 	}
@@ -182,17 +189,26 @@ public class GLBClient implements IClient {
 	public String getTravelAndSurfBandwidth() 
 			throws HttpClientException {
 		
+		if (operationsHash == null)
+			operationsHash = findOperationsHashCodes();		
+		
 		return doPostRequest(GLBRequestType.GET_TRAVELNSURF);
 	}
 
 	public String getCreditLimit()
 		throws HttpClientException {
 
+		if (operationsHash == null)
+			operationsHash = findOperationsHashCodes();
+		
 		return doPostRequest(GLBRequestType.GET_CREDITLIMIT);
 	}
 
 	public String getAvailableMSPackage()
 		throws HttpClientException {
+		
+		if (operationsHash == null)
+			operationsHash = findOperationsHashCodes();		
 
 		return doPostRequest(GLBRequestType.GET_MSPACKAGE);
 	}
@@ -202,6 +218,8 @@ public class GLBClient implements IClient {
 			throws HttpClientException {
 		
 		// TODO
+
+		findInvoiceExportParams();
 		
 		return null;
 	}
@@ -486,6 +504,72 @@ public class GLBClient implements IClient {
 		}
 		
 		return result;
+	}
+	
+	private HashMap<String, String> findInvoiceExportParams() throws HttpClientException {
+		
+		HashMap<String, String>  result = new HashMap<String, String>();
+		
+		StringBuilder fullUrl = new StringBuilder(100);
+		fullUrl.append(HTTP_MYGLOBUL_SITE).append(GLBRequestType.PAGE_INVOCECHECK.getPath()).append("?")
+			.append(GLBRequestType.PAGE_INVOCECHECK.getParams());
+
+		BufferedReader reader = null;
+		long bytesCount = 0;
+		
+		try {
+			HttpGet httpGet = new HttpGet(fullUrl.toString());
+			HttpResponse resp = httpClient.execute(httpGet);
+			StatusLine status = resp.getStatusLine();
+			
+			if ( status.getStatusCode() == HttpStatus.SC_OK ) {
+				
+				reader = new BufferedReader(new InputStreamReader(resp.getEntity().getContent()));
+				
+				String line = null;
+				while((line = reader.readLine()) != null) {
+					
+					// bytes downloaded
+					bytesCount += line.length();
+					
+					if (line.contains("ei2_open_file"))
+							Log.d(Defs.LOG_TAG, line);
+					
+					if (line.contains("JavaScript:ei2_open_file") && line.contains("xml")) {
+						Log.d(Defs.LOG_TAG, line);
+						
+						// extract keyword
+						Pattern p = Pattern.compile("'([a-zA-Z0-9\\.\\/]+)'", Pattern.CASE_INSENSITIVE);
+						Matcher m = p.matcher(line);
+						if (m.find()) {
+							Log.v(Defs.LOG_TAG, "Match: " + m.group());
+							
+//							reqType = GLBRequestType.getFromAction(m.group());
+//							if (reqType != null) {
+//								// we expect to find hash code, next
+//								inParam = true;
+//							} 
+						}
+						
+						break;
+					}
+				}
+				
+			} else {
+				throw new HttpClientException(status.getReasonPhrase(), status.getStatusCode());
+			}
+			
+		} catch (ClientProtocolException e) {
+			throw new HttpClientException("Client protocol error!" + e.getMessage(), e);
+		} catch (IOException e) {
+			throw new HttpClientException("Client error!" + e.getMessage(), e);
+		} finally {
+			if (reader != null) try { reader.close(); } catch (IOException e) {};
+			
+			addDownloadedBytesCount(bytesCount);
+		}
+		
+		return result;
 	}	
 	
 	private HttpPost createPostRequest(String url, List<NameValuePair> qparams)
@@ -541,5 +625,4 @@ public class GLBClient implements IClient {
 			return new String(baos.toByteArray()); // XXX check this!
 		}
 	}
-
 }

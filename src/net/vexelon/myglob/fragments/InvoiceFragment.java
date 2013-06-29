@@ -96,9 +96,10 @@ public class InvoiceFragment extends BaseFragment {
 			new Thread() {
 				public void run() {
 					try {
-//						User user = UsersManager.getInstance().getUserByPhoneNumber(phoneNumber);
+						User user = UsersManager.getInstance().getUserByPhoneNumber(
+								GlobalSettings.getInstance().getLastSelectedPhoneNumber());
 						
-						final ActionResult actionResult = new InvoiceUpdateAction()
+						final ActionResult actionResult = new InvoiceUpdateAction(activity, user)
 								.execute();
 //						
 //						// remember last account and operation
