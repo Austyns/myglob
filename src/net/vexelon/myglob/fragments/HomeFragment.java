@@ -31,7 +31,6 @@ import net.vexelon.myglob.AccountsArrayAdapter;
 import net.vexelon.myglob.Operations;
 import net.vexelon.myglob.R;
 import net.vexelon.myglob.actions.AccountStatusAction;
-import net.vexelon.myglob.actions.Action;
 import net.vexelon.myglob.actions.ActionExecuteException;
 import net.vexelon.myglob.actions.ActionResult;
 import net.vexelon.myglob.configuration.AccountPreferencesActivity;
@@ -330,9 +329,8 @@ public class HomeFragment extends BaseFragment implements OnClickListener, OnTou
 					try {
 						User user = UsersManager.getInstance().getUserByPhoneNumber(phoneNumber);
 						
-						Action action = new AccountStatusAction(activity, finalOperation, user);	
-						
-						final ActionResult actionResult = action.execute();
+						final ActionResult actionResult = new AccountStatusAction(
+								activity, finalOperation, user).execute();
 						
 						// remember last account and operation
 						GlobalSettings.getInstance().setLastSelectedPhoneNumber(phoneNumber);
