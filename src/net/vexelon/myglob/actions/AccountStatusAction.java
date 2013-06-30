@@ -121,7 +121,7 @@ public class AccountStatusAction extends BaseAction {
 			SharedPreferences prefs = _context.getSharedPreferences(Defs.PREFS_USER_PREFS, 0);
 			UsersManager.getInstance().save(prefs);				
 			
-		} catch(HttpClientException e) {
+		} catch (HttpClientException e) {
 			throw new ActionExecuteException(e);
 		} finally {
 			// Make sure we (attempt to) logout.

@@ -40,7 +40,7 @@ public abstract class BaseAction implements Action {
 		} catch (SecureCodeRequiredException e) {
 			throw new ActionExecuteException(R.string.dlg_error_msg_securecode, 
 					R.string.dlg_error_msg_title);			
-		} catch(HttpClientException e) {
+		} catch (HttpClientException e) {
 			throw new ActionExecuteException(e);	
 		}
 	}
@@ -48,7 +48,7 @@ public abstract class BaseAction implements Action {
 	protected void clientLogout(IClient client) throws ActionExecuteException {
 		try {
 			client.logout();
-		} catch(HttpClientException e) {
+		} catch (HttpClientException e) {
 			throw new ActionExecuteException(e);	
 		} finally {
 			if (client != null)

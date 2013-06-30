@@ -17,8 +17,7 @@ public class InvoiceUpdateAction extends BaseAction {
 	@Override
 	public ActionResult execute() throws ActionExecuteException {
 		ActionResult result = new ActionResult();
-		IClient client = this.newClient();
-		
+		IClient client = newClient();
 		clientLogin(client);
 		
 		try {
