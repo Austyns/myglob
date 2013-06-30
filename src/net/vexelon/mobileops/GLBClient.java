@@ -220,6 +220,7 @@ public class GLBClient implements IClient {
 		// TODO
 
 		findInvoiceExportParams();
+		findInvoiceExportParams();
 		
 		return null;
 	}
@@ -517,6 +518,8 @@ public class GLBClient implements IClient {
 		BufferedReader reader = null;
 		long bytesCount = 0;
 		
+		Log.d(Defs.LOG_TAG, "URL: " + fullUrl);
+		
 		try {
 			HttpGet httpGet = new HttpGet(fullUrl.toString());
 			HttpResponse resp = httpClient.execute(httpGet);
@@ -528,12 +531,8 @@ public class GLBClient implements IClient {
 				
 				String line = null;
 				while((line = reader.readLine()) != null) {
-					
 					// bytes downloaded
 					bytesCount += line.length();
-					
-					if (line.contains("ei2_open_file"))
-							Log.d(Defs.LOG_TAG, line);
 					
 					if (line.contains("JavaScript:ei2_open_file") && line.contains("xml")) {
 						Log.d(Defs.LOG_TAG, line);
