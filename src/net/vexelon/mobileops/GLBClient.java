@@ -39,6 +39,9 @@ import java.util.regex.Pattern;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 
 import net.vexelon.myglob.configuration.Defs;
 import net.vexelon.myglob.utils.TrustAllSocketFactory;
@@ -70,6 +73,9 @@ import org.apache.http.params.CoreProtocolPNames;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
 
 import android.util.Log;
 
@@ -523,7 +529,6 @@ public class GLBClient implements IClient {
 			HttpGet httpGet = new HttpGet(fullUrl.toString());
 			HttpResponse resp = httpClient.execute(httpGet);
 			StatusLine status = resp.getStatusLine();
-			
 			if ( status.getStatusCode() == HttpStatus.SC_OK ) {
 				
 				reader = new BufferedReader(new InputStreamReader(resp.getEntity().getContent()));
@@ -578,27 +583,53 @@ public class GLBClient implements IClient {
 							throw new IOException("Invalid invoice fingerprint!");
 						}
 						
-						Log.v(Defs.LOG_TAG, "Full URL " + xmlUrl.toString());	
-						
 //						Pattern p = Pattern.compile("([a-zA-Z0-9\\.\\/]{0,}),{0,}", Pattern.CASE_INSENSITIVE);
 //						Matcher m = p.matcher(line);
 //						while (m.find()) {
 //							Log.v(Defs.LOG_TAG, "Match: " + m.group());	
 //
 //						}
-						
 						break;
 					}
 				}
-				
 			} else {
 				throw new HttpClientException(status.getReasonPhrase(), status.getStatusCode());
+			}
+
+			// close current stream reader
+			if (reader != null) try { reader.close(); } catch (IOException e) {};
+			
+			// Fetch Invoice XML
+			if (Defs.LOG_ENABLED)
+				Log.v(Defs.LOG_TAG, "Fetching invoice XML from: " + xmlUrl.toString());	
+			
+			// TODO: Remove this check!
+			if (xmlUrl.length() > 0) {
+			
+				httpGet = new HttpGet(xmlUrl.toString());
+				resp = httpClient.execute(httpGet);
+				status = resp.getStatusLine();
+				if ( status.getStatusCode() == HttpStatus.SC_OK ) {
+					// parse XML
+					
+				    SAXParserFactory saxFactory = SAXParserFactory.newInstance();
+				    SAXParser saxParser = saxFactory.newSAXParser();
+				    XMLReader saxReader = saxParser.getXMLReader();
+				    
+				    GLBInvoiceXMLParser parserHandler = new GLBInvoiceXMLParser();
+				    saxReader.setContentHandler(parserHandler);
+				    saxReader.parse(new InputSource(resp.getEntity().getContent()));
+				}
 			}
 			
 		} catch (ClientProtocolException e) {
 			throw new HttpClientException("Client protocol error!" + e.getMessage(), e);
 		} catch (IOException e) {
 			throw new HttpClientException("Client error!" + e.getMessage(), e);
+		} catch (ParserConfigurationException e) {
+			throw new HttpClientException("Invoice data reader failed!", e);
+		} catch (SAXException e) {
+			throw new HttpClientException("Failed reading invoice data!", e);
 		} finally {
 			if (reader != null) try { reader.close(); } catch (IOException e) {};
 			
