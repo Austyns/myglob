@@ -74,7 +74,7 @@ import org.apache.http.protocol.HttpContext;
 import android.util.Log;
 
 public class GLBClient implements IClient {
-
+	
 	private final String HTTP_MYGLOBUL_SITE = "https://my.globul.bg";
 
 	private final int DEFAULT_BUFFER_SIZE = 1024;
@@ -517,8 +517,7 @@ public class GLBClient implements IClient {
 
 		BufferedReader reader = null;
 		long bytesCount = 0;
-		
-		Log.d(Defs.LOG_TAG, "URL: " + fullUrl);
+		StringBuilder xmlUrl = new StringBuilder();
 		
 		try {
 			HttpGet httpGet = new HttpGet(fullUrl.toString());
@@ -535,20 +534,58 @@ public class GLBClient implements IClient {
 					bytesCount += line.length();
 					
 					if (line.contains("JavaScript:ei2_open_file") && line.contains("xml")) {
-						Log.d(Defs.LOG_TAG, line);
+						if (Defs.LOG_ENABLED)
+							Log.d(Defs.LOG_TAG, line);
 						
+						/*
+						 * This is a g'damn hack. We don't need fancy stuff ;)
+						 */
+						xmlUrl.append("https://my.globul.bg/mg/ei2/EI2Export?")
+						.append("file_name=summary")
+						.append("&file_type=xml")
+						.append("&lower_bound=0")
+						.append("&upper_bound=0");
+						
+//		                 "?file_name="+ file_name +
+//		                 "&file_type="+ file_type +
+//		                 "&lower_bound="+ lower_bound +
+//		                 "&upper_bound="+ upper_bound +
+//		                 "&inv_no="+ inv_no +
+//		                 "&bill_acc_id="+ bill_acc_id +
+//		                 "&custnum=" + custnum +
+//		                 "&servicetype=" + servicetype+
+//		                 "&period=" + period +
+//		                 "&cust_acc_id=" + cust_acc_id +
+//		                 "&custCode10=" + custCode10;		
+		                 
 						// extract keyword
-						Pattern p = Pattern.compile("'([a-zA-Z0-9\\.\\/]+)'", Pattern.CASE_INSENSITIVE);
-						Matcher m = p.matcher(line);
-						if (m.find()) {
-							Log.v(Defs.LOG_TAG, "Match: " + m.group());
-							
-//							reqType = GLBRequestType.getFromAction(m.group());
-//							if (reqType != null) {
-//								// we expect to find hash code, next
-//								inParam = true;
-//							} 
+						String keys[] = {"file_type", "file_name", "context_path", "lower_bound", "upper_bound", 
+								"inv_no", "bill_acc_id", "custnum", "servicetype", "period", "cust_acc_id", 
+								"custCode10"};
+						String parts[] = line.split(",");
+						if (parts.length > 5) {
+							for (int i = 5; i < parts.length - 1; i++) {
+								xmlUrl.append("&").append(keys[i]).append("=")
+								.append(parts[i].replace("'", "")); // strip single quotes
+							}
+							// the last param is tricky
+							int lastidx = parts.length - 1;
+							parts = parts[lastidx].split("\\)");
+							xmlUrl.append("&").append(keys[lastidx]).append("=")
+							.append(parts[0].replace("'", "")); // strip single quotes
+						} else {
+							Log.e(Defs.LOG_TAG, "Got line: " + line);
+							throw new IOException("Invalid invoice fingerprint!");
 						}
+						
+						Log.v(Defs.LOG_TAG, "Full URL " + xmlUrl.toString());	
+						
+//						Pattern p = Pattern.compile("([a-zA-Z0-9\\.\\/]{0,}),{0,}", Pattern.CASE_INSENSITIVE);
+//						Matcher m = p.matcher(line);
+//						while (m.find()) {
+//							Log.v(Defs.LOG_TAG, "Match: " + m.group());	
+//
+//						}
 						
 						break;
 					}
