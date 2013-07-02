@@ -23,10 +23,10 @@
  */
 package net.vexelon.myglob.fragments;
 
-import net.vexelon.myglob.Operations;
+import java.util.List;
+import java.util.Map;
+
 import net.vexelon.myglob.R;
-import net.vexelon.myglob.actions.AccountStatusAction;
-import net.vexelon.myglob.actions.Action;
 import net.vexelon.myglob.actions.ActionExecuteException;
 import net.vexelon.myglob.actions.ActionResult;
 import net.vexelon.myglob.actions.InvoiceUpdateAction;
@@ -43,6 +43,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -76,12 +77,21 @@ public class InvoiceFragment extends BaseFragment {
 		return v;
 	}
 	
+    private void updateInvoiceView(List<Map<String, String>> results) {
+    	
+    	View v = getView();
+    	
+    	setText(v, R.id.tv_invoice_num, results.get(0).get("InvNum"));
+    	setText(v, R.id.tv_invoice_date, results.get(0).get("InvNum"));
+    	setText(v, R.id.tv_invoice_services, results.get(0).get("InvNum"));
+    	setText(v, R.id.tv_invoice_discount, results.get(0).get("Disc"));
+    	setText(v, R.id.tv_invoice_totvat, results.get(0).get("Tot-VAT"));
+    }
+	
 	public void update() {
 		if (Defs.LOG_ENABLED) {
 			Log.d(Defs.LOG_TAG, "Updating invoice ...");
 		}
-		
-		View v = this.getView();
 		
 		final FragmentActivity activity = getActivity();
 		
@@ -101,6 +111,9 @@ public class InvoiceFragment extends BaseFragment {
 						
 						final ActionResult actionResult = new InvoiceUpdateAction(activity, user)
 								.execute();
+						
+						final List<Map<String, String>> results = 
+								(List<Map<String, String>>)actionResult.getListResult();
 //						
 //						// remember last account and operation
 //						GlobalSettings.getInstance().setLastSelectedPhoneNumber(phoneNumber);
@@ -111,6 +124,7 @@ public class InvoiceFragment extends BaseFragment {
 
 							@Override
 							public void run() {
+								updateInvoiceView(results);
 //								tvContent.setText(Html.fromHtml(actionResult.getString()));
 //								updateProfileView(phoneNumber);
 							}
