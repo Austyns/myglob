@@ -39,9 +39,6 @@ import java.util.regex.Pattern;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 
 import net.vexelon.myglob.configuration.Defs;
 import net.vexelon.myglob.utils.TrustAllSocketFactory;
@@ -73,9 +70,7 @@ import org.apache.http.params.CoreProtocolPNames;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
 
 import android.util.Log;
 
@@ -223,12 +218,7 @@ public class GLBClient implements IClient {
 	public List<Map<String, String>> getInvoiceInfo()
 			throws HttpClientException {
 		
-		// TODO
-
-		findInvoiceExportParams();
-		findInvoiceExportParams();
-		
-		return null;
+		return findInvoiceExportParams();
 	}
 	
 	@Override
@@ -513,22 +503,34 @@ public class GLBClient implements IClient {
 		return result;
 	}
 	
-	private HashMap<String, String> findInvoiceExportParams() throws HttpClientException {
-		
-		HashMap<String, String>  result = new HashMap<String, String>();
-		
-		StringBuilder fullUrl = new StringBuilder(100);
-		fullUrl.append(HTTP_MYGLOBUL_SITE).append(GLBRequestType.PAGE_INVOCECHECK.getPath()).append("?")
-			.append(GLBRequestType.PAGE_INVOCECHECK.getParams());
+	private List<Map<String, String>> findInvoiceExportParams() throws HttpClientException {
 
 		BufferedReader reader = null;
 		long bytesCount = 0;
-		StringBuilder xmlUrl = new StringBuilder();
+		StringBuilder xmlUrl = new StringBuilder(100);
 		
 		try {
+			// Get invoice check page
+			StringBuilder fullUrl = new StringBuilder(100);
+			fullUrl.append(HTTP_MYGLOBUL_SITE).append(GLBRequestType.PAGE_INVOICE.getPath()).append("?")
+			.append(GLBRequestType.PAGE_INVOICE.getParams());
+			
 			HttpGet httpGet = new HttpGet(fullUrl.toString());
 			HttpResponse resp = httpClient.execute(httpGet);
 			StatusLine status = resp.getStatusLine();
+			if ( status.getStatusCode() != HttpStatus.SC_OK ) {
+				// now what?
+			}
+			
+			// Get invoice parameters
+			
+			fullUrl.setLength(0);
+			fullUrl.append(HTTP_MYGLOBUL_SITE).append(GLBRequestType.PAGE_INVOICE_EXPORT.getPath()).append("?")
+				.append(GLBRequestType.PAGE_INVOICE_EXPORT.getParams());
+			
+			httpGet = new HttpGet(fullUrl.toString());
+			resp = httpClient.execute(httpGet);
+			status = resp.getStatusLine();
 			if ( status.getStatusCode() == HttpStatus.SC_OK ) {
 				
 				reader = new BufferedReader(new InputStreamReader(resp.getEntity().getContent()));
@@ -603,40 +605,30 @@ public class GLBClient implements IClient {
 			if (Defs.LOG_ENABLED)
 				Log.v(Defs.LOG_TAG, "Fetching invoice XML from: " + xmlUrl.toString());	
 			
-			// TODO: Remove this check!
-			if (xmlUrl.length() > 0) {
 			
-				httpGet = new HttpGet(xmlUrl.toString());
-				resp = httpClient.execute(httpGet);
-				status = resp.getStatusLine();
-				if ( status.getStatusCode() == HttpStatus.SC_OK ) {
-					// parse XML
-					
-				    SAXParserFactory saxFactory = SAXParserFactory.newInstance();
-				    SAXParser saxParser = saxFactory.newSAXParser();
-				    XMLReader saxReader = saxParser.getXMLReader();
-				    
-				    GLBInvoiceXMLParser parserHandler = new GLBInvoiceXMLParser();
-				    saxReader.setContentHandler(parserHandler);
-				    saxReader.parse(new InputSource(resp.getEntity().getContent()));
-				}
+			httpGet = new HttpGet(xmlUrl.toString());
+			resp = httpClient.execute(httpGet);
+			status = resp.getStatusLine();
+			if ( status.getStatusCode() == HttpStatus.SC_OK ) {
+				// parse XML
+				GLBInvoiceXMLParser xmlParser = new GLBInvoiceXMLParser(resp.getEntity().getContent());
+				List<Map<String, String>> rows = xmlParser.build();
+				return rows;
+			} else {
+				throw new HttpClientException(status.getReasonPhrase(), status.getStatusCode());
 			}
 			
 		} catch (ClientProtocolException e) {
 			throw new HttpClientException("Client protocol error!" + e.getMessage(), e);
 		} catch (IOException e) {
 			throw new HttpClientException("Client error!" + e.getMessage(), e);
-		} catch (ParserConfigurationException e) {
-			throw new HttpClientException("Invoice data reader failed!", e);
 		} catch (SAXException e) {
-			throw new HttpClientException("Failed reading invoice data!", e);
+			throw new HttpClientException("Data processing error!" + e.getMessage(), e);
 		} finally {
 			if (reader != null) try { reader.close(); } catch (IOException e) {};
 			
 			addDownloadedBytesCount(bytesCount);
 		}
-		
-		return result;
 	}	
 	
 	private HttpPost createPostRequest(String url, List<NameValuePair> qparams)
