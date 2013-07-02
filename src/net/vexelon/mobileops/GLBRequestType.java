@@ -45,7 +45,8 @@ public enum GLBRequestType {
 	/*
 	 * Invoice check
 	 */
-	PAGE_INVOCECHECK("/mg/myglobul.e2i", "action=export&pkey=217&jkey=235&brand=&model=0"),
+	PAGE_INVOICE("/mg/myglobul.e2i", "action=invoice&pkey=217&jkey=219&brand=&model=0"),
+	PAGE_INVOICE_EXPORT("/mg/myglobul.e2i", "action=export&pkey=217&jkey=225&brand=&model=0"),
 	GET_INVOICE("mg/ei2/EI2Export", "")
 	;
 	
