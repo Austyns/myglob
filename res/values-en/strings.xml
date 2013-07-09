@@ -72,7 +72,7 @@
 <string name="widget_4x1">MyGlob (4x1)</string>
 <string name="widget_4x2">MyGlob (4x2)</string>
 <string name="text_menu">Menu</string>
-<string name="text_menu_invoice">Update invoice</string>
+<string name="text_menu_invoice">Check invoice</string>
 <string name="text_checks_today">Checks today</string>
 <string name="text_checks_overal">All checks</string>
 <string name="text_traffic_today">Traffic today</string>
