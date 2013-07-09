@@ -49,6 +49,7 @@ public class GLBInvoiceXMLParser extends DefaultHandler {
 	public static final String TAG_ROWDATA = "ROWDATA";
 	public static final String TAG_ROW = "ROW";
 	
+	public static final String TAG_DATE = "InvDatum";
 	public static final String TAG_INVNUM = "InvNum";
 	public static final String TAG_MSISDN = "MSISDN";
 	public static final String TAG_FIXED_TAG = "FixCha";

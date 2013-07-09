@@ -40,13 +40,10 @@ import net.vexelon.myglob.utils.Utils;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 public class InvoiceFragment extends BaseFragment {
@@ -80,11 +77,8 @@ public class InvoiceFragment extends BaseFragment {
 	}
 	
     private void updateInvoiceView(List<Map<String, String>> results, User user) {
-    	
-
-    	
-    	boolean found = false;
     	View v = getView();
+    	boolean found = false;
     	
     	for (Map<String, String> map : results) {
 			if (map.containsKey(GLBInvoiceXMLParser.TAG_MSISDN)) {
@@ -94,7 +88,8 @@ public class InvoiceFragment extends BaseFragment {
 				if (value.trim().length() == 0) {
 					// invoice info
 			    	setText(v, R.id.tv_invoice_num, map.get(GLBInvoiceXMLParser.TAG_INVNUM));
-			    	setText(v, R.id.tv_invoice_date, map.get(GLBInvoiceXMLParser.TAG_INVNUM));
+			    	setText(v, R.id.tv_invoice_date, new SimpleDateFormat("dd-MM-yy HH:mm").format(
+			    			Long.parseLong(map.get(GLBInvoiceXMLParser.TAG_DATE))));
 			    	// costs
 			    	setText(v, R.id.tv_invoice_services, map.get(GLBInvoiceXMLParser.TAG_INVNUM));
 			    	setText(v, R.id.tv_invoice_discount, map.get(GLBInvoiceXMLParser.TAG_DISCOUNT));
@@ -107,8 +102,6 @@ public class InvoiceFragment extends BaseFragment {
 			    	break;
 				}
 			}
-			
-			//.append(new SimpleDateFormat("dd-MM-yy HH:mm").format(calendar.getTime()));
 		}
     	
     	if (!found) {
@@ -141,6 +134,7 @@ public class InvoiceFragment extends BaseFragment {
 						final ActionResult actionResult = new InvoiceUpdateAction(activity, user)
 								.execute();
 						
+						@SuppressWarnings("unchecked")
 						final List<Map<String, String>> results = 
 								(List<Map<String, String>>)actionResult.getListResult();
 //						

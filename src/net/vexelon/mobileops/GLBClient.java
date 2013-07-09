@@ -31,6 +31,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.security.InvalidAlgorithmParameterException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -508,6 +509,7 @@ public class GLBClient implements IClient {
 		BufferedReader reader = null;
 		long bytesCount = 0;
 		StringBuilder xmlUrl = new StringBuilder(100);
+		String invoiceDate = Long.toString(new Date().getTime()); // today
 		
 		try {
 			// Get invoice check page
@@ -572,8 +574,15 @@ public class GLBClient implements IClient {
 						String parts[] = line.split(",");
 						if (parts.length > 5) {
 							for (int i = 5; i < parts.length - 1; i++) {
+								String value = parts[i].replace("'", "");
+								
 								xmlUrl.append("&").append(keys[i]).append("=")
-								.append(parts[i].replace("'", "")); // strip single quotes
+								.append(value); // strip single quotes
+								
+								// we need the invoice date
+								if (keys[i].equals("period")) {
+									invoiceDate = value;
+								}
 							}
 							// the last param is tricky
 							int lastidx = parts.length - 1;
@@ -613,6 +622,10 @@ public class GLBClient implements IClient {
 				// parse XML
 				GLBInvoiceXMLParser xmlParser = new GLBInvoiceXMLParser(resp.getEntity().getContent());
 				List<Map<String, String>> rows = xmlParser.build();
+				// hack - we need to display the date
+				for (Map<String, String> map : rows) {
+					map.put(GLBInvoiceXMLParser.TAG_DATE, invoiceDate);
+				}
 				return rows;
 			} else {
 				throw new HttpClientException(status.getReasonPhrase(), status.getStatusCode());
