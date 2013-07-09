@@ -46,8 +46,17 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class GLBInvoiceXMLParser extends DefaultHandler {
 	
-	public static String TAG_ROWDATA = "ROWDATA";
-	public static String TAG_ROW = "ROW";
+	public static final String TAG_ROWDATA = "ROWDATA";
+	public static final String TAG_ROW = "ROW";
+	
+	public static final String TAG_INVNUM = "InvNum";
+	public static final String TAG_MSISDN = "MSISDN";
+	public static final String TAG_FIXED_TAG = "FixCha";
+	public static final String TAG_DISCOUNT = "Disc";
+	public static final String TAG_TOTAL_NO_VAT = "Tot-VAT";
+	public static final String TAG_VAT = "VatAm";
+	public static final String TAG_TOTALVAT = "TotDueAm";
+	public static final String TAG_TOTAL = "TotServ";	
 	
 	protected List<Map<String, String>> accountsList;
 	protected InputStream inputStream;

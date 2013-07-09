@@ -23,9 +23,11 @@
  */
 package net.vexelon.myglob.fragments;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
 
+import net.vexelon.mobileops.GLBInvoiceXMLParser;
 import net.vexelon.myglob.R;
 import net.vexelon.myglob.actions.ActionExecuteException;
 import net.vexelon.myglob.actions.ActionResult;
@@ -77,15 +79,42 @@ public class InvoiceFragment extends BaseFragment {
 		return v;
 	}
 	
-    private void updateInvoiceView(List<Map<String, String>> results) {
+    private void updateInvoiceView(List<Map<String, String>> results, User user) {
     	
+
+    	
+    	boolean found = false;
     	View v = getView();
     	
-    	setText(v, R.id.tv_invoice_num, results.get(0).get("InvNum"));
-    	setText(v, R.id.tv_invoice_date, results.get(0).get("InvNum"));
-    	setText(v, R.id.tv_invoice_services, results.get(0).get("InvNum"));
-    	setText(v, R.id.tv_invoice_discount, results.get(0).get("Disc"));
-    	setText(v, R.id.tv_invoice_totvat, results.get(0).get("Tot-VAT"));
+    	for (Map<String, String> map : results) {
+			if (map.containsKey(GLBInvoiceXMLParser.TAG_MSISDN)) {
+				String value = map.get(GLBInvoiceXMLParser.TAG_MSISDN);
+//				String userPhone = user.getPhoneNumber();
+//				if (value.endsWith(userPhone.substring(userPhone.length() - 6, userPhone.length()))) {
+				if (value.trim().length() == 0) {
+					// invoice info
+			    	setText(v, R.id.tv_invoice_num, map.get(GLBInvoiceXMLParser.TAG_INVNUM));
+			    	setText(v, R.id.tv_invoice_date, map.get(GLBInvoiceXMLParser.TAG_INVNUM));
+			    	// costs
+			    	setText(v, R.id.tv_invoice_services, map.get(GLBInvoiceXMLParser.TAG_INVNUM));
+			    	setText(v, R.id.tv_invoice_discount, map.get(GLBInvoiceXMLParser.TAG_DISCOUNT));
+			    	// totals
+			    	setText(v, R.id.tv_invoice_tot_no_vat, map.get(GLBInvoiceXMLParser.TAG_TOTAL_NO_VAT));
+			    	setText(v, R.id.tv_invoice_vat, map.get(GLBInvoiceXMLParser.TAG_VAT));
+			    	setText(v, R.id.tv_invoice_totvat, map.get(GLBInvoiceXMLParser.TAG_TOTALVAT));
+			    
+			    	found = true;
+			    	break;
+				}
+			}
+			
+			//.append(new SimpleDateFormat("dd-MM-yy HH:mm").format(calendar.getTime()));
+		}
+    	
+    	if (!found) {
+    		//TODO:
+    	}
+
     }
 	
 	public void update() {
@@ -106,7 +135,7 @@ public class InvoiceFragment extends BaseFragment {
 			new Thread() {
 				public void run() {
 					try {
-						User user = UsersManager.getInstance().getUserByPhoneNumber(
+						final User user = UsersManager.getInstance().getUserByPhoneNumber(
 								GlobalSettings.getInstance().getLastSelectedPhoneNumber());
 						
 						final ActionResult actionResult = new InvoiceUpdateAction(activity, user)
@@ -124,7 +153,7 @@ public class InvoiceFragment extends BaseFragment {
 
 							@Override
 							public void run() {
-								updateInvoiceView(results);
+								updateInvoiceView(results, user);
 //								tvContent.setText(Html.fromHtml(actionResult.getString()));
 //								updateProfileView(phoneNumber);
 							}
