@@ -101,7 +101,6 @@ public class InvoiceFragment extends BaseFragment {
 			    	} catch (Exception e) {
 			    		Log.e(Defs.LOG_TAG, "Failed to get decimal prices info!", e);
 			    	}
-			    	
 			    	setText(v, R.id.tv_invoice_services, servicesCharge.toPlainString());
 			    	setText(v, R.id.tv_invoice_fixed_charge, map.get(GLBInvoiceXMLParser.TAG_FIXED_CHARGE));
 			    	setText(v, R.id.tv_invoice_discount, map.get(GLBInvoiceXMLParser.TAG_DISCOUNT));
@@ -109,6 +108,10 @@ public class InvoiceFragment extends BaseFragment {
 			    	setText(v, R.id.tv_invoice_tot_no_vat, map.get(GLBInvoiceXMLParser.TAG_TOTAL_NO_VAT));
 			    	setText(v, R.id.tv_invoice_vat, map.get(GLBInvoiceXMLParser.TAG_VAT));
 			    	setText(v, R.id.tv_invoice_totvat, map.get(GLBInvoiceXMLParser.TAG_TOTALVAT));
+			    	// amount dues
+			    	setText(v, R.id.tv_invoice_prev_amountdue, map.get(GLBInvoiceXMLParser.TAG_PREV_AMOUNTDUE));
+			    	setText(v, R.id.tv_invoice_paied_amountdue, map.get(GLBInvoiceXMLParser.TAG_PAID_AMOUNTDUE));
+			    	setText(v, R.id.tv_invoice_total_dueamount, map.get(GLBInvoiceXMLParser.TAG_TOTAL_DUEAMOUNT));		
 			    
 			    	found = true;
 			    	break;

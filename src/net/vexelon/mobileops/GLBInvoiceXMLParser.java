@@ -52,11 +52,14 @@ public class GLBInvoiceXMLParser extends DefaultHandler {
 	public static final String TAG_DATE = "InvDatum";
 	public static final String TAG_INVNUM = "InvNum";
 	public static final String TAG_MSISDN = "MSISDN";
+	public static final String TAG_PREV_AMOUNTDUE = "PrevAm";
+	public static final String TAG_PAID_AMOUNTDUE = "Pmnts";
 	public static final String TAG_FIXED_CHARGE = "FixCha";
 	public static final String TAG_DISCOUNT = "Disc";
 	public static final String TAG_TOTAL_NO_VAT = "Tot-VAT";
 	public static final String TAG_VAT = "VatAm";
-	public static final String TAG_TOTALVAT = "TotDueAm";
+	public static final String TAG_TOTALVAT = "InvAm";
+	public static final String TAG_TOTAL_DUEAMOUNT = "TotDueAm";	
 	public static final String TAG_TOTAL = "TotServ";	
 	
 	protected List<Map<String, String>> accountsList;
