@@ -5,6 +5,8 @@ Feature: Added Invoices. Last created invoice can now be checked.
 (Добавено извеждане на последно издадена фактура.)
 Improvement/Change: App is localized in English. Texts will show in English for all devices that have their language set to English. For all other language settings the Default language is Bulgarian.
 (Приложението е локализирано на Англииски език. Текстовете ще се изписват на англ. език за всички устройства с конфигуриран англ. език в Андроид. За всички останали езикови конфигурации текстовете в приложението се изписват на български език.)  
+Fixed: Status info not updated when selected user was deleted.
+(Проблем при обновяване на статуса, когато някои от профилите бива изтрит.)
 
 v3.0.1
 Fix: Fixed a problem where app could not be moved to SDCard storage. 
