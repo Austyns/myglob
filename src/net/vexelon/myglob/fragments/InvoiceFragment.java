@@ -93,17 +93,34 @@ public class InvoiceFragment extends BaseFragment {
 			    			map.get(GLBInvoiceXMLParser.TAG_DATE))));
 			    	// costs
 			    	BigDecimal servicesCharge = new BigDecimal("0.00");
+			    	BigDecimal discounts = new BigDecimal("0.00");
 			    	try {
+			    		// solve discounts amount
+			    		BigDecimal discount = new BigDecimal(map.get(GLBInvoiceXMLParser.TAG_DISCOUNT));
+			    		BigDecimal discountPackage = new BigDecimal(map.get(GLBInvoiceXMLParser.TAG_DISCOUNT_PACKAGE));
+			    		BigDecimal discountLoyality = new BigDecimal(map.get(GLBInvoiceXMLParser.TAG_DISCOUNT_LOYALITY));
+			    		BigDecimal discountUBB = new BigDecimal(map.get(GLBInvoiceXMLParser.TAG_DISCOUNT_GLOBUL_UBB));
+			    		discounts = discounts
+			    				.add(discount)
+			    				.add(discountPackage)
+			    				.add(discountLoyality)
+			    				.add(discountUBB);
+			    		
+			    		// solve services costs
 			    		BigDecimal fixedCharge = new BigDecimal(map.get(GLBInvoiceXMLParser.TAG_FIXED_CHARGE));
-			    		BigDecimal discounts = new BigDecimal(map.get(GLBInvoiceXMLParser.TAG_DISCOUNT));
+//			    		BigDecimal discounts = new BigDecimal(map.get(GLBInvoiceXMLParser.TAG_DISCOUNT));
 			    		BigDecimal totalNoVAT = new BigDecimal(map.get(GLBInvoiceXMLParser.TAG_TOTAL_NO_VAT));
-			    		servicesCharge = totalNoVAT.subtract(discounts).subtract(fixedCharge);
+			    		servicesCharge = totalNoVAT
+			    				.subtract(discounts)
+			    				.subtract(fixedCharge);
+			    		
 			    	} catch (Exception e) {
+			    		// TODO throw exception
 			    		Log.e(Defs.LOG_TAG, "Failed to get decimal prices info!", e);
 			    	}
 			    	setText(v, R.id.tv_invoice_services, servicesCharge.toPlainString());
 			    	setText(v, R.id.tv_invoice_fixed_charge, map.get(GLBInvoiceXMLParser.TAG_FIXED_CHARGE));
-			    	setText(v, R.id.tv_invoice_discount, map.get(GLBInvoiceXMLParser.TAG_DISCOUNT));
+			    	setText(v, R.id.tv_invoice_discount, discounts.toPlainString());
 			    	// totals
 			    	setText(v, R.id.tv_invoice_tot_no_vat, map.get(GLBInvoiceXMLParser.TAG_TOTAL_NO_VAT));
 			    	setText(v, R.id.tv_invoice_vat, map.get(GLBInvoiceXMLParser.TAG_VAT));

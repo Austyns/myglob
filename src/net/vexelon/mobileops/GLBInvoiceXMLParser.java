@@ -56,6 +56,10 @@ public class GLBInvoiceXMLParser extends DefaultHandler {
 	public static final String TAG_PAID_AMOUNTDUE = "Pmnts";
 	public static final String TAG_FIXED_CHARGE = "FixCha";
 	public static final String TAG_DISCOUNT = "Disc";
+	public static final String TAG_DISCOUNT_PACKAGE = "PackDisc";
+	public static final String TAG_DISCOUNT_LOYALITY = "Lbonus";
+	public static final String TAG_DISCOUNT_GLOBUL_UBB = "GLOBUL_UBB";
+	public static final String TAG_DISCOUNT_GLOBUL_GARANT = "GLOBUL_GARANT";
 	public static final String TAG_TOTAL_NO_VAT = "Tot-VAT";
 	public static final String TAG_VAT = "VatAm";
 	public static final String TAG_TOTALVAT = "InvAm";
