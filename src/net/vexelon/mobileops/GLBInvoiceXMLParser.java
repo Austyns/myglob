@@ -105,7 +105,7 @@ public class GLBInvoiceXMLParser extends DefaultHandler {
 			parsingRow = false;
 			accountsList.add(currentMap);
 		} else if (parsingRow) {
-			currentMap.put(localName, buffer.toString());
+			currentMap.put(localName, buffer.toString().trim());
 		}
 		buffer.setLength(0);
 	}
