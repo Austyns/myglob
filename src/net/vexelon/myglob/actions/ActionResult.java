@@ -32,7 +32,7 @@ public class ActionResult {
 //	private int intResult;
 	private long downloadedBytesCount;
 	private Date checkedOn;
-	private List<?> listResult; 
+	private List<?> listResult;
 
 	public String getString() {
 		return stringResult;
@@ -73,5 +73,4 @@ public class ActionResult {
 	public void setResult(List<?> listResult) {
 		this.listResult = listResult;
 	}	
-
 }

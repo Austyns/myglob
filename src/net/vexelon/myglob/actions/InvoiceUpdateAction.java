@@ -32,6 +32,7 @@ import java.util.Map;
 import org.xml.sax.SAXException;
 
 import android.content.Context;
+import android.util.Log;
 import net.vexelon.mobileops.GLBInvoiceXMLParser;
 import net.vexelon.mobileops.HttpClientException;
 import net.vexelon.mobileops.IClient;
@@ -55,16 +56,28 @@ public class InvoiceUpdateAction extends BaseAction {
 		
 		try {
 			byte[] invoiceData = client.getInvoiceData();
+			// clean up cache
+			String lookForStorageName = String.format(Defs.ISTORAGE_XML_FORMAT, 
+					_user.getPhoneNumber(), "");
+			String[] storageFiles = _context.fileList();
+			for (String fileName : storageFiles) {
+				if (fileName.startsWith(lookForStorageName)) {
+					if (!_context.deleteFile(fileName)) {
+						Log.w(Defs.LOG_TAG, "Failed deleting - " + fileName);
+					}
+				}
+			}
 			// cache on local device storage
-			String storageName = String.format(Defs.ISTORAGE_XML_FORMAT, _user.getPhoneNumber());
+			String storageName = String.format(Defs.ISTORAGE_XML_FORMAT, 
+					_user.getPhoneNumber(), 
+					client.getInvoiceDateTime());
 			Utils.writeToInternalStorage(_context, new ByteArrayInputStream(invoiceData), storageName);
 			// parse XML
 			GLBInvoiceXMLParser xmlParser = new GLBInvoiceXMLParser(new ByteArrayInputStream(invoiceData));
 			List<Map<String, String>> invoiceInfo = xmlParser.build();
 			// hack - we need to display the date
 			for (Map<String, String> row : invoiceInfo) {
-//				map.put(GLBInvoiceXMLParser.TAG_DATE, invoiceDate);
-				row.put(GLBInvoiceXMLParser.TAG_DATE, Long.toString(new Date().getTime()));
+				row.put(GLBInvoiceXMLParser.TAG_DATE, Long.toString(client.getInvoiceDateTime()));
 			}			
 			// prep result object
 			result.setBytesCount(client.getDownloadedBytesCount());

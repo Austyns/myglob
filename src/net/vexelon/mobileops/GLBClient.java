@@ -89,6 +89,7 @@ public class GLBClient implements IClient {
 	private HashMap<GLBRequestType, String> operationsHash;
 	
 	private long bytesDownloaded = 0;
+	private long invoiceDateTime;
 
 	public GLBClient(String username, String password) {
 		this.username = username;
@@ -218,6 +219,11 @@ public class GLBClient implements IClient {
 			throws HttpClientException {
 		
 		return findInvoiceExportParams();
+	}
+	
+	@Override
+	public long getInvoiceDateTime() {
+		return invoiceDateTime;
 	}
 	
 	@Override
@@ -633,6 +639,13 @@ public class GLBClient implements IClient {
 			
 			addDownloadedBytesCount(bytesCount);
 		}
+		// parse invoice datetime
+		try {
+			invoiceDateTime = Long.parseLong(invoiceDate); //invoiceDate.substring(0, invoiceDate.length() - 3));
+		} catch (NumberFormatException e) {
+			// default 
+			invoiceDateTime = new Date().getTime();
+		}		
 		
 		return resultData;
 	}	

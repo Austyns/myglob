@@ -33,6 +33,7 @@ import java.util.Map;
 import org.xml.sax.SAXException;
 
 import android.content.Context;
+import android.util.Log;
 import net.vexelon.mobileops.GLBInvoiceXMLParser;
 import net.vexelon.myglob.configuration.Defs;
 import net.vexelon.myglob.users.User;
@@ -48,16 +49,30 @@ public class InvoiceLoadCachedAction extends BaseAction {
 		ActionResult result = new ActionResult();
 		
 		InputStream source = null;
+		String invoiceDateTime = Long.toString(new Date().getTime());
 		try {
-			String storageName = String.format(Defs.ISTORAGE_XML_FORMAT, _user.getPhoneNumber());
+			String storageName = String.format(Defs.ISTORAGE_XML_FORMAT, _user.getPhoneNumber(), "");
+			String[] storageFiles = _context.fileList();
+			for (String fileName : storageFiles) {
+				if (Defs.LOG_ENABLED) {
+					Log.d(Defs.LOG_TAG, "Found inv.storage: " + fileName);
+				}
+				if (fileName.startsWith(storageName)) {
+					invoiceDateTime = fileName.replace(storageName, "");
+					storageName = fileName;
+					if (Defs.LOG_ENABLED) {
+						Log.d(Defs.LOG_TAG, "Found inv.parsed-datetime: " + invoiceDateTime);
+					}					
+					break;
+				}
+			}
 			source = _context.openFileInput(storageName);
 			// parse XML
 			GLBInvoiceXMLParser xmlParser = new GLBInvoiceXMLParser(source);
 			List<Map<String, String>> invoiceInfo = xmlParser.build();
 			// hack - we need to display the date
 			for (Map<String, String> row : invoiceInfo) {
-//				map.put(GLBInvoiceXMLParser.TAG_DATE, invoiceDate);
-				row.put(GLBInvoiceXMLParser.TAG_DATE, Long.toString(new Date().getTime()));
+				row.put(GLBInvoiceXMLParser.TAG_DATE, invoiceDateTime);
 			}			
 			// prep result object
 			result.setResult(invoiceInfo);

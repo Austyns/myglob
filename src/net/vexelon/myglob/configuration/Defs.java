@@ -71,7 +71,7 @@ public class Defs {
 	public final static String INTENT_ACCOUNT_EDIT = "_ACCOUNT_EDIT";
 	public final static String INTENT_ACCOUNT_PHONENUMBER = "_ACCOUNT_PHONENUMBER";
 	
-	public final static String ISTORAGE_XML_FORMAT = "ivc_%s.xml";
+	public final static String ISTORAGE_XML_FORMAT = "ivc_%s_%s";
 	
 	// OBSOLETE
 	public final static int INTENT_SIGNIN_RQ = 100;

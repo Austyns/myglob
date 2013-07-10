@@ -100,6 +100,12 @@ public class MTLClient implements IClient {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	@Override
+	public long getInvoiceDateTime() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 
 	@Override
 	public void login() throws HttpClientException, InvalidCredentialsException, SecureCodeRequiredException {

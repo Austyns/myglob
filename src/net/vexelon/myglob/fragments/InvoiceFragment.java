@@ -24,6 +24,7 @@
 package net.vexelon.myglob.fragments;
 
 import java.math.BigDecimal;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
@@ -113,7 +114,7 @@ public class InvoiceFragment extends BaseFragment {
 				ActionResult actionResult = new InvoiceLoadCachedAction(this.getActivity(), user)
 						.execute();
 				
-				updateInvoiceView((List<Map<String, String>>) actionResult.getListResult(), user);
+				updateInvoiceView(user, (List<Map<String, String>>) actionResult.getListResult());
 			}
 		} catch (ActionExecuteException e) {
 			if (Defs.LOG_ENABLED) {
@@ -133,7 +134,7 @@ public class InvoiceFragment extends BaseFragment {
 		return result;
 	}
 	
-    private void updateInvoiceView(List<Map<String, String>> results, User user) {
+    private void updateInvoiceView(User user, List<Map<String, String>> results) {
     	if (Defs.LOG_ENABLED) 
     		Log.v(Defs.LOG_TAG, "Updating invoice for: " + user.getPhoneNumber());
     	
@@ -148,8 +149,10 @@ public class InvoiceFragment extends BaseFragment {
 				if (value.trim().length() == 0) {
 					// invoice info
 			    	setText(v, R.id.tv_invoice_num, map.get(GLBInvoiceXMLParser.TAG_INVNUM));
-			    	setText(v, R.id.tv_invoice_date, Defs.globalDateFormat.format(Long.parseLong(
-			    			map.get(GLBInvoiceXMLParser.TAG_DATE))));
+			    	
+		    		Calendar calendar = Calendar.getInstance();
+		    		calendar.setTimeInMillis(Long.parseLong(map.get(GLBInvoiceXMLParser.TAG_DATE)));			    	
+			    	setText(v, R.id.tv_invoice_date, Defs.globalDateFormat.format(calendar.getTime()));
 			    	// costs
 			    	BigDecimal servicesCharge = new BigDecimal("0.00");
 			    	BigDecimal discounts = new BigDecimal("0.00");
@@ -213,6 +216,7 @@ public class InvoiceFragment extends BaseFragment {
     	setUpdated(true);
     }
 	
+    @SuppressWarnings("unchecked")
 	public void update() {
 		if (Defs.LOG_ENABLED)
 			Log.d(Defs.LOG_TAG, "Updating invoice ...");
@@ -236,16 +240,12 @@ public class InvoiceFragment extends BaseFragment {
 						final ActionResult actionResult = new InvoiceUpdateAction(activity, user)
 								.execute();
 						
-						@SuppressWarnings("unchecked")
-						final List<Map<String, String>> results = 
-								(List<Map<String, String>>)actionResult.getListResult();
-						
 						// update text field
 						activity.runOnUiThread(new Runnable() {
 
 							@Override
 							public void run() {
-								updateInvoiceView(results, user);
+								updateInvoiceView(user, (List<Map<String, String>>)actionResult.getListResult());
 								// notify listeners that invoice was updated
 								for(IFragmentEvents listener : listeners) {
 									listener.onFEvent_InvoiceUpdated(user);									

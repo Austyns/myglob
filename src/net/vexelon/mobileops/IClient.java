@@ -64,5 +64,7 @@ public interface IClient {
 	public byte[] getInvoiceData()
 			throws HttpClientException;
 	
+	public long getInvoiceDateTime();
+	
 	public void close();
 }
