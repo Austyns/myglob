@@ -23,11 +23,12 @@
  */
 package net.vexelon.myglob.utils;
 
-
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,6 +37,10 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.ByteBuffer;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.WritableByteChannel;
 import java.util.Random;
 
 import net.vexelon.myglob.R;
@@ -48,8 +53,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.view.KeyEvent;
 
-
 public class Utils {
+	
+	public static final int BUFFER_PAGE_SIZE = 4096; // 4k
 	
 	private static Random _random = null;
 	
@@ -172,6 +178,68 @@ public class Utils {
 		}
 		
 		return ret;
+	}
+	
+	/**
+	 * Write input stream data to PRIVATE internal storage file.
+	 * @param context
+	 * @param source
+	 * @param internalStorageName
+	 * @throws IOException
+	 */
+	public static void writeToInternalStorage(Context context, InputStream source, String internalStorageName) 
+			throws IOException {
+		
+		FileOutputStream fos = null;
+		try {
+			fos = context.openFileOutput(internalStorageName, Context.MODE_PRIVATE);
+			BufferedOutputStream bos = new BufferedOutputStream(fos);
+			
+			BufferedInputStream bis = new BufferedInputStream(source);
+			byte[] buffer = new byte[4096];
+			int read = -1;
+			while((read = bis.read(buffer)) != -1) {
+				bos.write(buffer, 0, read);
+			}
+			bos.flush();
+			bos.close();
+		} catch (FileNotFoundException e) {
+			throw new IOException(e.getMessage());
+		} finally {
+			try { if ( fos != null ) fos.close(); } catch (IOException e) { }
+			try { if ( source != null ) source.close(); } catch (IOException e) { }
+		}		
+	}
+	
+	/**
+	 * Reads an input stream into a byte array
+	 * @param source
+	 * @return Byte array of input stream data
+	 * @throws IOException
+	 */
+	public static byte[] read(InputStream source) throws IOException {
+		ReadableByteChannel srcChannel = Channels.newChannel(source);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream(
+				source.available() > 0 ? source.available() : BUFFER_PAGE_SIZE);
+		WritableByteChannel destination = Channels.newChannel(baos);
+		
+		try {
+			ByteBuffer buffer = ByteBuffer.allocate(BUFFER_PAGE_SIZE);
+			while(srcChannel.read(buffer) > 0) {
+				buffer.flip();
+				while(buffer.hasRemaining()) {
+					destination.write(buffer);
+				}
+				buffer.clear();
+			}
+			return baos.toByteArray();
+		} catch(IOException e) {
+			throw e;
+		} finally {
+			try { if ( srcChannel != null ) srcChannel.close(); } catch (IOException e) { }
+			try { if ( source != null ) source.close(); } catch (IOException e) { }
+			try { if ( destination != null ) destination.close(); } catch (IOException e) { }
+		}
 	}
 	
 	/**
