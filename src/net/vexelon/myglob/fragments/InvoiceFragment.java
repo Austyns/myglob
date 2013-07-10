@@ -81,9 +81,23 @@ public class InvoiceFragment extends BaseFragment {
 		return v;
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
 	public void onStart() {
+		initInvoiceView();
+		super.onStart();
+	}
+	
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+    	if (Defs.LOG_ENABLED)
+    		Log.v(Defs.LOG_TAG, "InvoiceFragment.onSaveInstanceState");
+    	
+    	super.onSaveInstanceState(outState);
+    	setUserVisibleHint(true);
+    }	
+	
+	@SuppressWarnings("unchecked")
+	private void initInvoiceView() {
 		View v = getView();
 		
 		TableLayout table_invoice = (TableLayout) v.findViewById(R.id.table_invoice);
@@ -106,9 +120,7 @@ public class InvoiceFragment extends BaseFragment {
 				Log.d(Defs.LOG_TAG, "Failed loading invoice cache!", e);
 			}
 			// Simply skip view updates until user updates manually ...
-		}
-		
-		super.onStart();
+		}		
 	}
 	
 	private BigDecimal valOrZero(String value) {
@@ -122,6 +134,9 @@ public class InvoiceFragment extends BaseFragment {
 	}
 	
     private void updateInvoiceView(List<Map<String, String>> results, User user) {
+    	if (Defs.LOG_ENABLED) 
+    		Log.v(Defs.LOG_TAG, "Updating invoice for: " + user.getPhoneNumber());
+    	
     	View v = getView();
     	boolean found = false;
     	
@@ -284,6 +299,6 @@ public class InvoiceFragment extends BaseFragment {
 	
 	@Override
 	public void onFEvent_UserChanged() {
-		this.onStart();
+		initInvoiceView();
 	}
 }

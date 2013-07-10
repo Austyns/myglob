@@ -189,6 +189,15 @@ public class HomeFragment extends BaseFragment implements OnClickListener, OnTou
     	updateProfileView(GlobalSettings.getInstance().getLastSelectedPhoneNumber());
     }
     
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+    	if (Defs.LOG_ENABLED)
+    		Log.v(Defs.LOG_TAG, "HomeFragment.onSaveInstanceState");
+    	
+    	super.onSaveInstanceState(outState);
+    	setUserVisibleHint(true);
+    }
+    
     /**
      * Show preferences Activity where new account may be added
      */
