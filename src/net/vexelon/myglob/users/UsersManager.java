@@ -122,8 +122,10 @@ public class UsersManager {
 		return items;
 	}
 	
-	public void removeUser(String phoneNumber) {
-		_users.remove(getUserByPhoneNumber(phoneNumber));
+	public User removeUser(String phoneNumber) {
+		User user = getUserByPhoneNumber(phoneNumber);
+		_users.remove(user);
+		return user;
 	}
 	
 	public int getUsersCount() {

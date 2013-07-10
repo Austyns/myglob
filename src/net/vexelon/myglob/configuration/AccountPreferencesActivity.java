@@ -106,13 +106,20 @@ public class AccountPreferencesActivity extends PreferenceActivity {
 							
 							@Override
 							public void onClick(DialogInterface dialog, int which) {
-								UsersManager.getInstance().removeUser(_accountNumberPref.getText());
+								User removedUser = UsersManager.getInstance().removeUser(_accountNumberPref.getText());
 								
 								// save all users
 								SharedPreferences prefs = _activity.getSharedPreferences(Defs.PREFS_USER_PREFS, 0);
 								UsersManager.getInstance().save(prefs);
 								_activity.setResult(Defs.INTENT_RESULT_ACCOUT_DELETED);
 								_activity.finish();
+								
+								// set new default selection
+								if (GlobalSettings.getInstance().getLastSelectedPhoneNumber().equals(removedUser
+										.getPhoneNumber()) && UsersManager.getInstance().getUsersCount() > 0) {
+									String[] users = UsersManager.getInstance().getUsersPhoneNumbersList();
+									GlobalSettings.getInstance().setLastSelectedPhoneNumber(users[0]);
+								}
 								
 								dialog.dismiss();
 							}
