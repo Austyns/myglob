@@ -11,6 +11,6 @@
     <string name="text_vat">VAT</string>
     <string name="text_tot_vat">Total Incl. VAT</string>
     <string name="text_invoice_total_dueamount">Total Amount Due</string>
-    
+    <string name="text_invoice_invalid">Invoice contains invalid entries!</string>
     
 </resources>

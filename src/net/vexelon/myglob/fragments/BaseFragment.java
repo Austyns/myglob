@@ -35,6 +35,12 @@ public class BaseFragment extends SherlockFragment {
 		if ( tx != null )
 			tx.setText(text);
 	}
+	
+	protected void setText(View v, int id, int textId) {
+		TextView tx = (TextView) v.findViewById(id);
+		if ( tx != null )
+			tx.setText(textId);
+	}	
 
 	protected  String getResString(int id) {
 		return this.getResources().getString(id);

@@ -1,5 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  	android:layout_width="fill_parent"
+  	android:layout_height="fill_parent"
+  	android:orientation="vertical">
+  	
+<TextView
+    android:id="@+id/tv_invoice_status_nodata"
+    android:textAppearance="@style/FontContent"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:padding="4sp"
+    android:text="@string/text_no_data" />
+            
+<TableLayout
+    android:id="@+id/table_invoice"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical"
@@ -318,3 +332,5 @@
     <!-- 2 columns -->           
 
 </TableLayout>
+
+</LinearLayout>

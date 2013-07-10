@@ -44,6 +44,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TableLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class InvoiceFragment extends BaseFragment {
@@ -76,9 +79,25 @@ public class InvoiceFragment extends BaseFragment {
 	    	
 		View v = inflater.inflate(R.layout.invoice, container, false);
 		
+		TableLayout table_invoice = (TableLayout) v.findViewById(R.id.table_invoice);
+		table_invoice.setVisibility(View.GONE);
+		
+		TextView tv = (TextView) v.findViewById(R.id.tv_invoice_status_nodata);
+		tv.setVisibility(View.VISIBLE);
+		
 		// TODO
 		
 		return v;
+	}
+	
+	private BigDecimal valOrZero(String value) {
+		BigDecimal result = new BigDecimal("0.00");
+		try {
+			result = new BigDecimal(value);
+		} catch (NumberFormatException e) {
+			Log.w(Defs.LOG_TAG, "Failed to get decimal value from " + value + "!", e);
+		}
+		return result;
 	}
 	
     private void updateInvoiceView(List<Map<String, String>> results, User user) {
@@ -100,10 +119,10 @@ public class InvoiceFragment extends BaseFragment {
 			    	BigDecimal discounts = new BigDecimal("0.00");
 			    	try {
 			    		// solve discounts amount
-			    		BigDecimal discount = new BigDecimal(map.get(GLBInvoiceXMLParser.TAG_DISCOUNT));
-			    		BigDecimal discountPackage = new BigDecimal(map.get(GLBInvoiceXMLParser.TAG_DISCOUNT_PACKAGE));
-			    		BigDecimal discountLoyality = new BigDecimal(map.get(GLBInvoiceXMLParser.TAG_DISCOUNT_LOYALITY));
-			    		BigDecimal discountUBB = new BigDecimal(map.get(GLBInvoiceXMLParser.TAG_DISCOUNT_GLOBUL_UBB));
+			    		BigDecimal discount = valOrZero(map.get(GLBInvoiceXMLParser.TAG_DISCOUNT));
+			    		BigDecimal discountPackage = valOrZero(map.get(GLBInvoiceXMLParser.TAG_DISCOUNT_PACKAGE));
+			    		BigDecimal discountLoyality = valOrZero(map.get(GLBInvoiceXMLParser.TAG_DISCOUNT_LOYALITY));
+			    		BigDecimal discountUBB = valOrZero(map.get(GLBInvoiceXMLParser.TAG_DISCOUNT_GLOBUL_UBB));
 			    		discounts = discounts
 			    				.add(discount)
 			    				.add(discountPackage)
@@ -111,16 +130,20 @@ public class InvoiceFragment extends BaseFragment {
 			    				.add(discountUBB);
 			    		
 			    		// solve services costs
-			    		BigDecimal fixedCharge = new BigDecimal(map.get(GLBInvoiceXMLParser.TAG_FIXED_CHARGE));
+			    		BigDecimal fixedCharge = valOrZero(map.get(GLBInvoiceXMLParser.TAG_FIXED_CHARGE));
 //			    		BigDecimal discounts = new BigDecimal(map.get(GLBInvoiceXMLParser.TAG_DISCOUNT));
-			    		BigDecimal totalNoVAT = new BigDecimal(map.get(GLBInvoiceXMLParser.TAG_TOTAL_NO_VAT));
+			    		BigDecimal totalNoVAT = valOrZero(map.get(GLBInvoiceXMLParser.TAG_TOTAL_NO_VAT));
 			    		servicesCharge = totalNoVAT
 			    				.subtract(discounts)
 			    				.subtract(fixedCharge);
 			    		
 			    	} catch (Exception e) {
-			    		// TODO throw exception
 			    		Log.e(Defs.LOG_TAG, "Failed to get decimal prices info!", e);
+			    		/*
+			    		 * XXX
+			    		 * It would be better to throw exception at this point!
+			    		 */
+			    		discounts = new BigDecimal(map.get(GLBInvoiceXMLParser.TAG_DISCOUNT));
 			    	}
 			    	setText(v, R.id.tv_invoice_services, servicesCharge.toPlainString());
 			    	setText(v, R.id.tv_invoice_fixed_charge, map.get(GLBInvoiceXMLParser.TAG_FIXED_CHARGE));
@@ -141,9 +164,16 @@ public class InvoiceFragment extends BaseFragment {
 		}
     	
     	if (!found) {
-    		//TODO:
+    		// empty MSISDN was not found!
+    		setText(v, R.id.tv_invoice_status_nodata, R.string.text_invoice_invalid);
+    	} else {
+    		TextView tv = (TextView) v.findViewById(R.id.tv_invoice_status_nodata);
+    		tv.setVisibility(View.GONE);
+    		
+        	TableLayout table_invoice = (TableLayout) v.findViewById(R.id.table_invoice);
+    		table_invoice.setVisibility(View.VISIBLE);    		
     	}
-    	
+
     	setUpdated(true);
     }
 	
