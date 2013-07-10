@@ -157,7 +157,9 @@ public class UsersManager {
 		user.updateChecks(result.getCheckedOn(), 1);
 		user.updateTraffic(result.getCheckedOn(), result.getBytesCount());
 		user.setLastCheckDateTime(result.getCheckedOn().getTime());
-		user.setLastCheckData(result.getString());
+		
+		if (result.getString() != null && result.getString().length() > 0)
+			user.setLastCheckData(result.getString());
 	}
 	
 //	private byte[] loadKey() throws Exception {

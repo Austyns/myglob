@@ -28,14 +28,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 
 import net.vexelon.mobileops.HttpClientException;
 import net.vexelon.mobileops.IClient;
 import net.vexelon.myglob.Operations;
 import net.vexelon.myglob.configuration.Defs;
 import net.vexelon.myglob.users.User;
-import net.vexelon.myglob.users.UsersManager;
 import net.vexelon.myglob.utils.Utils;
 
 public class AccountStatusAction extends BaseAction {
@@ -115,11 +113,8 @@ public class AccountStatusAction extends BaseAction {
 			
 			result.setBytesCount(client.getDownloadedBytesCount());
 			result.setResult(sb.toString());
-			
 			// update user info
-			UsersManager.getInstance().setUserResult(_user, result);
-			SharedPreferences prefs = _context.getSharedPreferences(Defs.PREFS_USER_PREFS, 0);
-			UsersManager.getInstance().save(prefs);				
+			updateUserResult(result);
 			
 		} catch (HttpClientException e) {
 			throw new ActionExecuteException(e);

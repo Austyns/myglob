@@ -23,6 +23,7 @@
  */
 package net.vexelon.myglob.actions;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -40,12 +41,18 @@ public class InvoiceUpdateAction extends BaseAction {
 	@Override
 	public ActionResult execute() throws ActionExecuteException {
 		ActionResult result = new ActionResult();
+		result.setCheckedOn(new Date());
+		
 		IClient client = newClient();
 		clientLogin(client);
 		
 		try {
 			List<Map<String, String>> invoiceInfo = client.getInvoiceInfo();
+			result.setBytesCount(client.getDownloadedBytesCount());
 			result.setResult(invoiceInfo);
+			// update user info
+			updateUserResult(result);
+			
 		} catch (HttpClientException e) {
 			throw new ActionExecuteException(e);
 		} finally {

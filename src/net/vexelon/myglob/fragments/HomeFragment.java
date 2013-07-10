@@ -79,6 +79,9 @@ public class HomeFragment extends BaseFragment implements OnClickListener, OnTou
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    	if (Defs.LOG_ENABLED)
+    		Log.v(Defs.LOG_TAG, "HomeFragment.onCreateView()");
+    	
 		View v = inflater.inflate(R.layout.main, container, false);
 		
 		TextView tvPhoneNumber = (TextView) v.findViewById(R.id.tv_profile_number);
@@ -92,6 +95,9 @@ public class HomeFragment extends BaseFragment implements OnClickListener, OnTou
 	}
 	
 	public void onActivityCreated(Bundle savedInstanceState) {
+    	if (Defs.LOG_ENABLED)
+    		Log.v(Defs.LOG_TAG, "HomeFragment.onCreate()");
+    	
 		super.onActivityCreated(savedInstanceState);
 	}
 	

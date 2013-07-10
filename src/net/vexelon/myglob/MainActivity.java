@@ -277,6 +277,13 @@ public class MainActivity extends SherlockFragmentActivity {
 				Log.d(Defs.LOG_TAG, "Selected tab id: " + this._tabId);
 			
 			_pager.setCurrentItem(_tabId);
+			
+			// force views update if switching to home fragment after updating invoice
+			if (_tabId == HomeFragment.TAB_ID && _homeFragment != null 
+					&& _invoiceFragment != null && _invoiceFragment.isUpdated()) {
+				_homeFragment.onStart();
+				_invoiceFragment.setUpdated(false);
+			}
 		}
 		
 		@Override

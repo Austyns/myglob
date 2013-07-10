@@ -29,9 +29,11 @@ import net.vexelon.mobileops.IClient;
 import net.vexelon.mobileops.InvalidCredentialsException;
 import net.vexelon.mobileops.SecureCodeRequiredException;
 import net.vexelon.myglob.R;
+import net.vexelon.myglob.configuration.Defs;
 import net.vexelon.myglob.users.User;
 import net.vexelon.myglob.users.UsersManager;
 import android.content.Context;
+import android.content.SharedPreferences;
 
 public abstract class BaseAction implements Action {
 	
@@ -77,6 +79,13 @@ public abstract class BaseAction implements Action {
 			if (client != null)
 				client.close();
 		}		
+	}
+	
+	protected void updateUserResult(ActionResult result) {
+		// update user info
+		UsersManager.getInstance().setUserResult(_user, result);
+		SharedPreferences prefs = _context.getSharedPreferences(Defs.PREFS_USER_PREFS, 0);
+		UsersManager.getInstance().save(prefs);			
 	}
 	
 }

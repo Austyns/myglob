@@ -24,7 +24,6 @@
 package net.vexelon.myglob.fragments;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
 
@@ -51,6 +50,8 @@ public class InvoiceFragment extends BaseFragment {
 	// unique ID	
 	public static final int TAB_ID = 1;
 	
+	private boolean isUpdated = false;
+	
 	public static InvoiceFragment newInstance() {
 		InvoiceFragment fragment = new InvoiceFragment();
 
@@ -63,13 +64,16 @@ public class InvoiceFragment extends BaseFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
     	if (Defs.LOG_ENABLED)
-    		Log.v(Defs.LOG_TAG, "onCreate()");
+    		Log.v(Defs.LOG_TAG, "InvoiceFragment.onCreate()");
     	
 		super.onCreate(savedInstanceState);
 	}
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    	if (Defs.LOG_ENABLED)
+    		Log.v(Defs.LOG_TAG, "InvoiceFragment.onCreateView()");
+	    	
 		View v = inflater.inflate(R.layout.invoice, container, false);
 		
 		// TODO
@@ -139,7 +143,8 @@ public class InvoiceFragment extends BaseFragment {
     	if (!found) {
     		//TODO:
     	}
-
+    	
+    	setUpdated(true);
     }
 	
 	public void update() {
@@ -220,4 +225,12 @@ public class InvoiceFragment extends BaseFragment {
 
 		}		
 	}
+	
+	public boolean isUpdated() {
+		return isUpdated;
+	}
+
+	public void setUpdated(boolean isUpdated) {
+		this.isUpdated = isUpdated;
+	}	
 }
