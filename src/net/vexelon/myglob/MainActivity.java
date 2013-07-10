@@ -278,12 +278,12 @@ public class MainActivity extends SherlockFragmentActivity {
 			
 			_pager.setCurrentItem(_tabId);
 			
-			// force views update if switching to home fragment after updating invoice
-			if (_tabId == HomeFragment.TAB_ID && _homeFragment != null 
-					&& _invoiceFragment != null && _invoiceFragment.isUpdated()) {
-				_homeFragment.onStart();
-				_invoiceFragment.setUpdated(false);
-			}
+//			// force views update if switching to home fragment after updating invoice
+//			if (_tabId == HomeFragment.TAB_ID && _homeFragment != null 
+//					&& _invoiceFragment != null && _invoiceFragment.isUpdated()) {
+//				_homeFragment.onStart();
+//				_invoiceFragment.setUpdated(false);
+//			}
 		}
 		
 		@Override
@@ -317,6 +317,10 @@ public class MainActivity extends SherlockFragmentActivity {
 				return _aboutFragment;
 			case InvoiceFragment.TAB_ID:
 				_invoiceFragment = InvoiceFragment.newInstance();
+				if (_homeFragment != null) {
+					_homeFragment.addListener(_invoiceFragment);
+					_invoiceFragment.addListener(_homeFragment);
+				}				
 				return _invoiceFragment;
 			}
 				

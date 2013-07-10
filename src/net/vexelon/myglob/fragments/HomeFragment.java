@@ -130,6 +130,11 @@ public class HomeFragment extends BaseFragment implements OnClickListener, OnTou
 					GlobalSettings.getInstance().setLastSelectedPhoneNumber(items[which]);
 					
 					dialog.dismiss();
+					
+					// notify
+					for (IFragmentEvents listener : listeners) {
+						listener.onFEvent_UserChanged();
+					}
 				}
 			});
 			break;
@@ -387,4 +392,8 @@ public class HomeFragment extends BaseFragment implements OnClickListener, OnTou
 		}
 	}
 	
+	@Override
+	public void onFEvent_InvoiceUpdated(User forUser) {
+		updateProfileView(forUser.getPhoneNumber());
+	}
 }

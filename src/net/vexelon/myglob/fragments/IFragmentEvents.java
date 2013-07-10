@@ -23,52 +23,18 @@
  */
 package net.vexelon.myglob.fragments;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import net.vexelon.myglob.configuration.Defs;
 import net.vexelon.myglob.users.User;
 
-import android.util.Log;
-import android.view.View;
-import android.widget.TextView;
+/**
+ * 
+ * Events valid across all fragments
+ * <p>
+ * This actually is not a very good idea! It is better to implement separate interface for each fragment.
+ *
+ */
+public interface IFragmentEvents {
 
-import com.actionbarsherlock.app.SherlockFragment;
-
-public abstract class BaseFragment extends SherlockFragment implements IFragmentEvents {
+	void onFEvent_UserChanged();
 	
-	public List<IFragmentEvents> listeners = new ArrayList<IFragmentEvents>();
-	
-	public void addListener(IFragmentEvents listener) {
-		Log.d(Defs.LOG_TAG, "adding listener...");
-		if (!listeners.contains(listener)) {
-			listeners.add(listener);
-		}
-	}
-	
-	protected void setText(View v, int id, String text) {
-		TextView tx = (TextView) v.findViewById(id);
-		if ( tx != null )
-			tx.setText(text);
-	}
-	
-	protected void setText(View v, int id, int textId) {
-		TextView tx = (TextView) v.findViewById(id);
-		if ( tx != null )
-			tx.setText(textId);
-	}	
-
-	protected  String getResString(int id) {
-		return this.getResources().getString(id);
-	}
-	
-	@Override
-	public void onFEvent_InvoiceUpdated(User forUser) {
-		// TODO Auto-generated method stub
-	}
-	
-	@Override
-	public void onFEvent_UserChanged() {
-		// TODO Auto-generated method stub
-	}
+	void onFEvent_InvoiceUpdated(User forUser);
 }

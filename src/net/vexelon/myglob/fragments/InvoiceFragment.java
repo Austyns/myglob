@@ -78,6 +78,13 @@ public class InvoiceFragment extends BaseFragment {
     		Log.v(Defs.LOG_TAG, "InvoiceFragment.onCreateView()");
 	    	
 		View v = inflater.inflate(R.layout.invoice, container, false);
+		return v;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public void onStart() {
+		View v = getView();
 		
 		TableLayout table_invoice = (TableLayout) v.findViewById(R.id.table_invoice);
 		table_invoice.setVisibility(View.GONE);
@@ -85,12 +92,6 @@ public class InvoiceFragment extends BaseFragment {
 		TextView tv = (TextView) v.findViewById(R.id.tv_invoice_status_nodata);
 		tv.setVisibility(View.VISIBLE);
 		
-		return v;
-	}
-	
-	@SuppressWarnings("unchecked")
-	@Override
-	public void onStart() {
 		try {
 			User user = UsersManager.getInstance().getUserByPhoneNumber(
 					GlobalSettings.getInstance().getLastSelectedPhoneNumber());
@@ -230,6 +231,10 @@ public class InvoiceFragment extends BaseFragment {
 							@Override
 							public void run() {
 								updateInvoiceView(results, user);
+								// notify listeners that invoice was updated
+								for(IFragmentEvents listener : listeners) {
+									listener.onFEvent_InvoiceUpdated(user);									
+								}
 							}
 						});
 						
@@ -276,4 +281,9 @@ public class InvoiceFragment extends BaseFragment {
 	public void setUpdated(boolean isUpdated) {
 		this.isUpdated = isUpdated;
 	}	
+	
+	@Override
+	public void onFEvent_UserChanged() {
+		this.onStart();
+	}
 }
