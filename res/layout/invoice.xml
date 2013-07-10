@@ -8,9 +8,8 @@
     >
 
     <!-- 2 columns -->
-
     <TableRow
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1">
 
@@ -18,6 +17,7 @@
             android:id="@+id/tv_invoice_num_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="right"
             android:text="@string/text_invoice_num"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -25,14 +25,14 @@
             android:id="@+id/tv_invoice_num"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="left"
             android:paddingLeft="6dp"
-            android:text=""
             android:textAppearance="?android:attr/textAppearanceSmall" />
     </TableRow>
     <!-- 2 columns -->
 
     <TableRow
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1">
 
@@ -40,6 +40,7 @@
             android:id="@+id/tv_invoice_date_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="right"
             android:text="@string/text_invoice_date"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -47,6 +48,7 @@
             android:id="@+id/tv_invoice_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="left"
             android:paddingLeft="6dp"
             android:text=""
             android:textAppearance="?android:attr/textAppearanceSmall" />
@@ -56,7 +58,7 @@
 	<!-- COSTS ////////////////////////////////////////////////////////////-->
 	
     <TableRow
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1">
 
@@ -64,6 +66,7 @@
             android:id="@+id/tv_invoice_services_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="right"
             android:text="@string/text_invoice_services"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -71,6 +74,7 @@
             android:id="@+id/tv_invoice_services"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="left"
             android:paddingLeft="6dp"
             android:text=""
             android:textAppearance="?android:attr/textAppearanceSmall" />
@@ -78,7 +82,7 @@
     <!-- 2 columns -->
     
     <TableRow
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1">
 
@@ -86,6 +90,7 @@
             android:id="@+id/tv_invoice_discount_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="right"
             android:text="@string/text_invoice_discount"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -93,6 +98,7 @@
             android:id="@+id/tv_invoice_discount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="left"
             android:paddingLeft="6dp"
             android:text=""
             android:textAppearance="?android:attr/textAppearanceSmall" />
@@ -115,7 +121,7 @@
     <!-- 2 columns -->
     
     <TableRow
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1">
 
@@ -123,6 +129,7 @@
             android:id="@+id/tv_invoice_tot_no_vat_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="right"
             android:text="@string/text_tot_no_vat"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -130,6 +137,7 @@
             android:id="@+id/tv_invoice_tot_no_vat"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="left"
             android:paddingLeft="6dp"
             android:text=""
             android:textAppearance="?android:attr/textAppearanceSmall" />
@@ -137,7 +145,7 @@
     <!-- 2 columns -->
     
     <TableRow
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1">
 
@@ -145,6 +153,7 @@
             android:id="@+id/tv_invoice_vat_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="right"
             android:text="@string/text_vat"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -152,6 +161,7 @@
             android:id="@+id/tv_invoice_vat"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="left"
             android:paddingLeft="6dp"
             android:text=""
             android:textAppearance="?android:attr/textAppearanceSmall" />
@@ -159,7 +169,7 @@
     <!-- 2 columns -->        
     
     <TableRow
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1">
 
@@ -167,6 +177,7 @@
             android:id="@+id/tv_invoice_totvat_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="right"
             android:text="@string/text_tot_vat"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -174,6 +185,7 @@
             android:id="@+id/tv_invoice_totvat"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="left"
             android:paddingLeft="6dp"
             android:text=""
             android:textAppearance="?android:attr/textAppearanceSmall" />
