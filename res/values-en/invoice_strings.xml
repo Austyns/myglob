@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="text_invoice_num">Invoice Number</string>
+    <string name="text_invoice_num">Invoice No.</string>
     <string name="text_invoice_date">Invoice Date</string>
     <string name="text_invoice_services">Services Costs</string>
     <string name="text_invoice_discount">Discounts</string>
-    <string name="text_tot_no_vat">Total (no VAT)</string>
+    <string name="text_tot_no_vat">Total Excl. VAT</string>
     <string name="text_vat">VAT</string>
-    <string name="text_tot_vat">Total +VAT</string>
+    <string name="text_tot_vat">Total Incl. VAT</string>
     
 </resources>
