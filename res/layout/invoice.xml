@@ -19,6 +19,7 @@
     android:orientation="vertical"
     android:padding="4sp"
     android:stretchColumns="*"
+    android:shrinkColumns="0"
     >
 
     <!-- 2 columns -->
