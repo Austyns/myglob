@@ -1,8 +1,16 @@
 MyGlob HISTORY file
 
+v3.1.0
+Feature: Added Invoices. Last created invoice can now be checked. 
+(Добавено извеждане на последно издадена фактура.)
+Improvement/Change: App is localized in English. Texts will show in English for all devices that have their language set to English. For all other language settings the Default language is Bulgarian.
+(Приложението е локализирано на Англииски език. Текстовете ще се изписват на англ. език за всички устройства с конфигуриран англ. език в Андроид. За всички останали езикови конфигурации текстовете в приложението се изписват на български език.)  
+
 v3.0.1
-Fix: Fixed a problem where app could not be moved to SDCard storage. (Приложнието отново може да се инсталира на SD картата).
-Improvement/Change: Added Travel&Surf internet bandwidth check operation. (Добавена проверка на Travel&Surf моб.интернет трафик).
+Fix: Fixed a problem where app could not be moved to SDCard storage. 
+(Приложнието отново може да се инсталира на SD картата).
+Improvement/Change: Added Travel&Surf internet bandwidth check operation. 
+(Добавена проверка на Travel&Surf моб.интернет трафик).
 
 v3.0.0
 Improvement/Change: Redesigned the complete UI. (Цялостен редизайн на приложението)
@@ -11,8 +19,10 @@ v2.1.2
 Fixed: (Issue #8) Cannot get bill info for other than one account
 
 v2.1.1
-Fixed: (Issue #7)Page does not exist (Страницата не съществува)
-Fixed: (Issue #6) No menu button on latest Android phones (Добавен меню бутон за телефони без хардуерен меню бутон)
+Fixed: (Issue #7)Page does not exist 
+(Страницата не съществува)
+Fixed: (Issue #6) No menu button on latest Android phones 
+(Добавен меню бутон за телефони без хардуерен меню бутон)
 
 v2.1.0
 Important: App now requires Android SDK 7 (2.1).
