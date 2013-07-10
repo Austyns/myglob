@@ -238,6 +238,13 @@ public class HomeFragment extends BaseFragment implements OnClickListener, OnTou
     		Log.v(Defs.LOG_TAG, "Updating selection for: " + phoneNumber);
     	
     	View v = getView();
+    	// XXX When calling this method from another fragment view is sometimes <null> :(
+    	if (v == null) {
+        	if (Defs.LOG_ENABLED)
+        		Log.w(Defs.LOG_TAG, "View is <null>!");    		
+    		return;
+    	}
+    	
     	LinearLayout profileLayout = (LinearLayout) v.findViewById(R.id.ly_profile);
     	
     	User user = UsersManager.getInstance().getUserByPhoneNumber(phoneNumber);
