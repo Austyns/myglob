@@ -71,7 +71,8 @@ public class GLBInvoiceXMLParser extends DefaultHandler {
 	
 	private StringBuilder buffer;
 	private boolean parsingRow = false;
-	Map<String,String> currentMap;
+	private Map<String,String> currentMap;
+	private long totalBytesParsed = 0;
 	
 	public GLBInvoiceXMLParser(InputStream inputStream) {
 		this.inputStream = inputStream;
@@ -114,6 +115,7 @@ public class GLBInvoiceXMLParser extends DefaultHandler {
 		} else if (parsingRow) {
 			currentMap.put(localName, buffer.toString().trim());
 		}
+		totalBytesParsed += buffer.length();
 		buffer.setLength(0);
 	}
 	
@@ -125,4 +127,8 @@ public class GLBInvoiceXMLParser extends DefaultHandler {
 		}
 	}
 
+	public long getTotalBytesParsed() {
+		return totalBytesParsed;
+	}
+	
 }

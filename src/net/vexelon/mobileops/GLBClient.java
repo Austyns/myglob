@@ -511,6 +511,7 @@ public class GLBClient implements IClient {
 		StringBuilder xmlUrl = new StringBuilder(100);
 		String invoiceDate = Long.toString(new Date().getTime()); // today
 		
+		List<Map<String, String>> rows = new ArrayList<Map<String,String>>(); // empty list
 		try {
 			// Get invoice check page
 			StringBuilder fullUrl = new StringBuilder(100);
@@ -621,12 +622,13 @@ public class GLBClient implements IClient {
 			if ( status.getStatusCode() == HttpStatus.SC_OK ) {
 				// parse XML
 				GLBInvoiceXMLParser xmlParser = new GLBInvoiceXMLParser(resp.getEntity().getContent());
-				List<Map<String, String>> rows = xmlParser.build();
+				rows = xmlParser.build();
 				// hack - we need to display the date
 				for (Map<String, String> map : rows) {
 					map.put(GLBInvoiceXMLParser.TAG_DATE, invoiceDate);
 				}
-				return rows;
+				// add loaded bytes
+				bytesCount += xmlParser.getTotalBytesParsed();
 			} else {
 				throw new HttpClientException(status.getReasonPhrase(), status.getStatusCode());
 			}
@@ -642,6 +644,8 @@ public class GLBClient implements IClient {
 			
 			addDownloadedBytesCount(bytesCount);
 		}
+		
+		return rows;
 	}	
 	
 	private HttpPost createPostRequest(String url, List<NameValuePair> qparams)
