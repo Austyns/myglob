@@ -1,4 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="text_invoice_num">Фактура (ДУБЛИКАТ) No:</string>
+    <string name="text_invoice_date">Дата на данъчно събитие:</string>
+    <string name="text_invoice_services">Таксувани услуги</string>
+    <string name="text_invoice_fixed_charge">Месечни и еднократни такси</string>
+    <string name="text_invoice_discount">Отстъпки</string>
+    <string name="text_invoice_prev_amountdue">Задължения от пред. период</string>
+    <string name="text_invoice_paid_amountdue">Внесени плащания</string>
+    <string name="text_tot_no_vat">Сума без ДДС</string>
+    <string name="text_vat">ДДС</string>
+    <string name="text_tot_vat">Сума с ДДС</string>
+    <string name="text_invoice_total_dueamount">ОБЩА СУМА ЗА ПЛАЩАНЕ С ДДС</string>
+    <string name="text_invoice_invalid">Фактурата съдържа невалидни записи!</string>
     
 </resources>
