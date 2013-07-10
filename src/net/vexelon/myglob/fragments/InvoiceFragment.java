@@ -23,7 +23,6 @@
  */
 package net.vexelon.myglob.fragments;
 
-import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
 
@@ -88,8 +87,8 @@ public class InvoiceFragment extends BaseFragment {
 				if (value.trim().length() == 0) {
 					// invoice info
 			    	setText(v, R.id.tv_invoice_num, map.get(GLBInvoiceXMLParser.TAG_INVNUM));
-			    	setText(v, R.id.tv_invoice_date, new SimpleDateFormat("dd-MM-yy HH:mm").format(
-			    			Long.parseLong(map.get(GLBInvoiceXMLParser.TAG_DATE))));
+			    	setText(v, R.id.tv_invoice_date, Defs.globalDateFormat.format(Long.parseLong(
+			    			map.get(GLBInvoiceXMLParser.TAG_DATE))));
 			    	// costs
 			    	setText(v, R.id.tv_invoice_services, map.get(GLBInvoiceXMLParser.TAG_INVNUM));
 			    	setText(v, R.id.tv_invoice_discount, map.get(GLBInvoiceXMLParser.TAG_DISCOUNT));

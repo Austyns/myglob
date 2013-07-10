@@ -23,6 +23,8 @@
  */
 package net.vexelon.myglob.configuration;
 
+import java.text.SimpleDateFormat;
+
 import net.vexelon.myglob.R;
 
 public class Defs {
@@ -35,6 +37,8 @@ public class Defs {
 	
 	public final static int CLR_BUTTON_UPDATE = 0xFFA6D060;
 	public final static String CLR_TEXT_HIGHLIGHT = "#FF7F00"; //0xFFFF7F00;
+	
+	public final static SimpleDateFormat globalDateFormat = new SimpleDateFormat("dd-MM-yy HH:mm");
 
 	public final static int MENU_OPTIONS_BASE = 100;
 	public final static int MENU_ADD_ACCOUNT = 200;

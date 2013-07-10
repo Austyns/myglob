@@ -23,7 +23,6 @@
  */
 package net.vexelon.myglob.fragments;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -240,7 +239,7 @@ public class HomeFragment extends BaseFragment implements OnClickListener, OnTou
     		StringBuilder dateText = new StringBuilder(100);
     		dateText.append(getString(R.string.text_from))
     		.append(" ")
-    		.append(new SimpleDateFormat("dd-MM-yy HH:mm").format(calendar.getTime()));
+    		.append(Defs.globalDateFormat.format(calendar.getTime()));
     		
     		setText(v, R.id.tv_profile_lastchecked_at, dateText.toString());
     		
