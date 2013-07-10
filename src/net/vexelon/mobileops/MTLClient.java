@@ -95,7 +95,7 @@ public class MTLClient implements IClient {
 	}
 	
 	@Override
-	public List<Map<String, String>> getInvoiceInfo()
+	public byte[] getInvoiceData()
 			throws HttpClientException {
 		// TODO Auto-generated method stub
 		return null;

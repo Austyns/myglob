@@ -34,7 +34,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -71,7 +70,6 @@ import org.apache.http.params.CoreProtocolPNames;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
-import org.xml.sax.SAXException;
 
 import android.util.Log;
 
@@ -216,7 +214,7 @@ public class GLBClient implements IClient {
 	}
 	
 	@Override
-	public List<Map<String, String>> getInvoiceInfo()
+	public byte[] getInvoiceData()
 			throws HttpClientException {
 		
 		return findInvoiceExportParams();
@@ -504,14 +502,14 @@ public class GLBClient implements IClient {
 		return result;
 	}
 	
-	private List<Map<String, String>> findInvoiceExportParams() throws HttpClientException {
+	private byte[] findInvoiceExportParams() throws HttpClientException {
 
 		BufferedReader reader = null;
 		long bytesCount = 0;
 		StringBuilder xmlUrl = new StringBuilder(100);
 		String invoiceDate = Long.toString(new Date().getTime()); // today
 		
-		List<Map<String, String>> rows = new ArrayList<Map<String,String>>(); // empty list
+		byte[] resultData = null;
 		try {
 			// Get invoice check page
 			StringBuilder fullUrl = new StringBuilder(100);
@@ -615,20 +613,13 @@ public class GLBClient implements IClient {
 			if (Defs.LOG_ENABLED)
 				Log.v(Defs.LOG_TAG, "Fetching invoice XML from: " + xmlUrl.toString());	
 			
-			
 			httpGet = new HttpGet(xmlUrl.toString());
 			resp = httpClient.execute(httpGet);
 			status = resp.getStatusLine();
 			if ( status.getStatusCode() == HttpStatus.SC_OK ) {
-				// parse XML
-				GLBInvoiceXMLParser xmlParser = new GLBInvoiceXMLParser(resp.getEntity().getContent());
-				rows = xmlParser.build();
-				// hack - we need to display the date
-				for (Map<String, String> map : rows) {
-					map.put(GLBInvoiceXMLParser.TAG_DATE, invoiceDate);
-				}
+				resultData = Utils.read(resp.getEntity().getContent());
 				// add loaded bytes
-				bytesCount += xmlParser.getTotalBytesParsed();
+				bytesCount += resultData.length;
 			} else {
 				throw new HttpClientException(status.getReasonPhrase(), status.getStatusCode());
 			}
@@ -637,15 +628,13 @@ public class GLBClient implements IClient {
 			throw new HttpClientException("Client protocol error!" + e.getMessage(), e);
 		} catch (IOException e) {
 			throw new HttpClientException("Client error!" + e.getMessage(), e);
-		} catch (SAXException e) {
-			throw new HttpClientException("Data processing error!" + e.getMessage(), e);
 		} finally {
 			if (reader != null) try { reader.close(); } catch (IOException e) {};
 			
 			addDownloadedBytesCount(bytesCount);
 		}
 		
-		return rows;
+		return resultData;
 	}	
 	
 	private HttpPost createPostRequest(String url, List<NameValuePair> qparams)

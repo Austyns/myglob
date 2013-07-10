@@ -23,8 +23,9 @@
  */
 package net.vexelon.myglob.actions;
 
-import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -33,33 +34,25 @@ import org.xml.sax.SAXException;
 
 import android.content.Context;
 import net.vexelon.mobileops.GLBInvoiceXMLParser;
-import net.vexelon.mobileops.HttpClientException;
-import net.vexelon.mobileops.IClient;
 import net.vexelon.myglob.configuration.Defs;
 import net.vexelon.myglob.users.User;
-import net.vexelon.myglob.utils.Utils;
 
-public class InvoiceUpdateAction extends BaseAction {
+public class InvoiceLoadCachedAction extends BaseAction {
 	
-	public InvoiceUpdateAction(Context context, User user) {
+	public InvoiceLoadCachedAction(Context context, User user) {
 		super(context, user);
 	}
 
 	@Override
 	public ActionResult execute() throws ActionExecuteException {
 		ActionResult result = new ActionResult();
-		result.setCheckedOn(new Date());
 		
-		IClient client = newClient();
-		clientLogin(client);
-		
+		InputStream source = null;
 		try {
-			byte[] invoiceData = client.getInvoiceData();
-			// cache on local device storage
 			String storageName = String.format(Defs.ISTORAGE_XML_FORMAT, _user.getPhoneNumber());
-			Utils.writeToInternalStorage(_context, new ByteArrayInputStream(invoiceData), storageName);
+			source = _context.openFileInput(storageName);
 			// parse XML
-			GLBInvoiceXMLParser xmlParser = new GLBInvoiceXMLParser(new ByteArrayInputStream(invoiceData));
+			GLBInvoiceXMLParser xmlParser = new GLBInvoiceXMLParser(source);
 			List<Map<String, String>> invoiceInfo = xmlParser.build();
 			// hack - we need to display the date
 			for (Map<String, String> row : invoiceInfo) {
@@ -67,20 +60,14 @@ public class InvoiceUpdateAction extends BaseAction {
 				row.put(GLBInvoiceXMLParser.TAG_DATE, Long.toString(new Date().getTime()));
 			}			
 			// prep result object
-			result.setBytesCount(client.getDownloadedBytesCount());
 			result.setResult(invoiceInfo);
-			// update user info
-			updateUserResult(result);
 			
-		} catch (HttpClientException e) {
-			throw new ActionExecuteException(e);
 		} catch (SAXException e) {
 			throw new ActionExecuteException(e);
-		} catch (IOException e) {
+		} catch (FileNotFoundException e) {
 			throw new ActionExecuteException(e);
 		} finally {
-			// Make sure we (attempt to) logout.
-			clientLogout(client);
+			try { if ( source != null ) source.close(); } catch (IOException e) {}
 		}
 
 		return result;

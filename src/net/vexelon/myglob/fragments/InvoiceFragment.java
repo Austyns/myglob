@@ -31,6 +31,7 @@ import net.vexelon.mobileops.GLBInvoiceXMLParser;
 import net.vexelon.myglob.R;
 import net.vexelon.myglob.actions.ActionExecuteException;
 import net.vexelon.myglob.actions.ActionResult;
+import net.vexelon.myglob.actions.InvoiceLoadCachedAction;
 import net.vexelon.myglob.actions.InvoiceUpdateAction;
 import net.vexelon.myglob.configuration.Defs;
 import net.vexelon.myglob.configuration.GlobalSettings;
@@ -44,7 +45,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -71,7 +71,7 @@ public class InvoiceFragment extends BaseFragment {
     	
 		super.onCreate(savedInstanceState);
 	}
-	
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     	if (Defs.LOG_ENABLED)
@@ -85,9 +85,29 @@ public class InvoiceFragment extends BaseFragment {
 		TextView tv = (TextView) v.findViewById(R.id.tv_invoice_status_nodata);
 		tv.setVisibility(View.VISIBLE);
 		
-		// TODO
-		
 		return v;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public void onStart() {
+		try {
+			User user = UsersManager.getInstance().getUserByPhoneNumber(
+					GlobalSettings.getInstance().getLastSelectedPhoneNumber());
+			if (user != null) {
+				ActionResult actionResult = new InvoiceLoadCachedAction(this.getActivity(), user)
+						.execute();
+				
+				updateInvoiceView((List<Map<String, String>>) actionResult.getListResult(), user);
+			}
+		} catch (ActionExecuteException e) {
+			if (Defs.LOG_ENABLED) {
+				Log.d(Defs.LOG_TAG, "Failed loading invoice cache!", e);
+			}
+			// Simply skip view updates until user updates manually ...
+		}
+		
+		super.onStart();
 	}
 	
 	private BigDecimal valOrZero(String value) {
@@ -178,9 +198,8 @@ public class InvoiceFragment extends BaseFragment {
     }
 	
 	public void update() {
-		if (Defs.LOG_ENABLED) {
+		if (Defs.LOG_ENABLED)
 			Log.d(Defs.LOG_TAG, "Updating invoice ...");
-		}
 		
 		final FragmentActivity activity = getActivity();
 		
@@ -204,10 +223,6 @@ public class InvoiceFragment extends BaseFragment {
 						@SuppressWarnings("unchecked")
 						final List<Map<String, String>> results = 
 								(List<Map<String, String>>)actionResult.getListResult();
-//						
-//						// remember last account and operation
-//						GlobalSettings.getInstance().setLastSelectedPhoneNumber(phoneNumber);
-//						GlobalSettings.getInstance().setLastSelectedOperation(finalOperation);	
 						
 						// update text field
 						activity.runOnUiThread(new Runnable() {
@@ -215,8 +230,6 @@ public class InvoiceFragment extends BaseFragment {
 							@Override
 							public void run() {
 								updateInvoiceView(results, user);
-//								tvContent.setText(Html.fromHtml(actionResult.getString()));
-//								updateProfileView(phoneNumber);
 							}
 						});
 						

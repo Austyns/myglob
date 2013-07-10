@@ -23,9 +23,6 @@
  */
 package net.vexelon.mobileops;
 
-import java.util.List;
-import java.util.Map;
-
 /**
  * Client interface
  * 
@@ -64,7 +61,7 @@ public interface IClient {
 	public String getAvailableMSPackage()
 		throws HttpClientException;
 	
-	public List<Map<String, String>> getInvoiceInfo()
+	public byte[] getInvoiceData()
 			throws HttpClientException;
 	
 	public void close();
