@@ -23,6 +23,8 @@
  */
 package net.vexelon.myglob.fragments;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
 
@@ -90,7 +92,18 @@ public class InvoiceFragment extends BaseFragment {
 			    	setText(v, R.id.tv_invoice_date, Defs.globalDateFormat.format(Long.parseLong(
 			    			map.get(GLBInvoiceXMLParser.TAG_DATE))));
 			    	// costs
-			    	setText(v, R.id.tv_invoice_services, map.get(GLBInvoiceXMLParser.TAG_INVNUM));
+			    	BigDecimal servicesCharge = new BigDecimal("0.00");
+			    	try {
+			    		BigDecimal fixedCharge = new BigDecimal(map.get(GLBInvoiceXMLParser.TAG_FIXED_CHARGE));
+			    		BigDecimal discounts = new BigDecimal(map.get(GLBInvoiceXMLParser.TAG_DISCOUNT));
+			    		BigDecimal totalNoVAT = new BigDecimal(map.get(GLBInvoiceXMLParser.TAG_TOTAL_NO_VAT));
+			    		servicesCharge = totalNoVAT.subtract(discounts).subtract(fixedCharge);
+			    	} catch (Exception e) {
+			    		Log.e(Defs.LOG_TAG, "Failed to get decimal prices info!", e);
+			    	}
+			    	
+			    	setText(v, R.id.tv_invoice_services, servicesCharge.toPlainString());
+			    	setText(v, R.id.tv_invoice_fixed_charge, map.get(GLBInvoiceXMLParser.TAG_FIXED_CHARGE));
 			    	setText(v, R.id.tv_invoice_discount, map.get(GLBInvoiceXMLParser.TAG_DISCOUNT));
 			    	// totals
 			    	setText(v, R.id.tv_invoice_tot_no_vat, map.get(GLBInvoiceXMLParser.TAG_TOTAL_NO_VAT));

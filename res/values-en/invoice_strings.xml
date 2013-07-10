@@ -3,6 +3,7 @@
     <string name="text_invoice_num">Invoice No.</string>
     <string name="text_invoice_date">Invoice Date</string>
     <string name="text_invoice_services">Services Costs</string>
+    <string name="text_invoice_fixed_charge">Fixed Charge</string>
     <string name="text_invoice_discount">Discounts</string>
     <string name="text_tot_no_vat">Total Excl. VAT</string>
     <string name="text_vat">VAT</string>

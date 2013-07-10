@@ -80,6 +80,30 @@
             android:textAppearance="?android:attr/textAppearanceSmall" />
     </TableRow>
     <!-- 2 columns -->
+    	
+    <TableRow
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/tv_invoice_fixed_charge_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:text="@string/text_invoice_fixed_charge"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/tv_invoice_fixed_charge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="left"
+            android:paddingLeft="6dp"
+            android:text=""
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+    </TableRow>
+    <!-- 2 columns -->
     
     <TableRow
         android:layout_width="fill_parent"
