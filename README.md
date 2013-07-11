@@ -1,7 +1,7 @@
 _.o0 MyGlob 0o._
 ===================
 
-MyGlob is an Android application that allows you to quickly check your current bill and account information if you are a customer of the bulgarian mobile operator - Globul.
+[MyGlob](https://play.google.com/store/apps/details?id=net.vexelon.myglob) is an Android application that allows you to quickly check your current bill and account information if you are a customer of the bulgarian mobile operator - Globul.
 
 **Note:** This application is localized only in Bulgarian language.
 
