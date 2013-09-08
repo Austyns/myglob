@@ -102,6 +102,8 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
 		.append("\n").append("Янчо Гинчев (Bug reports)")
 		.append("\n").append("Svetlana Velkova (Bug reports)")
 		.append("\n").append("P.Zabukovsek (Suggestions)")
+		.append("\n").append("STL ENCH (Bug reports)")
+		
 		.append("\n");
 
 		this.setText(v, R.id.about_apptitle, sb.toString());
