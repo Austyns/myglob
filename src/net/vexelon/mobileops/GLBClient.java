@@ -28,7 +28,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.security.InvalidAlgorithmParameterException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -58,6 +57,7 @@ import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.protocol.ClientContext;
 import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
@@ -68,6 +68,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.CoreProtocolPNames;
 import org.apache.http.params.HttpParams;
+import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 
@@ -85,6 +86,7 @@ public class GLBClient implements IClient {
 	private String password;
 	private DefaultHttpClient httpClient = null;
 	private CookieStore httpCookieStore = null;
+	private HttpContext httpContext = null;
 	
 	private HashMap<GLBRequestType, String> operationsHash;
 	
@@ -107,28 +109,20 @@ public class GLBClient implements IClient {
 	 * Perform login into the web system using the specified user and password
 	 */
 	public void login() throws HttpClientException, InvalidCredentialsException, SecureCodeRequiredException {
-		
-//		rametersapplication/x-www-form-urlencoded
-//		action
-//		continuation	myglobul.portal%3Faction%3Duserhome%26pkey%3D0%26jkey%3D0
-//		image.x	0
-//		image.y	0
-//		imglogin	JFNH
-//		password	mypassword
-//		refid		0a7b8fa558b46142e2d400ae0f2548f2f
-//		username	0899123456
-		
+
 		try {
 			List<NameValuePair> qparams = new ArrayList<NameValuePair>();
-			qparams.add(new BasicNameValuePair("action", "loginexec"));
 			//qparams.add(new BasicNameValuePair("refid", ""));
-			qparams.add(new BasicNameValuePair("continuation",
-					URLDecoder.decode("myglobul.portal%3Faction%3Duserhome%26pkey%3D0%26jkey%3D0",
-							"UTF-8")));
-			qparams.add(new BasicNameValuePair("image.x", Integer.toString(Utils.getRandomInt(1024)) ));
-			qparams.add(new BasicNameValuePair("image.y", Integer.toString(Utils.getRandomInt(768)) ));
+//			qparams.add(new BasicNameValuePair("continuation",
+//					URLDecoder.decode("myglobul.portal%3Faction%3Duserhome%26pkey%3D0%26jkey%3D0",
+//							"UTF-8")));
+				                    
+//			qparams.add(new BasicNameValuePair("image.x", Integer.toString(Utils.getRandomInt(1024)) ));
+//			qparams.add(new BasicNameValuePair("image.y", Integer.toString(Utils.getRandomInt(768)) ));
 			qparams.add(new BasicNameValuePair("password", password));
 			qparams.add(new BasicNameValuePair("username", username));
+			qparams.add(new BasicNameValuePair("_eventId","submit"));
+			qparams.addAll(findLoginParams());
 			
 			handleLogin(qparams);
 			
@@ -146,7 +140,7 @@ public class GLBClient implements IClient {
 
 		try {
 			HttpGet httpGet = new HttpGet(fullUrl.toString());
-			HttpResponse resp = httpClient.execute(httpGet);
+			HttpResponse resp = httpClient.execute(httpGet, httpContext);
 			StatusLine status = resp.getStatusLine();
 
 			if ( status.getStatusCode() != HttpStatus.SC_OK )
@@ -252,13 +246,16 @@ public class GLBClient implements IClient {
 		params.setParameter(CoreProtocolPNames.PROTOCOL_VERSION, HttpVersion.HTTP_1_1);
 		params.setParameter(CoreProtocolPNames.USER_AGENT, UserAgentHelper.getRandomUserAgent());
 		//params.setParameter(CoreProtocolPNames.HTTP_CONTENT_CHARSET, HTTP.UTF_8);
-
 		// Bugfix #1: The target server failed to respond
 		params.setParameter(CoreProtocolPNames.USE_EXPECT_CONTINUE, Boolean.FALSE);
 
 		DefaultHttpClient client = new DefaultHttpClient(params);
+
 		httpCookieStore = new BasicCookieStore();
 		client.setCookieStore(httpCookieStore);
+		
+		httpContext = new BasicHttpContext();
+		httpContext.setAttribute(ClientContext.COOKIE_STORE, httpCookieStore);
 
 		// Bugfix #1: Adding retry handler to repeat failed requests
 		HttpRequestRetryHandler retryHandler = new HttpRequestRetryHandler() {
@@ -312,15 +309,19 @@ public class GLBClient implements IClient {
 	SecureCodeRequiredException, UnsupportedEncodingException {
 
 		StringBuilder fullUrl = new StringBuilder(100);
-		fullUrl.append(HTTP_MYGLOBUL_SITE).append(GLBRequestType.LOGIN.getPath());
-
+		fullUrl.append(GLBRequestType.LOGIN.getPath())
+//		.append("?service=" + URLDecoder.decode(
+//				"https%3A%2F%2Fmy.globul.bg%2Fmg%2Fmyglobul.portal%3Faction%3Duserhome%26pkey%3D0%26jkey%3D0", "UTF-8"));
+		.append("?service=" + 
+				"https%3A%2F%2Fmy.globul.bg%2Fmg%2Fmyglobul.portal%3Faction%3Duserhome%26pkey%3D0%26jkey%3D0");
+		
 		HttpPost httpPost = createPostRequest(fullUrl.toString(), qparams);
 		HttpResponse resp;
 		BufferedReader reader = null;
 		long bytesCount = 0;
 		
 		try {
-			resp = httpClient.execute(httpPost);
+			resp = httpClient.execute(httpPost, httpContext);
 		} catch (Exception e) {
 			throw new HttpClientException("Client protocol error!" + e.getMessage(), e);
 		}
@@ -417,7 +418,7 @@ public class GLBClient implements IClient {
 		
 		try {
 			HttpGet httpGet = new HttpGet(fullUrl.toString());
-			HttpResponse resp = httpClient.execute(httpGet);
+			HttpResponse resp = httpClient.execute(httpGet, httpContext);
 			StatusLine status = resp.getStatusLine();
 			
 			if ( status.getStatusCode() == HttpStatus.SC_OK ) {
@@ -523,7 +524,7 @@ public class GLBClient implements IClient {
 			.append(GLBRequestType.PAGE_INVOICE.getParams());
 			
 			HttpGet httpGet = new HttpGet(fullUrl.toString());
-			HttpResponse resp = httpClient.execute(httpGet);
+			HttpResponse resp = httpClient.execute(httpGet, httpContext);
 			StatusLine status = resp.getStatusLine();
 			if ( status.getStatusCode() != HttpStatus.SC_OK ) {
 				// now what?
@@ -536,7 +537,7 @@ public class GLBClient implements IClient {
 				.append(GLBRequestType.PAGE_INVOICE_EXPORT.getParams());
 			
 			httpGet = new HttpGet(fullUrl.toString());
-			resp = httpClient.execute(httpGet);
+			resp = httpClient.execute(httpGet, httpContext);
 			status = resp.getStatusLine();
 			if ( status.getStatusCode() == HttpStatus.SC_OK ) {
 				
@@ -620,7 +621,7 @@ public class GLBClient implements IClient {
 				Log.v(Defs.LOG_TAG, "Fetching invoice XML from: " + xmlUrl.toString());	
 			
 			httpGet = new HttpGet(xmlUrl.toString());
-			resp = httpClient.execute(httpGet);
+			resp = httpClient.execute(httpGet, httpContext);
 			status = resp.getStatusLine();
 			if ( status.getStatusCode() == HttpStatus.SC_OK ) {
 				resultData = Utils.read(resp.getEntity().getContent());
@@ -650,6 +651,86 @@ public class GLBClient implements IClient {
 		return resultData;
 	}	
 	
+	private List<NameValuePair> findLoginParams() throws HttpClientException {
+		
+		List<NameValuePair> result = new ArrayList<NameValuePair>();
+		BufferedReader reader = null;
+		long bytesCount = 0;
+		
+		try {
+			// Get invoice check page
+			StringBuilder fullUrl = new StringBuilder(100);
+			fullUrl.append(GLBRequestType.LOGIN.getPath())
+			.append("?")
+			.append(GLBRequestType.LOGIN.getParams());
+			
+			HttpGet httpGet = new HttpGet(fullUrl.toString());
+			HttpResponse resp = httpClient.execute(httpGet, httpContext);
+			StatusLine status = resp.getStatusLine();
+			if (status.getStatusCode() == HttpStatus.SC_OK) {
+				
+				reader = new BufferedReader(new InputStreamReader(resp.getEntity().getContent()));
+				
+				String line = null;
+				while((line = reader.readLine()) != null) {
+					// bytes downloaded
+					bytesCount += line.length();
+					
+					String key = null;
+					
+					if (line.contains("name=\"lt\"") && line.contains("hidden")) {
+						key = "lt";
+					} else if (line.contains("name=\"execution\"") && line.contains("hidden")) {
+						key = "execution";
+					}
+						
+					if (key != null) {
+						if (Defs.LOG_ENABLED)
+							Log.d(Defs.LOG_TAG, line);
+						
+						/*
+						 * This is a g'damn hack. We don't need fancy stuff ;)
+						 */
+						String parts[] = line.split("value=");
+						if (parts.length > 1) {
+							String value = parts[1].replace("\"", "")
+									.replace(">", "")
+									.replace("/", "")
+									.trim();
+							result.add(new BasicNameValuePair(key, value));
+							
+							Log.d(Defs.LOG_TAG, "VALUE: " + value);
+						} else {
+							Log.e(Defs.LOG_TAG, "Got line: " + line);
+							throw new IOException("Invalid invoice fingerprint!");
+						}
+					}
+					
+					// we only need to extract to input values
+					if (result.size() >= 2) {
+						break;
+					}
+				}
+			} else {
+				throw new HttpClientException(status.getReasonPhrase(), status.getStatusCode());
+			}
+
+			// close current stream reader
+			if (reader != null) try { reader.close(); } catch (IOException e) {};
+			
+		} catch (ClientProtocolException e) {
+			throw new HttpClientException("Client protocol error!" + e.getMessage(), e);
+		} catch (IOException e) {
+			throw new HttpClientException("Client error!" + e.getMessage(), e);
+		} finally {
+			if (reader != null) try { reader.close(); } catch (IOException e) {};
+			
+			addDownloadedBytesCount(bytesCount);
+		}
+		
+		return result;		
+	}
+	
 	private HttpPost createPostRequest(String url, List<NameValuePair> qparams)
 		throws UnsupportedEncodingException {
 		HttpPost httpPost = new HttpPost(url);
@@ -673,7 +754,7 @@ public class GLBClient implements IClient {
 			httpPost.setHeader("X-Requested-With", "XMLHttpRequest");
 			httpPost.setHeader("X-Prototype-Version", "1.6.0.2");
 			
-			resp = httpClient.execute(httpPost);
+			resp = httpClient.execute(httpPost, httpContext);
 		} catch (Exception e) {
 			throw new HttpClientException("Client protocol error!" + e.getMessage(), e);
 		}

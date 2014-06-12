@@ -30,8 +30,9 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
 public enum GLBRequestType {
-	LOGIN("/mg/myglobul.portal", ""),
-	LOGOUT("/mg/myglobul.portal", "action=logout"),
+	LOGIN("https://login.globul.bg/login", "service=https%3A%2F%2Fmy.globul.bg%2Fmg%2Fmyglobul.portal%3Faction%3Duserhome%26pkey%3D0%26jkey%3D0"),
+	LOGIN_ACTION("https://login.globul.bg/login", ""),
+	LOGOUT("/mg/myglobul.portal", "action=logoff"),
 	/*
 	 * Status checks
 	 */
