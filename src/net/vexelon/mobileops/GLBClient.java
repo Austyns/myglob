@@ -698,8 +698,6 @@ public class GLBClient implements IClient {
 									.replace("/", "")
 									.trim();
 							result.add(new BasicNameValuePair(key, value));
-							
-							Log.d(Defs.LOG_TAG, "VALUE: " + value);
 						} else {
 							Log.e(Defs.LOG_TAG, "Got line: " + line);
 							throw new IOException("Invalid invoice fingerprint!");
