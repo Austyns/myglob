@@ -1,5 +1,11 @@
 MyGlob HISTORY file
 
+v3.1.2
+Fix: Fixed issue with login.
+
+Оправен проблем с логване на потребители.
+ 
+
 v3.1.1
 Improvement/Change: App now installed on internalStorage by default. If no space available app will be installed on the externalStorage, i.e., SDCard.
 Fixed: (Issue #10) Widgets now available when app is installed on internalStorage.
