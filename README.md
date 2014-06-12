@@ -10,6 +10,8 @@ _.o0 MyGlob 0o._
 
 Ползвайте MyGlob, за да проверите сметката си ако сте абонат на оператора Globul и имате регистрация в my.globul.bg. Можете да проверявате текущата си сметка и задължения за минал период, оставащи пакет минути или данни, както и кредитен лимит.
 
+Please read [HISTORY](HISTORY) for a list of changes.
+
 # Requirements
 
   * Requires Android 2.2 [API Level 8](http://developer.android.com/about/versions/android-2.2.html) or above
@@ -19,9 +21,5 @@ _.o0 MyGlob 0o._
 
 As of version 3.0 MyGlob depends on the [ActionBarSherlock](https://github.com/JakeWharton/ActionBarSherlock) project.
 
-# Files
-
- * Please check [HISTORY](HISTORY) for latest release changes.
- * Please check [LICENSE](LICENSE) for licensing topics.
- * Please check [CREDITS](CREDITS) for contributed code.
-
+# License
+Under [LICENSE](MIT License).
