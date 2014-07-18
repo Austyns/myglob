@@ -31,7 +31,6 @@ import net.vexelon.myglob.configuration.Defs;
 import net.vexelon.myglob.configuration.GlobalSettings;
 import net.vexelon.myglob.users.User;
 import net.vexelon.myglob.users.UsersManager;
-
 import android.app.PendingIntent;
 import android.app.Service;
 import android.appwidget.AppWidgetManager;
@@ -40,6 +39,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.IBinder;
 import android.text.Html;
 import android.util.Log;
@@ -109,10 +109,10 @@ public class UpdateWidgetService extends Service {
 	@Override
 	public void onStart(Intent intent, int startId) {
 		
-		Context context = this.getApplicationContext();
+		final Context context = this.getApplicationContext();
+		final AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+		final int[] widgetIds = intent.getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS);
 		
-		AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-		int[] widgetIds = intent.getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS);
 		if (widgetIds == null) {
 			Log.w(Defs.LOG_TAG, "No widgets found to update!");
 			return;
@@ -125,46 +125,54 @@ public class UpdateWidgetService extends Service {
 			Log.d(Defs.LOG_TAG, "Direct: " + String.valueOf(allWidgetIds2.length));
 		}
 		
-		String lastSelectedAccountStatus = getLastAccountStatus();
+		new AsyncTask<String, Void, String>() {
+			
+			@Override
+			protected String doInBackground(String... params) {
+				String lastSelectedAccountStatus = getLastAccountStatus();
+				
+				if (Defs.LOG_ENABLED) {
+					Log.i(Defs.LOG_TAG, "Result = " + lastSelectedAccountStatus);
+				}
+				
+				for (int widgetId : widgetIds) {
+					// get all views inside this widget
+					RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_layout);
+					// update text			
+					remoteViews.setTextViewText(R.id.widgetText, Html.fromHtml(lastSelectedAccountStatus));
+					
+					if (Defs.LOG_ENABLED) {
+						Log.d(Defs.LOG_TAG, "Updating id=" + widgetId);
+					}
+					
+					// onClick listener
+					Uri data = Uri.withAppendedPath(
+						    Uri.parse(URI_SCHEME + "://widget/id/"), String.valueOf(widgetId));
+					Intent updateIntent = new Intent(context, WidgetProvider.class);
+					updateIntent.setData(data);
+					
+					updateIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+//					updateIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, new int[] {widgetId});
+					updateIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId);
+					PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, updateIntent, 
+							PendingIntent.FLAG_UPDATE_CURRENT);
+					remoteViews.setOnClickPendingIntent(R.id.refreshButton, pendingIntent);
+					
+					// openApp listener
+					Intent openIntent = new Intent(context, MainActivity.class);
+					pendingIntent = PendingIntent.getActivity(context, 0, openIntent, 0);
+					remoteViews.setOnClickPendingIntent(R.id.layout, pendingIntent);
+					
+					// Refresh button now visible again
+					remoteViews.setViewVisibility(R.id.refreshButton, View.VISIBLE);
+					
+					appWidgetManager.updateAppWidget(widgetId, remoteViews);
+				}
+				
+				return "";
+			};
+		}.execute("");
 		
-		if (Defs.LOG_ENABLED) {
-			Log.i(Defs.LOG_TAG, "Result = " + lastSelectedAccountStatus);
-		}
-		
-		for (int widgetId : widgetIds) {
-			// get all views inside this widget
-			RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_layout);
-			// update text			
-			remoteViews.setTextViewText(R.id.widgetText, Html.fromHtml(lastSelectedAccountStatus));
-			
-			if (Defs.LOG_ENABLED) {
-				Log.d(Defs.LOG_TAG, "Updating id=" + widgetId);
-			}
-			
-			// onClick listener
-			Uri data = Uri.withAppendedPath(
-				    Uri.parse(URI_SCHEME + "://widget/id/"), String.valueOf(widgetId));
-			Intent updateIntent = new Intent(context, WidgetProvider.class);
-			updateIntent.setData(data);
-			
-			updateIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-//			updateIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, new int[] {widgetId});
-			updateIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId);
-			PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, updateIntent, 
-					PendingIntent.FLAG_UPDATE_CURRENT);
-			remoteViews.setOnClickPendingIntent(R.id.refreshButton, pendingIntent);
-			
-			// openApp listener
-			Intent openIntent = new Intent(context, MainActivity.class);
-			pendingIntent = PendingIntent.getActivity(context, 0, openIntent, 0);
-			remoteViews.setOnClickPendingIntent(R.id.layout, pendingIntent);
-			
-			// Refresh button now visible again
-			remoteViews.setViewVisibility(R.id.refreshButton, View.VISIBLE);
-			
-			appWidgetManager.updateAppWidget(widgetId, remoteViews);
-		}
-
 		stopSelf();
 		super.onStart(intent, startId);
 	}
