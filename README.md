@@ -17,9 +17,9 @@ Please read [HISTORY](HISTORY) for a list of changes.
   * Requires Android 2.2 [API Level 8](http://developer.android.com/about/versions/android-2.2.html) or above
   * Requires Internet connection
 
-# Dependencies
+# Libs
 
-As of version 3.0 MyGlob depends on the [ActionBarSherlock](https://github.com/JakeWharton/ActionBarSherlock) project.
+As of version 3.0 MyGlob uses the [ActionBarSherlock](https://github.com/JakeWharton/ActionBarSherlock) library.
 
 # License
-Under [MIT License](LICENSE).
+[MIT License](LICENSE).
