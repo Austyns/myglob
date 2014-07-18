@@ -98,6 +98,7 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
 		.append("\n")
 		.append("\n")
 		.append(getResString(R.string.about_thanks))
+		.append("\n").append("Kristian Iliev (Testing)")
 		.append("\n").append("Atanas Atanasow (Testing)")
 		.append("\n").append("Янчо Гинчев (Bug reports)")
 		.append("\n").append("Svetlana Velkova (Bug reports)")
