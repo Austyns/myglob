@@ -1,9 +1,9 @@
 MyGlob HISTORY file
 
 v3.1.3
-Fix issue #12: Widget updates failure on Samsung S5/Android 4.4.
+Fix issue #12: Widget updates failure on Samsung S5/Android 4.0+
 
-Оправен проблем (#12) с неработещ Widget при Samsung S5/Android 4.4.
+Оправен проблем (#12) с неработещ Widget при Samsung S5/Android 4.0+
 
 v3.1.2
 Fix: Fixed issue with login.
