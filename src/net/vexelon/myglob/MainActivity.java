@@ -221,6 +221,11 @@ public class MainActivity extends SherlockFragmentActivity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (_currentPage == HomeFragment.TAB_ID) {
+			if (_homeFragment == null) {
+				Log.w(Defs.LOG_TAG, "_homeFragment is <null>!");
+				return false;
+			}
+			
 			switch(item.getItemId()) {
 //			case Defs.MENU_REFRESH:
 //				_homeFragment.updateStatus(Operations.CHECK_SMS_PACKAGE);
