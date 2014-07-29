@@ -1,5 +1,10 @@
 MyGlob HISTORY file
 
+v3.1.4
+Fix issue with incorrect logins.
+
+Оправен проблем с невалидно потребителско име и парола.
+
 v3.1.3
 Fix issue #12: Widget updates failure on Samsung S5/Android 4.0+
 
