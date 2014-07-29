@@ -28,6 +28,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.security.InvalidAlgorithmParameterException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -72,6 +73,7 @@ import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 
+import android.util.Base64;
 import android.util.Log;
 
 public class GLBClient implements IClient {
@@ -323,7 +325,7 @@ public class GLBClient implements IClient {
 		try {
 			resp = httpClient.execute(httpPost, httpContext);
 		} catch (Exception e) {
-			throw new HttpClientException("Client protocol error!" + e.getMessage(), e);
+			throw new HttpClientException("Client  protocol error!" + e.getMessage(), e);
 		}
 		
 		StatusLine status = resp.getStatusLine();
@@ -339,7 +341,8 @@ public class GLBClient implements IClient {
 					
 					bytesCount += line.length();
 					
-					if (line.indexOf("action=pdetails") != -1 || line.indexOf("action=chpass") != -1) {
+					if (line.indexOf("action=pdetails") != -1 || line.indexOf("action=chpass") != -1
+							|| line.indexOf("action=logoff") != -1) {
 						// if the username is not present in the content, then we're obviously not logged in
 						loggedIn = true;
 						break;
@@ -355,7 +358,12 @@ public class GLBClient implements IClient {
 				}
 				
 				if (!loggedIn) {
-					throw new InvalidCredentialsException();
+					// TODO: Seems that occasionally the login response would return
+					// something totally different than the welcome page.
+					// So we cannot count on the markers to be always correct. We just assume
+					// that we have logged in and we proceed with the actions further.
+					Log.w(Defs.LOG_TAG, "Could not locate login markers!");
+//					throw new InvalidCredentialsException();
 				}
 				
 			} catch (IOException e) {
@@ -657,7 +665,7 @@ public class GLBClient implements IClient {
 		BufferedReader reader = null;
 		long bytesCount = 0;
 		
-		try {
+		try {  
 			// Get invoice check page
 			StringBuilder fullUrl = new StringBuilder(100);
 			fullUrl.append(GLBRequestType.LOGIN.getPath())
@@ -698,6 +706,10 @@ public class GLBClient implements IClient {
 									.replace("/", "")
 									.trim();
 							result.add(new BasicNameValuePair(key, value));
+							
+							if (Defs.LOG_ENABLED) {
+								Log.v(Defs.LOG_TAG, "Add key=" + key + " / value=" + value);
+							}
 						} else {
 							Log.e(Defs.LOG_TAG, "Got line: " + line);
 							throw new IOException("Invalid invoice fingerprint!");
