@@ -22,4 +22,4 @@ Please read [HISTORY](HISTORY) for a list of changes.
 As of version 3.0 MyGlob uses the [ActionBarSherlock](https://github.com/JakeWharton/ActionBarSherlock) library.
 
 # License
-[MIT License](LICENSE).
+[GPL License](LICENSE).
