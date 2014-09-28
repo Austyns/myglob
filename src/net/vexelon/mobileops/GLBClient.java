@@ -75,7 +75,7 @@ public class GLBClient implements IClient {
 	private final String HTTP_MYGLOBUL_SITE = "https://my.globul.bg";
 
 	private final int DEFAULT_BUFFER_SIZE = 1024;
-	private final String RESPONSE_ENCODING = "Windows-1251";
+	private final String RESPONSE_ENCODING = "windows-1251";
 	private final int MAX_REQUEST_RETRIES = 2;
 
 	private String username;
@@ -206,7 +206,7 @@ public class GLBClient implements IClient {
 	
 	@Override
 	public byte[] getInvoiceData()
-			throws HttpClientException {
+			throws HttpClientException, InvoiceException {
 		
 		return findInvoiceExportParams();
 	}
@@ -511,7 +511,7 @@ public class GLBClient implements IClient {
 		return result;
 	}
 	
-	private byte[] findInvoiceExportParams() throws HttpClientException {
+	private byte[] findInvoiceExportParams() throws HttpClientException, InvoiceException {
 
 		BufferedReader reader = null;
 		long bytesCount = 0;
@@ -622,7 +622,12 @@ public class GLBClient implements IClient {
 			if (Defs.LOG_ENABLED)
 				Log.v(Defs.LOG_TAG, "Fetching invoice XML from: " + xmlUrl.toString());	
 			
+			if (xmlUrl.length() == 0) {
+				throw new InvoiceException("Invoice HTTP url not available!");
+			}
+			
 			httpGet = new HttpGet(xmlUrl.toString());
+			
 			resp = httpClient.execute(httpGet, httpContext);
 			status = resp.getStatusLine();
 			if ( status.getStatusCode() == HttpStatus.SC_OK ) {

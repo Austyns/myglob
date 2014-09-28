@@ -29,9 +29,11 @@ import org.xml.sax.SAXException;
 
 import android.content.Context;
 import android.util.Log;
+import net.vexelon.mobileops.InvoiceException;
 import net.vexelon.mobileops.GLBInvoiceXMLParser;
 import net.vexelon.mobileops.HttpClientException;
 import net.vexelon.mobileops.IClient;
+import net.vexelon.myglob.R;
 import net.vexelon.myglob.configuration.Defs;
 import net.vexelon.myglob.users.User;
 import net.vexelon.myglob.utils.Utils;
@@ -81,6 +83,8 @@ public class InvoiceUpdateAction extends BaseAction {
 			// update user info
 			updateUserResult(result);
 			
+		} catch (InvoiceException e) {
+			throw new ActionExecuteException(R.string.err_invoice_globul, e);
 		} catch (HttpClientException e) {
 			throw new ActionExecuteException(e);
 		} catch (SAXException e) {

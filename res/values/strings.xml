@@ -85,4 +85,5 @@
 <string name="text_account_not_found">Не е открит профил с този номер!</string>
 <string name="text_empty">&lt;n/a&gt;</string>
 <string name="text_from">към</string>
+<string name="err_invoice_globul">Извличането на фактура бе неуспешно! Моля проверете дали услугата Е-Фактура е активирана от оператора.Извличането на фактура бе неуспешно! Моля проверете дали услугата Е-Фактура е активирана от оператора.</string>
 </resources>

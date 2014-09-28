@@ -85,4 +85,5 @@
 <string name="text_account_not_found">Could not find a profile with this phone number!</string>
 <string name="text_empty">&lt;n/a&gt;</string>
 <string name="text_from">until</string>
+<string name="err_invoice_globul">Could not fetch invoice! Please check if your operator has activated the E-Invoice service for your account.</string>
 </resources>
