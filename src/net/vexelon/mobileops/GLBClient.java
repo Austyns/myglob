@@ -343,7 +343,7 @@ public class GLBClient implements IClient {
 					}
 					
 					//check if secure code image is sent
-					if (line.indexOf("/mg/my/GetImage?refid=") != -1) {
+					if (line.indexOf("/mg/my/GetImage?refid=") != -1 || line.indexOf("j_captcha_response") != -1) {
 						//TODO: retrieve image url
 						//<img class="code" alt="Ако се затруднявате с разчитането на кода от картинката, моля кликнете
 						//върху нея за да я смените." src="/mg/my/GetImage?refid=b7b8fa558b461f1e2d400ae0f3348f2f">

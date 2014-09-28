@@ -17,7 +17,7 @@
 
 
 <string name="dlg_error_msg_invalid_credentials">Wrong profile name or password.</string>
-<string name="dlg_error_msg_securecode">Операторът изисква да се въведе код за сигурност! За съжаление текущата версия на тази програма не поддържа тази възможност. Моля, опитайте да обновите пак след няколко минути.</string>
+<string name="dlg_error_msg_securecode">Either your password is wrong or your operator requires you to enter a captcha code. Unforunately MyGlob does not support that! Please check your password or login on the site of the operator and try again afterwards.</string>
 <string name="menu_signin">Sign in</string>
 <string name="menu_signout">Sign out</string>
 <string name="dlg_progress_title">Please wait</string>
