@@ -1,5 +1,10 @@
 MyGlob HISTORY file
 
+v3.1.5
+Update invoice and login error messages.
+
+Обновени съобщения за грешка при проверка на сметка и фактура.
+
 v3.1.4
 Fix issue with incorrect logins.
 
