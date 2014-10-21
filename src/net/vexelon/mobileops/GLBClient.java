@@ -24,6 +24,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.security.InvalidAlgorithmParameterException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -67,6 +68,12 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Attribute;
+import org.jsoup.nodes.Attributes;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import android.util.Log;
 
@@ -310,6 +317,7 @@ public class GLBClient implements IClient {
 //				"https%3A%2F%2Fmy.globul.bg%2Fmg%2Fmyglobul.portal%3Faction%3Duserhome%26pkey%3D0%26jkey%3D0", "UTF-8"));
 		.append("?service=" + 
 				"https%3A%2F%2Fmy.globul.bg%2Fmg%2Fmyglobul.portal%3Faction%3Duserhome%26pkey%3D0%26jkey%3D0");
+	
 		
 		HttpPost httpPost = createPostRequest(fullUrl.toString(), qparams);
 		HttpResponse resp;
@@ -676,50 +684,25 @@ public class GLBClient implements IClient {
 			StatusLine status = resp.getStatusLine();
 			if (status.getStatusCode() == HttpStatus.SC_OK) {
 				
-				reader = new BufferedReader(new InputStreamReader(resp.getEntity().getContent()));
-				
-				String line = null;
-				while((line = reader.readLine()) != null) {
-					// bytes downloaded
-					bytesCount += line.length();
-					
-					String key = null;
-					
-					if (line.contains("name=\"lt\"") && line.contains("hidden")) {
-						key = "lt";
-					} else if (line.contains("name=\"execution\"") && line.contains("hidden")) {
-						key = "execution";
+				Document doc = Jsoup.parse(resp.getEntity().getContent(), HTTP.UTF_8, "");
+				Elements inputs = doc.select("input");
+				for (Element el : inputs) {
+					if (Defs.LOG_ENABLED) {
+						Log.v(Defs.LOG_TAG, "ELEMENT: " + el.tagName());
 					}
-						
-					if (key != null) {
-						if (Defs.LOG_ENABLED)
-							Log.d(Defs.LOG_TAG, line);
-						
-						/*
-						 * This is a g'damn hack. We don't need fancy stuff ;)
-						 */
-						String parts[] = line.split("value=");
-						if (parts.length > 1) {
-							String value = parts[1].replace("\"", "")
-									.replace(">", "")
-									.replace("/", "")
-									.trim();
-							result.add(new BasicNameValuePair(key, value));
-							
-							if (Defs.LOG_ENABLED) {
-								Log.v(Defs.LOG_TAG, "Add key=" + key + " / value=" + value);
-							}
-						} else {
-							Log.e(Defs.LOG_TAG, "Got line: " + line);
-							throw new IOException("Invalid invoice fingerprint!");
+					
+					Attributes attrs = el.attributes();
+					for (Attribute attr : attrs) {
+						if (Defs.LOG_ENABLED) {
+							Log.v(Defs.LOG_TAG, " " + attr.getKey() + "=" + attr.getValue());
 						}
 					}
 					
-					// we only need to extract to input values
-					if (result.size() >= 2) {
-						break;
+					String elName = attrs.get("name");
+					if (elName.equalsIgnoreCase("lt") || elName.equalsIgnoreCase("execution")) {
+						result.add(new BasicNameValuePair(elName, attrs.get("value")));
 					}
-				}
+				}			
 			} else {
 				throw new HttpClientException(status.getReasonPhrase(), status.getStatusCode());
 			}
