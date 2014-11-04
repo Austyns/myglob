@@ -58,7 +58,9 @@ public class AccountStatusAction extends BaseAction {
 			switch(_operation) {
 			case CHECK_CURRENT_BALANCE:
 				tmpResult = client.getCurrentBalance();
+				tmpResult = tmpResult.replace("<div class=\"row\">", "\n--------------" );
 				tmpResult = Utils.stripHtml(tmpResult);
+				tmpResult = tmpResult.replace("---", "\n---");
 				break;
 			case CHECK_AVAIL_MINUTES:
 				tmpResult = client.getAvailableMinutes();

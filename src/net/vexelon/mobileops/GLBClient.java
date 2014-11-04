@@ -79,7 +79,7 @@ import android.util.Log;
 
 public class GLBClient implements IClient {
 	
-	private final String HTTP_MYGLOBUL_SITE = "https://my.globul.bg";
+	private final String HTTP_MYGLOBUL_SITE = "https://my.telenor.bg";
 
 	private final int DEFAULT_BUFFER_SIZE = 1024;
 	private final String RESPONSE_ENCODING = "windows-1251";
@@ -160,10 +160,10 @@ public class GLBClient implements IClient {
 	public String getCurrentBalance()
 		throws HttpClientException {
 
-		if (operationsHash == null)
-			operationsHash = findOperationsHashCodes();
+//		if (operationsHash == null)
+//			operationsHash = findOperationsHashCodes();
 		
-		return doPostRequest(GLBRequestType.GET_BALANCE);
+		return doGetRequest(GLBRequestType.GET_BALANCE);
 	}
 
 	public String getAvailableMinutes()
@@ -315,8 +315,7 @@ public class GLBClient implements IClient {
 		fullUrl.append(GLBRequestType.LOGIN.getPath())
 //		.append("?service=" + URLDecoder.decode(
 //				"https%3A%2F%2Fmy.globul.bg%2Fmg%2Fmyglobul.portal%3Faction%3Duserhome%26pkey%3D0%26jkey%3D0", "UTF-8"));
-		.append("?service=" + 
-				"https%3A%2F%2Fmy.globul.bg%2Fmg%2Fmyglobul.portal%3Faction%3Duserhome%26pkey%3D0%26jkey%3D0");
+		.append("?asid=s01&service=https%3A%2F%2Fmy.telenor.bg%2Flogin");
 	
 		
 		HttpPost httpPost = createPostRequest(fullUrl.toString(), qparams);
@@ -565,7 +564,7 @@ public class GLBClient implements IClient {
 						/*
 						 * This is a g'damn hack. We don't need fancy stuff ;)
 						 */
-						xmlUrl.append("https://my.globul.bg/mg/ei2/EI2Export?")
+						xmlUrl.append("http://my.telenor.bg/mg/ei2/EI2Export?")
 						.append("file_name=summary")
 						.append("&file_type=xml")
 						.append("&lower_bound=0")
@@ -728,6 +727,46 @@ public class GLBClient implements IClient {
 		HttpPost httpPost = new HttpPost(url);
 		httpPost.setEntity(new UrlEncodedFormEntity(qparams, HTTP.UTF_8));
 		return httpPost;
+	}
+	
+	private String doGetRequest(GLBRequestType requestType) throws HttpClientException {
+		HttpResponse resp;
+		try {
+			String url = HTTP_MYGLOBUL_SITE + requestType.getPath();
+			url += '?';
+			url += new Date().getTime();
+			
+			HttpGet httpGet = new HttpGet(url);
+			httpGet.setHeader("X-Requested-With", "XMLHttpRequest");
+			resp = httpClient.execute(httpGet, httpContext);
+		} catch (Exception e) {
+			throw new HttpClientException("Client protocol error!" + e.getMessage(), e);
+		}
+		
+		StatusLine status = resp.getStatusLine();
+		
+		if (status.getStatusCode() != HttpStatus.SC_OK)
+			throw new HttpClientException(status.getReasonPhrase(), status.getStatusCode());
+
+		HttpEntity entity = resp.getEntity();
+		ByteArrayOutputStream baos = null;
+		try {
+			baos = new ByteArrayOutputStream(DEFAULT_BUFFER_SIZE);
+			entity.writeTo(baos);
+		} catch (Exception e) {
+			throw new HttpClientException("Failed to load response! " + e.getMessage(), e);
+		} finally {
+			if (baos != null) try { baos.close(); } catch (IOException e) {};
+		}
+		
+		// bytes downloaded
+		addDownloadedBytesCount(baos.size());
+
+		try {
+			return new String(baos.toByteArray(), RESPONSE_ENCODING);
+		} catch (UnsupportedEncodingException e) {
+			return new String(baos.toByteArray()); // XXX check this!
+		}
 	}
 
 	private String doPostRequest(GLBRequestType requestType) throws HttpClientException {

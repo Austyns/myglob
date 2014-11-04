@@ -26,14 +26,15 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
 public enum GLBRequestType {
-	LOGIN("https://login.globul.bg/login", "service=https%3A%2F%2Fmy.globul.bg%2Fmg%2Fmyglobul.portal%3Faction%3Duserhome%26pkey%3D0%26jkey%3D0"),
-	LOGIN_ACTION("https://login.globul.bg/login", ""),
+	LOGIN("https://login.telenor.bg/login", "asid=s01&service=https%3A%2F%2Fmy.telenor.bg%2Flogin"),
+	LOGIN_ACTION("https://login.telenor.bg/login", ""),
 	LOGOUT("/mg/myglobul.portal", "action=logoff"),
 	/*
 	 * Status checks
 	 */
 	PAGE_BILLCHECK("/mg/myglobul.bch", "action=billcheck"),
-	GET_BALANCE("/mg/myglobul.bch", "action=billcheckperform"),
+	GET_BALANCE("/loadusagelines", ""),
+//	GET_BALANCE("/mg/myglobul.bch", "action=billcheckperform"),
 	GET_MINUTES("/mg/myglobul.bch", "action=bundlecheckperform"),
 	GET_BANDWIDTH("/mg/myglobul.bch", "action=gprscheckperform"),
 	GET_TRAVELNSURF("/mg/myglobul.bch", "action=drpCheckPerform"),
