@@ -58,9 +58,9 @@ public class AccountStatusAction extends BaseAction {
 			switch(_operation) {
 			case CHECK_CURRENT_BALANCE:
 				tmpResult = client.getCurrentBalance();
-				tmpResult = tmpResult.replace("<div class=\"row\">", "\n--------------" );
-				tmpResult = Utils.stripHtml(tmpResult);
-				tmpResult = tmpResult.replace("---", "\n---");
+//				tmpResult = tmpResult.replace("<div class=\"row\">", "\n--------------" );
+//				tmpResult = Utils.stripHtml(tmpResult);
+//				tmpResult = tmpResult.replace("---", "\n---");
 				break;
 //			case CHECK_AVAIL_MINUTES:
 //				tmpResult = client.getAvailableMinutes();
@@ -100,7 +100,7 @@ public class AccountStatusAction extends BaseAction {
 			}
 
 			// colorify important values
-			Pattern p = Pattern.compile("(-*\\d+(,\\d+)*\\s*лв\\.*)|(\\d+:\\d+\\s*(ч\\.*|мин\\.*))", Pattern.CASE_INSENSITIVE);
+			Pattern p = Pattern.compile("(-*\\d+((,|.)\\d+)*\\s*лв\\.*)|(\\d+:\\d+\\s*(ч\\.*|мин\\.*))", Pattern.CASE_INSENSITIVE);
 			Matcher m = p.matcher(tmpResult);
 			StringBuffer sb = new StringBuffer(tmpResult.length() + tmpResult.length());
 			while (m.find()) {

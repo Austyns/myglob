@@ -186,13 +186,26 @@ public class GLBClient implements IClient {
 			bytesCount = entity.getContentLength() > 0 ? entity.getContentLength() : 0;
 			
 			Document doc = Jsoup.parse(entity.getContent(), "windows-1251", "");
-			Elements inputs = doc.select("div");
-			for (Element el : inputs) {
-				String elClass = el.className();
-				if (elClass.contains("custme-select") || elClass.equalsIgnoreCase("history")) {
-					builder.append(el.html());
-				}
-			}	
+			Elements elements;
+			
+			// period bill
+			elements = doc.select("#outstanding-amount");
+			if (elements.size() > 0) {
+				Elements divs = elements.get(0).select("div");
+				for (Element el : divs) {
+					String elClass = el.className();
+					if (elClass.contains("custme-select") || elClass.equalsIgnoreCase("history")) {
+						builder.insert(0,  el.html());
+					}
+				}	
+			}
+			
+			// current bill
+			elements = doc.select("#bars-wrapper .p-price");
+			if (elements.size() > 0) {
+				Element el = elements.get(0);
+				builder.insert(0,  el.html());
+			}			
 
 			return builder.toString();
 			
