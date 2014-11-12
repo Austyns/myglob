@@ -1,5 +1,12 @@
 MyGlob HISTORY file
 
+v3.1.7
+Fix issues with changed operator name and system.
+Invoices will be available again in a next version.
+
+Оправен проблем с проверка на сметка след смяна на името на оператора. 
+Фактурите ще бъдат налични отново в следваща версия.
+
 v3.1.6
 Fix issue with user login.
 
