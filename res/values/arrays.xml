@@ -4,5 +4,5 @@
         <item >Профил</item>
         <item >Относно</item>
     </string-array>
-    <string-array name="array_available_operators"><item>Globul</item></string-array>
+    <string-array name="array_available_operators"><item>Telenor</item></string-array>
 </resources>

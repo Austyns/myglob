@@ -20,7 +20,7 @@
 package net.vexelon.myglob.users;
 
 public enum AccountType {
-	Globul,
+	Telenor,
 	M_Tel,
 	Vivacom,
 }

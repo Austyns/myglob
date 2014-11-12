@@ -188,8 +188,9 @@ public class AccountPreferencesActivity extends PreferenceActivity {
 	
 	private AccountType getAccountTypeFromListPrefs() {
 		String[] operators = getResStringArray(R.array.array_available_operators);
-		if (_accountOperatorPref.getValue().equals(operators[0])) {
-			return AccountType.Globul;
+		String userOperator = _accountOperatorPref.getValue();
+		if (userOperator.equals(operators[0]) || userOperator.equals("Globul")) {
+			return AccountType.Telenor;
 		}
 //		else if (_accountOperatorPref.getValue().equals(operators[1])) {
 //			return AccountType.M_Tel;
