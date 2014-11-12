@@ -6,9 +6,9 @@ _.o0 MyGlob 0o._
        src="https://developer.android.com/images/brand/en_generic_rgb_wo_45.png" />
 </a>
 
-[MyGlob](https://play.google.com/store/apps/details?id=net.vexelon.myglob) is an Android application that allows customers of the Bulgarian mobile operator - Globul to quickly check their current bill, invoice and account information.
+[MyGlob](https://play.google.com/store/apps/details?id=net.vexelon.myglob) is an Android application that allows customers of the Bulgarian mobile operator - Telenor to quickly check their current bill, invoice and account information.
 
-Ползвайте MyGlob, за да проверите сметката си ако сте абонат на оператора Globul и имате регистрация в my.globul.bg. Можете да проверявате текущата си сметка и задължения за минал период, оставащи пакет минути или данни, както и кредитен лимит.
+Ползвайте MyGlob, за да проверите сметката си ако сте абонат на оператора Globul и имате регистрация в my.telenor.bg. Можете да проверявате текущата си сметка и задължения за минал период, оставащи пакет минути или данни, както и кредитен лимит.
 
 Please read [HISTORY](HISTORY) for a list of changes.
 
