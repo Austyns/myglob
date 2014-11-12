@@ -19,7 +19,7 @@ Please read [HISTORY](HISTORY) for a list of changes.
 
 # Dependencies
 
-  * MyGlob v3.0+ uses the [ActionBarSherlock](https://github.com/JakeWharton/ActionBarSherlock) library.
+  * MyGlob v3.0+ uses the [ActionBarSherlock](https://github.com/JakeWharton/ActionBarSherlock) library (Use 3.8.0 of the android-maven-plugin)
   * Base64 encode/decode Java code by [Robert Harder](http://iharder.net/base64).
 
 # License
