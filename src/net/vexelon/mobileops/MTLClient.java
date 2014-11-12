@@ -78,36 +78,6 @@ public class MTLClient implements IClient {
 	}	
 
 	@Override
-	public String getAvailableInternetBandwidth() throws HttpClientException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	@Override
-	public String getTravelAndSurfBandwidth() throws HttpClientException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getAvailableMSPackage() throws HttpClientException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getAvailableMinutes() throws HttpClientException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getCreditLimit() throws HttpClientException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public String getCurrentBalance() throws HttpClientException {
 		// TODO Auto-generated method stub
 		return null;

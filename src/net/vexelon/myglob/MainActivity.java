@@ -149,13 +149,7 @@ public class MainActivity extends SherlockFragmentActivity {
         // XXX Operations based on account ?
         
         _operationsArray = new Operations[] {
-			Operations.CHECK_CURRENT_BALANCE,
-			Operations.CHECK_AVAIL_MINUTES,
-			Operations.CHECK_AVAIL_DATA,
-			Operations.CHECK_AVAIL_TRAVELNSURF,
-			Operations.CHECK_SMS_PACKAGE,
-			Operations.CHECK_CREDIT_LIMIT,
-			Operations.CHECK_ALL
+			Operations.CHECK_CURRENT_BALANCE
 		};          
 
     }

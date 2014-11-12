@@ -62,41 +62,41 @@ public class AccountStatusAction extends BaseAction {
 				tmpResult = Utils.stripHtml(tmpResult);
 				tmpResult = tmpResult.replace("---", "\n---");
 				break;
-			case CHECK_AVAIL_MINUTES:
-				tmpResult = client.getAvailableMinutes();
-				tmpResult = Utils.stripHtml(tmpResult);
-				break;
-			case CHECK_CREDIT_LIMIT:
-				tmpResult = client.getCreditLimit();
-				tmpResult = Utils.stripHtml(tmpResult);
-				break;
-			case CHECK_AVAIL_DATA:
-				tmpResult = client.getAvailableInternetBandwidth();
-				tmpResult = Utils.stripHtml(tmpResult);
-				break;
-			case CHECK_AVAIL_TRAVELNSURF:
-				tmpResult = client.getTravelAndSurfBandwidth();
-				tmpResult = Utils.stripHtml(tmpResult);				
-				break;
-			case CHECK_SMS_PACKAGE:
-				tmpResult = client.getAvailableMSPackage();
-				tmpResult = Utils.stripHtml(tmpResult);
-				break;
-			case CHECK_ALL:
-				StringBuilder sb = new StringBuilder(500);
-				sb.append(Utils.stripHtml(client.getCurrentBalance()))
-				.append("<br><br>")
-				.append(Utils.stripHtml(client.getAvailableMinutes()))
-				.append("<br><br>")
-				.append(Utils.stripHtml(client.getCreditLimit()))
-				.append("<br><br>")
-				.append(Utils.stripHtml(client.getAvailableInternetBandwidth()))
-				.append("<br><br>")
-				.append(Utils.stripHtml(client.getTravelAndSurfBandwidth()))				
-				.append("<br><br>")
-				.append(Utils.stripHtml(client.getAvailableMSPackage()));
-				tmpResult = sb.toString();
-				break;
+//			case CHECK_AVAIL_MINUTES:
+//				tmpResult = client.getAvailableMinutes();
+//				tmpResult = Utils.stripHtml(tmpResult);
+//				break;
+//			case CHECK_CREDIT_LIMIT:
+//				tmpResult = client.getCreditLimit();
+//				tmpResult = Utils.stripHtml(tmpResult);
+//				break;
+//			case CHECK_AVAIL_DATA:
+//				tmpResult = client.getAvailableInternetBandwidth();
+//				tmpResult = Utils.stripHtml(tmpResult);
+//				break;
+//			case CHECK_AVAIL_TRAVELNSURF:
+//				tmpResult = client.getTravelAndSurfBandwidth();
+//				tmpResult = Utils.stripHtml(tmpResult);				
+//				break;
+//			case CHECK_SMS_PACKAGE:
+//				tmpResult = client.getAvailableMSPackage();
+//				tmpResult = Utils.stripHtml(tmpResult);
+//				break;
+//			case CHECK_ALL:
+//				StringBuilder sb = new StringBuilder(500);
+//				sb.append(Utils.stripHtml(client.getCurrentBalance()))
+//				.append("<br><br>")
+//				.append(Utils.stripHtml(client.getAvailableMinutes()))
+//				.append("<br><br>")
+//				.append(Utils.stripHtml(client.getCreditLimit()))
+//				.append("<br><br>")
+//				.append(Utils.stripHtml(client.getAvailableInternetBandwidth()))
+//				.append("<br><br>")
+//				.append(Utils.stripHtml(client.getTravelAndSurfBandwidth()))				
+//				.append("<br><br>")
+//				.append(Utils.stripHtml(client.getAvailableMSPackage()));
+//				tmpResult = sb.toString();
+//				break;
 			}
 
 			// colorify important values

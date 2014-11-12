@@ -26,7 +26,7 @@ import net.vexelon.myglob.R;
 public class Defs {
 	
 	public final static String LOG_TAG = "net.vexelon.myglob";
-	public final static boolean LOG_ENABLED = false;
+	public final static boolean LOG_ENABLED = true;
 	
 	// Theming
 	public final static int THEME = R.style.Theme_Sherlock;

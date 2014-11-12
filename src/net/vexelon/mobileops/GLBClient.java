@@ -138,8 +138,9 @@ public class GLBClient implements IClient {
 		throws HttpClientException {
 
 		StringBuilder fullUrl = new StringBuilder(100);
-		fullUrl.append(HTTP_MYGLOBUL_SITE).append(GLBRequestType.LOGOUT.getPath()).append("?")
-			.append(GLBRequestType.LOGOUT.getParams());
+//		fullUrl.append(HTTP_MYGLOBUL_SITE).append(GLBRequestType.LOGOUT.getPath()).append("?")
+//			.append(GLBRequestType.LOGOUT.getParams());
+		fullUrl.append(GLBRequestType.LOGOUT.getPath()).append("?").append(GLBRequestType.LOGOUT.getParams());
 
 		try {
 			HttpGet httpGet = new HttpGet(fullUrl.toString());
@@ -160,55 +161,61 @@ public class GLBClient implements IClient {
 	public String getCurrentBalance()
 		throws HttpClientException {
 
-//		if (operationsHash == null)
-//			operationsHash = findOperationsHashCodes();
+		StringBuilder builder = new StringBuilder(100);
+		HttpResponse resp;
+		long bytesCount = 0;
+		try {
+			String url = HTTP_MYGLOBUL_SITE + GLBRequestType.GET_BALANCE.getPath();
+			url += '?';
+			url += new Date().getTime();
+			
+			HttpGet httpGet = new HttpGet(url);
+//			httpGet.setHeader("X-Requested-With", "XMLHttpRequest");
+			resp = httpClient.execute(httpGet, httpContext);
+		} catch (Exception e) {
+			throw new HttpClientException("Client protocol error!" + e.getMessage(), e);
+		}
 		
-		return doGetRequest(GLBRequestType.GET_BALANCE);
-	}
-
-	public String getAvailableMinutes()
-		throws HttpClientException {
+		StatusLine status = resp.getStatusLine();
 		
-		if (operationsHash == null)
-			operationsHash = findOperationsHashCodes();		
+		if (status.getStatusCode() != HttpStatus.SC_OK)
+			throw new HttpClientException(status.getReasonPhrase(), status.getStatusCode());
 
-		return doPostRequest(GLBRequestType.GET_MINUTES);
-	}
+		try {
+			HttpEntity entity = resp.getEntity();
+			bytesCount = entity.getContentLength() > 0 ? entity.getContentLength() : 0;
+			
+			Document doc = Jsoup.parse(entity.getContent(), "windows-1251", "");
+			Elements inputs = doc.select("div");
+			for (Element el : inputs) {
+				String elClass = el.className();
+				if (elClass.contains("custme-select") || elClass.equalsIgnoreCase("history")) {
+					builder.append(el.html());
+				}
+			}	
 
-	public String getAvailableInternetBandwidth()
-		throws HttpClientException {
+			return builder.toString();
+			
+		} catch (ClientProtocolException e) {
+			throw new HttpClientException("Client protocol error!" + e.getMessage(), e);
+		} catch (IOException e) {
+			throw new HttpClientException("Client error!" + e.getMessage(), e);
+		} finally {
+			addDownloadedBytesCount(bytesCount);
+		}		
 		
-		if (operationsHash == null)
-			operationsHash = findOperationsHashCodes();		
-
-		return doPostRequest(GLBRequestType.GET_BANDWIDTH);
-	}
-	
-	public String getTravelAndSurfBandwidth() 
-			throws HttpClientException {
+//		ByteArrayOutputStream baos = null;
+//		try {
+//			baos = new ByteArrayOutputStream(DEFAULT_BUFFER_SIZE);
+//			entity.writeTo(baos);
+//		} catch (Exception e) {
+//			throw new HttpClientException("Failed to load response! " + e.getMessage(), e);
+//		} finally {
+//			if (baos != null) try { baos.close(); } catch (IOException e) {};
+//		}
 		
-		if (operationsHash == null)
-			operationsHash = findOperationsHashCodes();		
-		
-		return doPostRequest(GLBRequestType.GET_TRAVELNSURF);
-	}
-
-	public String getCreditLimit()
-		throws HttpClientException {
-
-		if (operationsHash == null)
-			operationsHash = findOperationsHashCodes();
-		
-		return doPostRequest(GLBRequestType.GET_CREDITLIMIT);
-	}
-
-	public String getAvailableMSPackage()
-		throws HttpClientException {
-		
-		if (operationsHash == null)
-			operationsHash = findOperationsHashCodes();		
-
-		return doPostRequest(GLBRequestType.GET_MSPACKAGE);
+		// bytes downloaded
+//		addDownloadedBytesCount(baos.size());
 	}
 	
 	@Override
@@ -414,110 +421,6 @@ public class GLBClient implements IClient {
 		}
 	}
 	
-	private HashMap<GLBRequestType, String> findOperationsHashCodes() throws HttpClientException {
-		
-		HashMap<GLBRequestType, String>  result = new HashMap<GLBRequestType, String>();
-		
-		StringBuilder fullUrl = new StringBuilder(100);
-		fullUrl.append(HTTP_MYGLOBUL_SITE).append(GLBRequestType.PAGE_BILLCHECK.getPath()).append("?")
-			.append(GLBRequestType.PAGE_BILLCHECK.getParams());
-
-		BufferedReader reader = null;
-		long bytesCount = 0;
-		
-		try {
-			HttpGet httpGet = new HttpGet(fullUrl.toString());
-			HttpResponse resp = httpClient.execute(httpGet, httpContext);
-			StatusLine status = resp.getStatusLine();
-			
-			if ( status.getStatusCode() == HttpStatus.SC_OK ) {
-				
-				reader = new BufferedReader(new InputStreamReader(resp.getEntity().getContent()));
-				
-				boolean inParam = false;
-				String line = null;
-				GLBRequestType reqType = null;
-				
-				while((line = reader.readLine()) != null) {
-					
-					// bytes downloaded
-					bytesCount += line.length();
-					
-					if (line.contains("performAjaxRequest")) {
-						// reset hash code expect, since we obviously passed the last one
-						inParam = false;
-						
-						String params[] = line.split("=");
-						if (params.length > 1) {
-							
-							if (Defs.LOG_ENABLED)
-								Log.d(Defs.LOG_TAG, "Found param: " + params[1]);
-							
-							// extract keyword
-							Pattern p = Pattern.compile("([a-zA-Z0-9]+)", Pattern.CASE_INSENSITIVE);
-							Matcher m = p.matcher(params[1]);
-							if (m.find()) {
-//								Log.v(Defs.LOG_TAG, "Match: " + m.group());
-								
-								reqType = GLBRequestType.getFromAction(m.group());
-								if (reqType != null) {
-									// we expect to find hash code, next
-									inParam = true;
-								} 
-							}
-							
-							continue;
-						}
-					} else if (line.contains("successfullContentLocation")) {
-						// XXX 
-						// A convenient hack that allows us to stop processing the stream
-						// and waste bandwidth after the hash codes are loaded.
-						break;
-					}
-					
-					if (inParam) {
-						if (line.contains("action=billcheck")) {
-							String params[] = line.split(",");
-							if (params.length > 1) {
-								
-								if (Defs.LOG_ENABLED)
-									Log.d(Defs.LOG_TAG, "Hash param: " + params[1]);
-								
-								inParam = false;
-								
-								// extract hash
-								Pattern p = Pattern.compile("([a-z0-9]+)", Pattern.CASE_INSENSITIVE);
-								Matcher m = p.matcher(params[1]);
-								if (m.find()) {
-									
-									if (Defs.LOG_ENABLED)
-										Log.v(Defs.LOG_TAG, "Putting: " + reqType.getParams() + " to " + m.group());
-									
-									result.put(reqType, m.group());
-								}
-							}
-						}
-					}
-					
-				}
-				
-			} else {
-				throw new HttpClientException(status.getReasonPhrase(), status.getStatusCode());
-			}
-			
-		} catch (ClientProtocolException e) {
-			throw new HttpClientException("Client protocol error!" + e.getMessage(), e);
-		} catch (IOException e) {
-			throw new HttpClientException("Client error!" + e.getMessage(), e);
-		} finally {
-			if (reader != null) try { reader.close(); } catch (IOException e) {};
-			
-			addDownloadedBytesCount(bytesCount);
-		}
-		
-		return result;
-	}
-	
 	private byte[] findInvoiceExportParams() throws HttpClientException, InvoiceException {
 
 		BufferedReader reader = null;
@@ -707,7 +610,7 @@ public class GLBClient implements IClient {
 			}
 
 			// close current stream reader
-			if (reader != null) try { reader.close(); } catch (IOException e) {};
+//			if (reader != null) try { reader.close(); } catch (IOException e) {};
 			
 		} catch (ClientProtocolException e) {
 			throw new HttpClientException("Client protocol error!" + e.getMessage(), e);
@@ -727,46 +630,6 @@ public class GLBClient implements IClient {
 		HttpPost httpPost = new HttpPost(url);
 		httpPost.setEntity(new UrlEncodedFormEntity(qparams, HTTP.UTF_8));
 		return httpPost;
-	}
-	
-	private String doGetRequest(GLBRequestType requestType) throws HttpClientException {
-		HttpResponse resp;
-		try {
-			String url = HTTP_MYGLOBUL_SITE + requestType.getPath();
-			url += '?';
-			url += new Date().getTime();
-			
-			HttpGet httpGet = new HttpGet(url);
-			httpGet.setHeader("X-Requested-With", "XMLHttpRequest");
-			resp = httpClient.execute(httpGet, httpContext);
-		} catch (Exception e) {
-			throw new HttpClientException("Client protocol error!" + e.getMessage(), e);
-		}
-		
-		StatusLine status = resp.getStatusLine();
-		
-		if (status.getStatusCode() != HttpStatus.SC_OK)
-			throw new HttpClientException(status.getReasonPhrase(), status.getStatusCode());
-
-		HttpEntity entity = resp.getEntity();
-		ByteArrayOutputStream baos = null;
-		try {
-			baos = new ByteArrayOutputStream(DEFAULT_BUFFER_SIZE);
-			entity.writeTo(baos);
-		} catch (Exception e) {
-			throw new HttpClientException("Failed to load response! " + e.getMessage(), e);
-		} finally {
-			if (baos != null) try { baos.close(); } catch (IOException e) {};
-		}
-		
-		// bytes downloaded
-		addDownloadedBytesCount(baos.size());
-
-		try {
-			return new String(baos.toByteArray(), RESPONSE_ENCODING);
-		} catch (UnsupportedEncodingException e) {
-			return new String(baos.toByteArray()); // XXX check this!
-		}
 	}
 
 	private String doPostRequest(GLBRequestType requestType) throws HttpClientException {

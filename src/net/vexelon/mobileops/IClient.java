@@ -42,21 +42,6 @@ public interface IClient {
 	public String getCurrentBalance() 
 		throws HttpClientException;
 	
-	public String getAvailableMinutes()
-		throws HttpClientException;
-	
-	public String getAvailableInternetBandwidth()
-		throws HttpClientException;
-	
-	public String getTravelAndSurfBandwidth() 
-			throws HttpClientException;	
-	
-	public String getCreditLimit()
-		throws HttpClientException;
-
-	public String getAvailableMSPackage()
-		throws HttpClientException;
-	
 	public byte[] getInvoiceData()
 			throws HttpClientException, InvoiceException;
 	

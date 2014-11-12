@@ -28,18 +28,12 @@ import org.apache.http.message.BasicNameValuePair;
 public enum GLBRequestType {
 	LOGIN("https://login.telenor.bg/login", "asid=s01&service=https%3A%2F%2Fmy.telenor.bg%2Flogin"),
 	LOGIN_ACTION("https://login.telenor.bg/login", ""),
-	LOGOUT("/mg/myglobul.portal", "action=logoff"),
+	LOGOUT("https://login.telenor.bg/logout", "service=http://www.telenor.bg"),
 	/*
 	 * Status checks
 	 */
 	PAGE_BILLCHECK("/mg/myglobul.bch", "action=billcheck"),
-	GET_BALANCE("/loadusagelines", ""),
-//	GET_BALANCE("/mg/myglobul.bch", "action=billcheckperform"),
-	GET_MINUTES("/mg/myglobul.bch", "action=bundlecheckperform"),
-	GET_BANDWIDTH("/mg/myglobul.bch", "action=gprscheckperform"),
-	GET_TRAVELNSURF("/mg/myglobul.bch", "action=drpCheckPerform"),
-	GET_CREDITLIMIT("/mg/myglobul.bch", "action=creditlimitcheckperform"),
-	GET_MSPACKAGE("/mg/myglobul.bch", "action=smsmmsCheckPerform"),
+	GET_BALANCE("/billing-payment", ""),
 	/*
 	 * Invoice check
 	 */
@@ -88,16 +82,6 @@ public enum GLBRequestType {
 		String full = "action=" + action;
 		if (GET_BALANCE.params.equals(full)) {
 			return GET_BALANCE;
-		} else if (GET_MINUTES.params.equals(full)) {
-			return GET_MINUTES;
-		} else if (GET_BANDWIDTH.params.equals(full)) {
-			return GET_BANDWIDTH;
-		} else if (GET_CREDITLIMIT.params.equals(full)) {
-			return GET_CREDITLIMIT;
-		} else if (GET_MSPACKAGE.params.equals(full)) {
-			return GET_MSPACKAGE;
-		} else if (GET_TRAVELNSURF.params.equals(full)) {
-			return GET_TRAVELNSURF;
 		}
 		
 		return null;
