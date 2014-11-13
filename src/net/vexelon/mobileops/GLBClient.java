@@ -75,11 +75,11 @@ import android.util.Log;
 
 public class GLBClient implements IClient {
 	
-	private final String HTTP_MYTELENOR = "https://my.telenor.bg";
+	private static final String HTTP_MYTELENOR = "https://my.telenor.bg";
 
-	private final int DEFAULT_BUFFER_SIZE = 1024;
-	private final String RESPONSE_ENCODING = "windows-1251";
-	private final int MAX_REQUEST_RETRIES = 2;
+	private static final int DEFAULT_BUFFER_SIZE = 1024;
+	private static final String RESPONSE_ENCODING = "windows-1251";
+	private static final int MAX_REQUEST_RETRIES = 2;
 
 	private String username;
 	private String password;
