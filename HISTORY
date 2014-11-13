@@ -1,5 +1,10 @@
 MyGlob HISTORY file
 
+v3.1.8
+Fix invoice issues.
+
+Оправен проблем с неработещи фактури. 
+
 v3.1.7
 Fix issues with new operator name and system.
 (Invoices will be available again in a next version.)
