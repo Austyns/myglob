@@ -24,14 +24,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
 import java.security.InvalidAlgorithmParameterException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -69,7 +66,6 @@ import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Attribute;
 import org.jsoup.nodes.Attributes;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -183,6 +179,7 @@ public class GLBClient implements IClient {
 
 		try {
 			HttpEntity entity = resp.getEntity();
+			// bytes downloaded
 			bytesCount = entity.getContentLength() > 0 ? entity.getContentLength() : 0;
 			
 			Document doc = Jsoup.parse(entity.getContent(), "windows-1251", "");
@@ -216,19 +213,6 @@ public class GLBClient implements IClient {
 		} finally {
 			addDownloadedBytesCount(bytesCount);
 		}		
-		
-//		ByteArrayOutputStream baos = null;
-//		try {
-//			baos = new ByteArrayOutputStream(DEFAULT_BUFFER_SIZE);
-//			entity.writeTo(baos);
-//		} catch (Exception e) {
-//			throw new HttpClientException("Failed to load response! " + e.getMessage(), e);
-//		} finally {
-//			if (baos != null) try { baos.close(); } catch (IOException e) {};
-//		}
-		
-		// bytes downloaded
-//		addDownloadedBytesCount(baos.size());
 	}
 	
 	@Override
@@ -445,67 +429,78 @@ public class GLBClient implements IClient {
 		try {
 			// Get invoice check page
 			StringBuilder fullUrl = new StringBuilder(100);
-			fullUrl.append(HTTP_MYGLOBUL_SITE).append(GLBRequestType.PAGE_INVOICE.getPath()).append("?")
-			.append(GLBRequestType.PAGE_INVOICE.getParams());
+			fullUrl.append(HTTP_MYGLOBUL_SITE).append(GLBRequestType.PAGE_INVOICE.getPath());
 			
 			HttpGet httpGet = new HttpGet(fullUrl.toString());
 			HttpResponse resp = httpClient.execute(httpGet, httpContext);
 			StatusLine status = resp.getStatusLine();
-			if ( status.getStatusCode() != HttpStatus.SC_OK ) {
-				// now what?
+			
+			// Construct invoice id url
+			fullUrl.setLength(0);
+			fullUrl.append(HTTP_MYGLOBUL_SITE);
+			
+			if (status.getStatusCode() == HttpStatus.SC_OK) {
+				// bytes downloaded
+				bytesCount += resp.getEntity().getContentLength() > 0 ? resp.getEntity().getContentLength() : 0;
+				// Find invoice id
+				Document doc = Jsoup.parse(resp.getEntity().getContent(), HTTP.UTF_8, "");
+				Elements links = doc.select("a");
+				for (Element el : links) {
+					String href = el.attributes().get("href");
+					if (href != null && href.contains("invId")) {
+						fullUrl.append("/").append(href);
+						break;
+					}
+				}	
+			} else {
+				throw new HttpClientException(status.getReasonPhrase(), status.getStatusCode());
 			}
 			
-			// Get invoice parameters
-			
-			fullUrl.setLength(0);
-			fullUrl.append(HTTP_MYGLOBUL_SITE).append(GLBRequestType.PAGE_INVOICE_EXPORT.getPath()).append("?")
-				.append(GLBRequestType.PAGE_INVOICE_EXPORT.getParams());
-			
+			// Fetch invoice download parameters
 			httpGet = new HttpGet(fullUrl.toString());
 			resp = httpClient.execute(httpGet, httpContext);
 			status = resp.getStatusLine();
-			if ( status.getStatusCode() == HttpStatus.SC_OK ) {
-				
-				reader = new BufferedReader(new InputStreamReader(resp.getEntity().getContent()));
-				
+			if (status.getStatusCode() == HttpStatus.SC_OK) {
 				String line = null;
+				reader = new BufferedReader(new InputStreamReader(resp.getEntity().getContent()));
 				while((line = reader.readLine()) != null) {
 					// bytes downloaded
 					bytesCount += line.length();
 					
-					if (line.contains("JavaScript:ei2_open_file") && line.contains("xml")) {
+					if (line.contains("ei2_open_file") && line.contains("xml") && line.contains("summary")) {
 						if (Defs.LOG_ENABLED)
 							Log.d(Defs.LOG_TAG, line);
 						
 						/*
 						 * This is a g'damn hack. We don't need fancy stuff ;)
 						 */
-						xmlUrl.append("http://my.telenor.bg/mg/ei2/EI2Export?")
-						.append("file_name=summary")
+						xmlUrl.append(HTTP_MYGLOBUL_SITE).append(GLBRequestType.GET_INVOICE.getPath())
+						.append("?file_name=summary")
 						.append("&file_type=xml")
 						.append("&lower_bound=0")
 						.append("&upper_bound=0");
-						
-//		                 "?file_name="+ file_name +
-//		                 "&file_type="+ file_type +
-//		                 "&lower_bound="+ lower_bound +
-//		                 "&upper_bound="+ upper_bound +
-//		                 "&inv_no="+ inv_no +
-//		                 "&bill_acc_id="+ bill_acc_id +
-//		                 "&custnum=" + custnum +
-//		                 "&servicetype=" + servicetype+
-//		                 "&period=" + period +
-//		                 "&cust_acc_id=" + cust_acc_id +
-//		                 "&custCode10=" + custCode10;		
+
+//						?file_name=summary
+//						&file_type=xml
+//						&lower_bound=0
+//						&upper_bound=0
+//						&invoiceNumber=1234567890
+//						&bill_acc_id=1231231
+//						&custnum=001234567
+//						&servicetype=1
+//						&period=1414792800000
+//						&cust_acc_id=1011111
+//						&custCode10=1.111111
+//						&prgCode=1
 		                 
 						// extract keyword
-						String keys[] = {"file_type", "file_name", "context_path", "lower_bound", "upper_bound", 
-								"inv_no", "bill_acc_id", "custnum", "servicetype", "period", "cust_acc_id", 
-								"custCode10"};
+						String keys[] = {"file_type", "file_name", "lower_bound", "upper_bound", 
+								"invoiceNumber", "bill_acc_id", "custnum", "servicetype", "period", "cust_acc_id", 
+								"custCode10", "prgCode"};
 						String parts[] = line.split(",");
 						if (parts.length > 5) {
 							for (int i = 5; i < parts.length - 1; i++) {
-								String value = parts[i].replace("'", "");
+								String value = parts[i].replace("'", "").trim();
 								
 								xmlUrl.append("&").append(keys[i]).append("=")
 								.append(value); // strip single quotes
@@ -515,22 +510,14 @@ public class GLBClient implements IClient {
 									invoiceDate = value;
 								}
 							}
-							// the last param is tricky
+							// the last param is a bit tricky, because we need to remove the <a> data
 							int lastidx = parts.length - 1;
 							parts = parts[lastidx].split("\\)");
-							xmlUrl.append("&").append(keys[lastidx]).append("=")
-							.append(parts[0].replace("'", "")); // strip single quotes
+							xmlUrl.append("&").append(keys[lastidx]).append("=").append(parts[0].replace("'", ""));
 						} else {
 							Log.e(Defs.LOG_TAG, "Got line: " + line);
 							throw new IOException("Invalid invoice fingerprint!");
 						}
-						
-//						Pattern p = Pattern.compile("([a-zA-Z0-9\\.\\/]{0,}),{0,}", Pattern.CASE_INSENSITIVE);
-//						Matcher m = p.matcher(line);
-//						while (m.find()) {
-//							Log.v(Defs.LOG_TAG, "Match: " + m.group());	
-//
-//						}
 						break;
 					}
 				}
@@ -602,16 +589,15 @@ public class GLBClient implements IClient {
 				Document doc = Jsoup.parse(resp.getEntity().getContent(), HTTP.UTF_8, "");
 				Elements inputs = doc.select("input");
 				for (Element el : inputs) {
-					if (Defs.LOG_ENABLED) {
-						Log.v(Defs.LOG_TAG, "ELEMENT: " + el.tagName());
-					}
-					
+//					if (Defs.LOG_ENABLED) {
+//						Log.v(Defs.LOG_TAG, "ELEMENT: " + el.tagName());
+//					}
 					Attributes attrs = el.attributes();
-					for (Attribute attr : attrs) {
-						if (Defs.LOG_ENABLED) {
-							Log.v(Defs.LOG_TAG, " " + attr.getKey() + "=" + attr.getValue());
-						}
-					}
+//					for (Attribute attr : attrs) {
+//						if (Defs.LOG_ENABLED) {
+//							Log.v(Defs.LOG_TAG, " " + attr.getKey() + "=" + attr.getValue());
+//						}
+//					}
 					
 					String elName = attrs.get("name");
 					if (elName.equalsIgnoreCase("lt") || elName.equalsIgnoreCase("execution")) {
