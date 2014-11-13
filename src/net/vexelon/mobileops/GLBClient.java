@@ -75,7 +75,7 @@ import android.util.Log;
 
 public class GLBClient implements IClient {
 	
-	private final String HTTP_MYGLOBUL_SITE = "https://my.telenor.bg";
+	private final String HTTP_MYTELENOR = "https://my.telenor.bg";
 
 	private final int DEFAULT_BUFFER_SIZE = 1024;
 	private final String RESPONSE_ENCODING = "windows-1251";
@@ -161,7 +161,7 @@ public class GLBClient implements IClient {
 		HttpResponse resp;
 		long bytesCount = 0;
 		try {
-			String url = HTTP_MYGLOBUL_SITE + GLBRequestType.GET_BALANCE.getPath();
+			String url = HTTP_MYTELENOR + GLBRequestType.GET_BALANCE.getPath();
 			url += '?';
 			url += new Date().getTime();
 			
@@ -182,7 +182,7 @@ public class GLBClient implements IClient {
 			// bytes downloaded
 			bytesCount = entity.getContentLength() > 0 ? entity.getContentLength() : 0;
 			
-			Document doc = Jsoup.parse(entity.getContent(), "windows-1251", "");
+			Document doc = Jsoup.parse(entity.getContent(), RESPONSE_ENCODING, "");
 			Elements elements;
 			
 			// period bill
@@ -429,7 +429,7 @@ public class GLBClient implements IClient {
 		try {
 			// Get invoice check page
 			StringBuilder fullUrl = new StringBuilder(100);
-			fullUrl.append(HTTP_MYGLOBUL_SITE).append(GLBRequestType.PAGE_INVOICE.getPath());
+			fullUrl.append(HTTP_MYTELENOR).append(GLBRequestType.PAGE_INVOICE.getPath());
 			
 			HttpGet httpGet = new HttpGet(fullUrl.toString());
 			HttpResponse resp = httpClient.execute(httpGet, httpContext);
@@ -437,13 +437,13 @@ public class GLBClient implements IClient {
 			
 			// Construct invoice id url
 			fullUrl.setLength(0);
-			fullUrl.append(HTTP_MYGLOBUL_SITE);
+			fullUrl.append(HTTP_MYTELENOR);
 			
 			if (status.getStatusCode() == HttpStatus.SC_OK) {
 				// bytes downloaded
 				bytesCount += resp.getEntity().getContentLength() > 0 ? resp.getEntity().getContentLength() : 0;
 				// Find invoice id
-				Document doc = Jsoup.parse(resp.getEntity().getContent(), HTTP.UTF_8, "");
+				Document doc = Jsoup.parse(resp.getEntity().getContent(), RESPONSE_ENCODING, "");
 				Elements links = doc.select("a");
 				for (Element el : links) {
 					String href = el.attributes().get("href");
@@ -474,7 +474,7 @@ public class GLBClient implements IClient {
 						/*
 						 * This is a g'damn hack. We don't need fancy stuff ;)
 						 */
-						xmlUrl.append(HTTP_MYGLOBUL_SITE).append(GLBRequestType.GET_INVOICE.getPath())
+						xmlUrl.append(HTTP_MYTELENOR).append(GLBRequestType.GET_INVOICE.getPath())
 						.append("?file_name=summary")
 						.append("&file_type=xml")
 						.append("&lower_bound=0")
@@ -586,7 +586,7 @@ public class GLBClient implements IClient {
 			StatusLine status = resp.getStatusLine();
 			if (status.getStatusCode() == HttpStatus.SC_OK) {
 				
-				Document doc = Jsoup.parse(resp.getEntity().getContent(), HTTP.UTF_8, "");
+				Document doc = Jsoup.parse(resp.getEntity().getContent(), RESPONSE_ENCODING, "");
 				Elements inputs = doc.select("input");
 				for (Element el : inputs) {
 //					if (Defs.LOG_ENABLED) {
@@ -643,7 +643,7 @@ public class GLBClient implements IClient {
 //				Log.d(Defs.LOG_TAG, "Param: " + nameValuePair.getName() + " = " + nameValuePair.getValue());
 //			}
 			
-			HttpPost httpPost = createPostRequest(HTTP_MYGLOBUL_SITE + requestType.getPath(), qparams);
+			HttpPost httpPost = createPostRequest(HTTP_MYTELENOR + requestType.getPath(), qparams);
 			httpPost.setHeader("X-Requested-With", "XMLHttpRequest");
 			httpPost.setHeader("X-Prototype-Version", "1.6.0.2");
 			
