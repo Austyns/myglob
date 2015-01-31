@@ -40,13 +40,17 @@ import java.nio.channels.WritableByteChannel;
 import java.util.Random;
 
 import net.vexelon.myglob.R;
+import net.vexelon.myglob.configuration.Defs;
 
 import org.apache.http.util.ByteArrayBuffer;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.util.Log;
 import android.view.KeyEvent;
 
 public class Utils {
@@ -58,6 +62,26 @@ public class Utils {
 	public static String emptyIfNull(String value) {
 		return value == null ? "" : value;
 	}
+	
+	public static String emptyIfNull(JSONObject json, String key) {
+		try {
+			return json.getString(key);
+		} catch (JSONException e) {
+			return "";
+		}
+	}	
+	
+	public static BigDecimal zeroIfNull(String value) {
+		BigDecimal result = new BigDecimal("0.00");
+		if (value != null) {
+			try {
+				result = new BigDecimal(value);
+			} catch (NumberFormatException e) {
+				Log.w(Defs.LOG_TAG, "Failed to get decimal value from " + value + "!", e);
+			}
+		}
+		return result;
+	}	
 	
 	public static String scaleNumber(BigDecimal number, int n) {
 		return number.setScale(n, BigDecimal.ROUND_HALF_UP).toPlainString();
@@ -194,7 +218,7 @@ public class Utils {
 		try {
 			fos = context.openFileOutput(internalStorageName, Context.MODE_PRIVATE);
 			BufferedOutputStream bos = new BufferedOutputStream(fos);
-			
+
 			BufferedInputStream bis = new BufferedInputStream(source);
 			byte[] buffer = new byte[4096];
 			int read = -1;

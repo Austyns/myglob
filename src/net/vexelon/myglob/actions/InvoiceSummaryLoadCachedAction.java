@@ -19,25 +19,21 @@
  */
 package net.vexelon.myglob.actions;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
-import org.xml.sax.SAXException;
+import org.json.JSONObject;
 
 import android.content.Context;
 import android.util.Log;
-import net.vexelon.mobileops.GLBInvoiceXMLParser;
 import net.vexelon.myglob.configuration.Defs;
 import net.vexelon.myglob.users.User;
+import net.vexelon.myglob.utils.Utils;
 
-@Deprecated
-public class InvoiceLoadCachedAction extends BaseAction {
+public class InvoiceSummaryLoadCachedAction extends BaseAction {
 	
-	public InvoiceLoadCachedAction(Context context, User user) {
+	public InvoiceSummaryLoadCachedAction(Context context, User user) {
 		super(context, user);
 	}
 
@@ -63,20 +59,11 @@ public class InvoiceLoadCachedAction extends BaseAction {
 					break;
 				}
 			}
-			source = _context.openFileInput(storageName);
-			// parse XML
-			GLBInvoiceXMLParser xmlParser = new GLBInvoiceXMLParser(source);
-			List<Map<String, String>> invoiceInfo = xmlParser.build();
-			// hack - we need to display the date
-			for (Map<String, String> row : invoiceInfo) {
-				row.put(GLBInvoiceXMLParser.TAG_DATE, invoiceDateTime);
-			}			
-			// prep result object
-			result.setResult(invoiceInfo);
-			
-		} catch (SAXException e) {
-			throw new ActionExecuteException(e);
-		} catch (FileNotFoundException e) {
+			byte[] invoideData = Utils.read(_context.openFileInput(storageName));
+			// parse JSON
+			JSONObject json = new JSONObject(new String(invoideData, "utf-8"));
+			result.setResult(json);
+		} catch (Exception e) {
 			throw new ActionExecuteException(e);
 		} finally {
 			try { if ( source != null ) source.close(); } catch (IOException e) {}

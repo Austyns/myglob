@@ -20,15 +20,14 @@
 package net.vexelon.myglob.actions;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
+
+import org.json.JSONObject;
 
 import android.content.Context;
 import android.util.Log;
 import net.vexelon.mobileops.InvoiceException;
-import net.vexelon.mobileops.GLBInvoiceXMLParser;
 import net.vexelon.mobileops.HttpClientException;
 import net.vexelon.mobileops.IClient;
 import net.vexelon.myglob.R;
@@ -53,25 +52,31 @@ public class InvoiceSummaryUpdateAction extends BaseAction {
 		try {
 			Map<String, String> invoiceSummary = client.getInvoiceSummary();
 			// clean up cache
-//			String lookForStorageName = String.format(Defs.ISTORAGE_XML_FORMAT, 
-//					_user.getPhoneNumber(), "");
-//			String[] storageFiles = _context.fileList();
-//			for (String fileName : storageFiles) {
-//				if (fileName.startsWith(lookForStorageName)) {
-//					if (!_context.deleteFile(fileName)) {
-//						Log.w(Defs.LOG_TAG, "Failed deleting - " + fileName);
-//					}
-//				}
-//			}
-//			// cache on local device storage
-//			String storageName = String.format(Defs.ISTORAGE_XML_FORMAT, 
-//					_user.getPhoneNumber(), 
-//					client.getInvoiceDateTime());
-//			Utils.writeToInternalStorage(_context, new ByteArrayInputStream(invoiceData), storageName);
+			String lookForStorageName = String.format(Defs.ISTORAGE_XML_FORMAT, 
+					_user.getPhoneNumber(), "");
+			String[] storageFiles = _context.fileList();
+			for (String fileName : storageFiles) {
+				if (fileName.startsWith(lookForStorageName)) {
+					if (!_context.deleteFile(fileName)) {
+						Log.w(Defs.LOG_TAG, "Failed deleting - " + fileName);
+					}
+				}
+			}
+			// cache on local device storage
+		    JSONObject json = new JSONObject(invoiceSummary);
+		    try {
+		    	ByteArrayInputStream bais = new ByteArrayInputStream(json.toString().getBytes("utf-8"));
+				String storageName = String.format(Defs.ISTORAGE_XML_FORMAT, 
+						_user.getPhoneNumber(), 
+						invoiceSummary.get(Defs.INV_KEY_NO));		    	
+				Utils.writeToInternalStorage(_context, bais, storageName);
+		    } catch (Exception e) {
+		    	Log.e(Defs.LOG_TAG, "Failed to save fetched invoice data!", e);
+		    }
 		
 			// prep result object
 			result.setBytesCount(client.getDownloadedBytesCount());
-			result.setResult(invoiceSummary);
+			result.setResult(json);
 			// update user info
 			updateUserResult(result);
 			

@@ -23,6 +23,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONObject;
+
 public class ActionResult {
 	
 	private String stringResult;
@@ -30,7 +32,7 @@ public class ActionResult {
 	private long downloadedBytesCount;
 	private Date checkedOn;
 	private List<?> listResult;
-	private Map<?, ?> mapResult;
+	private JSONObject json;
 
 	public String getString() {
 		return stringResult;
@@ -72,11 +74,12 @@ public class ActionResult {
 		this.listResult = listResult;
 	}
 	
-	public void setResult(Map<?, ?> mapResult) {
-		this.mapResult = mapResult;
+	public void setResult(JSONObject json) {
+		this.json = json;
 	}
 	
-	public Map<?, ?> getMapResult() {
-		return mapResult;
+	public JSONObject getJsonResult() {
+		return json;
 	}
+	
 }

@@ -38,6 +38,7 @@ import net.vexelon.myglob.configuration.Defs;
 import net.vexelon.myglob.users.User;
 import net.vexelon.myglob.utils.Utils;
 
+@Deprecated
 public class InvoiceUpdateAction extends BaseAction {
 	
 	public InvoiceUpdateAction(Context context, User user) {
