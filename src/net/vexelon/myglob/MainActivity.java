@@ -89,8 +89,8 @@ public class MainActivity extends SherlockFragmentActivity {
         this._actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
         this._actionBar.setTitle(getResString(R.string.app_name) + " - " + getResString(R.string.about_tagline));
         this._actionBar.setDisplayShowTitleEnabled(false);
-        this._actionBar.setDisplayShowHomeEnabled(false);
-        this._actionBar.setDisplayHomeAsUpEnabled(true);            
+        this._actionBar.setDisplayShowHomeEnabled(true);
+        this._actionBar.setDisplayHomeAsUpEnabled(true);
         
         this._tabsCount = 3;
         

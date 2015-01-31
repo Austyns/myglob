@@ -19,7 +19,6 @@
  */
 package net.vexelon.mobileops;
 
-import java.util.List;
 import java.util.Map;
 
 import org.apache.http.HttpVersion;
@@ -94,6 +93,13 @@ public class MTLClient implements IClient {
 	public long getInvoiceDateTime() {
 		// TODO Auto-generated method stub
 		return 0;
+	}
+	
+	@Override
+	public Map<String, String> getInvoiceSummary() throws HttpClientException,
+			InvoiceException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override

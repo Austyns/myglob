@@ -72,7 +72,7 @@
 <string name="widget_4x1">MyGlob (4x1)</string>
 <string name="widget_4x2">MyGlob (4x2)</string>
 <string name="text_menu">Меню</string>
-<string name="text_menu_invoice">Провери фактура</string>
+<string name="text_menu_invoice">Провери последна фактура</string>
 <string name="text_checks_today">Проверки днес</string>
 <string name="text_checks_overal">Проверки общо</string>
 <string name="text_traffic_today">Трафик днес</string>

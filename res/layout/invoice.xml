@@ -69,48 +69,22 @@
             android:textAppearance="?android:attr/textAppearanceSmall" />
     </TableRow>
     <!-- 2 columns -->
-
-	<!-- COSTS ////////////////////////////////////////////////////////////-->
-	
+    
     <TableRow
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1">
 
         <TextView
-            android:id="@+id/tv_invoice_services_label"
+            android:id="@+id/tv_invoice_dateref_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="right"
-            android:text="@string/text_invoice_services"
+            android:text="@string/text_invoice_dateref"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <TextView
-            android:id="@+id/tv_invoice_services"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="left"
-            android:paddingLeft="6dp"
-            android:text=""
-            android:textAppearance="?android:attr/textAppearanceSmall" />
-    </TableRow>
-    <!-- 2 columns -->
-    	
-    <TableRow
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1">
-
-        <TextView
-            android:id="@+id/tv_invoice_fixed_charge_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="right"
-            android:text="@string/text_invoice_fixed_charge"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-
-        <TextView
-            android:id="@+id/tv_invoice_fixed_charge"
+            android:id="@+id/tv_invoice_dateref"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="left"
@@ -126,15 +100,15 @@
         android:layout_weight="1">
 
         <TextView
-            android:id="@+id/tv_invoice_discount_label"
+            android:id="@+id/tv_invoice_status_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="right"
-            android:text="@string/text_invoice_discount"
+            android:text="@string/text_invoice_status"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <TextView
-            android:id="@+id/tv_invoice_discount"
+            android:id="@+id/tv_invoice_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="left"
@@ -142,7 +116,7 @@
             android:text=""
             android:textAppearance="?android:attr/textAppearanceSmall" />
     </TableRow>
-    <!-- 2 columns -->    
+    <!-- 2 columns -->        
 
 	<!-- TOTALS ////////////////////////////////////////////////////////////-->
     <TableRow
@@ -158,54 +132,6 @@
             android:background="#ff0099cc" />
     </TableRow>
     <!-- 2 columns -->
-    
-    <TableRow
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1">
-
-        <TextView
-            android:id="@+id/tv_invoice_tot_no_vat_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="right"
-            android:text="@string/text_tot_no_vat"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-
-        <TextView
-            android:id="@+id/tv_invoice_tot_no_vat"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="left"
-            android:paddingLeft="6dp"
-            android:text=""
-            android:textAppearance="?android:attr/textAppearanceSmall" />
-    </TableRow>
-    <!-- 2 columns -->
-    
-    <TableRow
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1">
-
-        <TextView
-            android:id="@+id/tv_invoice_vat_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="right"
-            android:text="@string/text_vat"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-
-        <TextView
-            android:id="@+id/tv_invoice_vat"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="left"
-            android:paddingLeft="6dp"
-            android:text=""
-            android:textAppearance="?android:attr/textAppearanceSmall" />
-    </TableRow>
-    <!-- 2 columns -->        
     
     <TableRow
         android:layout_width="fill_parent"
@@ -231,21 +157,6 @@
     </TableRow>
     <!-- 2 columns -->    
     
-	<!-- PREVIOUS PAYMENTS ////////////////////////////////////////////////////////////-->
-    <TableRow
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        >
-        <View
-            android:id="@+id/v_repo_divider2"
-            android:layout_width="fill_parent"
-            android:layout_height="1dp"
-            android:layout_span="2"
-            android:background="#ff0099cc" />
-    </TableRow>
-    <!-- 2 columns -->    
-    
     <TableRow
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -268,45 +179,7 @@
             android:text=""
             android:textAppearance="?android:attr/textAppearanceSmall" />
     </TableRow>
-    <!-- 2 columns -->
-    
-    <TableRow
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1">
-
-        <TextView
-            android:id="@+id/tv_invoice_paied_amountdue_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="right"
-            android:text="@string/text_invoice_paid_amountdue"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-
-        <TextView
-            android:id="@+id/tv_invoice_paied_amountdue"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="left"
-            android:paddingLeft="6dp"
-            android:text=""
-            android:textAppearance="?android:attr/textAppearanceSmall" />
-    </TableRow>
-    <!-- 2 columns -->    
-    
-    <TableRow
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        >
-        <View
-            android:id="@+id/v_repo_divider3"
-            android:layout_width="fill_parent"
-            android:layout_height="1dp"
-            android:layout_span="2"
-            android:background="#ff0099cc" />
-    </TableRow>
-    <!-- 2 columns -->       
+    <!-- 2 columns -->  
     
     <TableRow
         android:layout_width="fill_parent"
@@ -330,7 +203,45 @@
             android:text=""
             android:textAppearance="?android:attr/textAppearanceSmall" />
     </TableRow>
-    <!-- 2 columns -->           
+    <!-- 2 columns -->
+    
+	<!-- DUE DATE ////////////////////////////////////////////////////////////-->
+    <TableRow
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        >
+        <View
+            android:id="@+id/v_repo_divider_1"
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:layout_span="2"
+            android:background="#ff0099cc" />
+    </TableRow>
+        
+    <TableRow
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/tv_invoice_duedate_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:text="@string/text_invoice_duedate"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/tv_invoice_duedate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="left"
+            android:paddingLeft="6dp"
+            android:text=""
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+    </TableRow>
+    <!-- 2 columns -->      
 
 </TableLayout>
 

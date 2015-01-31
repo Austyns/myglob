@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -212,19 +213,90 @@ public class GLBClient implements IClient {
 			throw new HttpClientException("Client error!" + e.getMessage(), e);
 		} finally {
 			addDownloadedBytesCount(bytesCount);
-		}		
+		}
 	}
 	
 	@Override
 	public byte[] getInvoiceData()
 			throws HttpClientException, InvoiceException {
-		
 		return findInvoiceExportParams();
 	}
 	
 	@Override
 	public long getInvoiceDateTime() {
 		return invoiceDateTime;
+	}
+	
+	@Override
+	public Map<String, String> getInvoiceSummary()
+			throws HttpClientException, InvoiceException {
+
+		long bytesCount = 0;
+		Map<String, String> invoiceParams = new HashMap<String, String>();
+		
+		try {
+			// Get invoice check page
+			StringBuilder fullUrl = new StringBuilder(100);
+			fullUrl.append(HTTP_MYTELENOR).append(GLBRequestType.PAGE_INVOICE.getPath());
+			
+			HttpGet httpGet = new HttpGet(fullUrl.toString());
+			HttpResponse resp = httpClient.execute(httpGet, httpContext);
+			StatusLine status = resp.getStatusLine();
+			
+			if (status.getStatusCode() == HttpStatus.SC_OK) {
+				// bytes downloaded
+				bytesCount += resp.getEntity().getContentLength() > 0 ? resp.getEntity().getContentLength() : 0;
+				// Find invoice id
+				Document doc = Jsoup.parse(resp.getEntity().getContent(), RESPONSE_ENCODING, "");
+				
+				Elements elInvStatus = doc.select("div.row.e-invoice-last div.col-md-6-telenor.col-sm-6-telenor div.row span.pull-right.blue-text.label-align");
+				if (elInvStatus.size() > 0) {
+					Element span = elInvStatus.get(0);
+					invoiceParams.put(Defs.INV_KEY_STATUS, span.text().equals("Платена") ? "1" : "0");
+				}
+				
+				Elements links = doc.select("ul.list-info");
+				if (links.size() > 0) {
+					Element ul = links.get(0);
+					Elements li = ul.getElementsByTag("li");
+					//div.row h3.pull-left
+					for (Element el : li) {
+						Elements span = el.getElementsByTag("span");
+						if (span.size() > 1) {
+							String key = span.get(0).text();
+							String value = span.get(1).text();
+							if (key.contains("Номер на фактура")) {
+								invoiceParams.put(Defs.INV_KEY_NO, value);
+							} else if (key.contains("Дата на издаване")) {
+								invoiceParams.put(Defs.INV_KEY_DATEISSUED, value);
+							} else if (key.contains("Отчетен период")) {
+								invoiceParams.put(Defs.INV_KEY_DATEREF, value);
+							} else if (key.contains("Сума с ДДС")) {
+								invoiceParams.put(Defs.INV_KEY_AMOUNT_TOTAL, value);
+							} else if (key.contains("предходен период")) {
+								invoiceParams.put(Defs.INV_KEY_AMOUNT_PREVBALANCE, value);
+							} else if (key.contains("дължима сума с ДДС")) {
+								invoiceParams.put(Defs.INV_KEY_AMOUNT_TOPAY, value);
+							} else if (key.contains("срок за плащане")) {
+								invoiceParams.put(Defs.INV_KEY_DATE_DUE, value);
+							}
+						}
+					}					
+				} else {
+					throw new InvoiceException("Invoice summary data not found!");
+				}
+	
+			} else {
+				throw new HttpClientException(status.getReasonPhrase(), status.getStatusCode());
+			}
+		} catch (ClientProtocolException e) {
+			throw new HttpClientException("Client protocol error!" + e.getMessage(), e);
+		} catch (IOException e) {
+			throw new HttpClientException("Client error!" + e.getMessage(), e);
+		} finally {
+			addDownloadedBytesCount(bytesCount);
+		}
+		return invoiceParams;
 	}
 	
 	@Override

@@ -29,6 +29,7 @@ import net.vexelon.myglob.R;
 import net.vexelon.myglob.actions.ActionExecuteException;
 import net.vexelon.myglob.actions.ActionResult;
 import net.vexelon.myglob.actions.InvoiceLoadCachedAction;
+import net.vexelon.myglob.actions.InvoiceSummaryUpdateAction;
 import net.vexelon.myglob.actions.InvoiceUpdateAction;
 import net.vexelon.myglob.configuration.Defs;
 import net.vexelon.myglob.configuration.GlobalSettings;
@@ -110,7 +111,7 @@ public class InvoiceFragment extends BaseFragment {
 				ActionResult actionResult = new InvoiceLoadCachedAction(this.getActivity(), user)
 						.execute();
 				
-				updateInvoiceView(user, (List<Map<String, String>>) actionResult.getListResult());
+				updateInvoiceView(user, null);
 			}
 		} catch (ActionExecuteException e) {
 			if (Defs.LOG_ENABLED) {
@@ -130,73 +131,113 @@ public class InvoiceFragment extends BaseFragment {
 		return result;
 	}
 	
-    private void updateInvoiceView(User user, List<Map<String, String>> results) {
+//    private void updateInvoiceView(User user, List<Map<String, String>> results) {
+//    	if (Defs.LOG_ENABLED) 
+//    		Log.v(Defs.LOG_TAG, "Updating invoice for: " + user.getPhoneNumber());
+//    	
+//    	View v = getView();
+//    	boolean found = false;
+//    	
+//    	for (Map<String, String> map : results) {
+//			if (map.containsKey(GLBInvoiceXMLParser.TAG_MSISDN)) {
+//				String value = map.get(GLBInvoiceXMLParser.TAG_MSISDN);
+////				String userPhone = user.getPhoneNumber();
+////				if (value.endsWith(userPhone.substring(userPhone.length() - 6, userPhone.length()))) {
+//				if (value.trim().length() == 0) {
+//					// invoice info
+//			    	setText(v, R.id.tv_invoice_num, map.get(GLBInvoiceXMLParser.TAG_INVNUM));
+//			    	
+//		    		Calendar calendar = Calendar.getInstance();
+//		    		calendar.setTimeInMillis(Long.parseLong(map.get(GLBInvoiceXMLParser.TAG_DATE)));			    	
+//			    	setText(v, R.id.tv_invoice_date, Defs.globalDateFormat.format(calendar.getTime()));
+//			    	// costs
+//			    	BigDecimal servicesCharge = new BigDecimal("0.00");
+//			    	BigDecimal discounts = new BigDecimal("0.00");
+//			    	try {
+//			    		// solve discounts amount
+//			    		BigDecimal discount = valOrZero(map.get(GLBInvoiceXMLParser.TAG_DISCOUNT));
+//			    		BigDecimal discountPackage = valOrZero(map.get(GLBInvoiceXMLParser.TAG_DISCOUNT_PACKAGE));
+//			    		BigDecimal discountLoyality = valOrZero(map.get(GLBInvoiceXMLParser.TAG_DISCOUNT_LOYALITY));
+//			    		BigDecimal discountUBB = valOrZero(map.get(GLBInvoiceXMLParser.TAG_DISCOUNT_GLOBUL_UBB));
+//			    		discounts = discounts
+//			    				.add(discount)
+//			    				.add(discountPackage)
+//			    				.add(discountLoyality)
+//			    				.add(discountUBB);
+//			    		
+//			    		// solve services costs
+//			    		BigDecimal fixedCharge = valOrZero(map.get(GLBInvoiceXMLParser.TAG_FIXED_CHARGE));
+////			    		BigDecimal discounts = new BigDecimal(map.get(GLBInvoiceXMLParser.TAG_DISCOUNT));
+//			    		BigDecimal totalNoVAT = valOrZero(map.get(GLBInvoiceXMLParser.TAG_TOTAL_NO_VAT));
+//			    		servicesCharge = totalNoVAT
+//			    				.subtract(discounts)
+//			    				.subtract(fixedCharge);
+//			    		
+//			    	} catch (Exception e) {
+//			    		Log.e(Defs.LOG_TAG, "Failed to get decimal prices info!", e);
+//			    		/*
+//			    		 * XXX
+//			    		 * It would be better to throw exception at this point!
+//			    		 */
+//			    		discounts = new BigDecimal(map.get(GLBInvoiceXMLParser.TAG_DISCOUNT));
+//			    	}
+//			    	setText(v, R.id.tv_invoice_services, servicesCharge.toPlainString());
+//			    	setText(v, R.id.tv_invoice_fixed_charge, map.get(GLBInvoiceXMLParser.TAG_FIXED_CHARGE));
+//			    	setText(v, R.id.tv_invoice_discount, discounts.toPlainString());
+//			    	// totals
+//			    	setText(v, R.id.tv_invoice_tot_no_vat, map.get(GLBInvoiceXMLParser.TAG_TOTAL_NO_VAT));
+//			    	setText(v, R.id.tv_invoice_vat, map.get(GLBInvoiceXMLParser.TAG_VAT));
+//			    	setText(v, R.id.tv_invoice_totvat, map.get(GLBInvoiceXMLParser.TAG_TOTALVAT));
+//			    	// amount dues
+//			    	setText(v, R.id.tv_invoice_prev_amountdue, map.get(GLBInvoiceXMLParser.TAG_PREV_AMOUNTDUE));
+//			    	setText(v, R.id.tv_invoice_paied_amountdue, map.get(GLBInvoiceXMLParser.TAG_PAID_AMOUNTDUE));
+//			    	setText(v, R.id.tv_invoice_total_dueamount, map.get(GLBInvoiceXMLParser.TAG_TOTAL_DUEAMOUNT));		
+//			    
+//			    	found = true;
+//			    	break;
+//				}
+//			}
+//		}
+//    	
+//    	if (!found) {
+//    		// empty MSISDN was not found!
+//    		setText(v, R.id.tv_invoice_status_nodata, R.string.text_invoice_invalid);
+//    	} else {
+//    		TextView tv = (TextView) v.findViewById(R.id.tv_invoice_status_nodata);
+//    		tv.setVisibility(View.GONE);
+//    		
+//        	TableLayout table_invoice = (TableLayout) v.findViewById(R.id.table_invoice);
+//    		table_invoice.setVisibility(View.VISIBLE);    		
+//    	}
+//
+//    	setUpdated(true);
+//    }
+	
+    private void updateInvoiceView(User user, Map<String, String> results) {
     	if (Defs.LOG_ENABLED) 
-    		Log.v(Defs.LOG_TAG, "Updating invoice for: " + user.getPhoneNumber());
+    		Log.v(Defs.LOG_TAG, "Updating invoice summary for: " + user.getPhoneNumber());
     	
     	View v = getView();
     	boolean found = false;
     	
-    	for (Map<String, String> map : results) {
-			if (map.containsKey(GLBInvoiceXMLParser.TAG_MSISDN)) {
-				String value = map.get(GLBInvoiceXMLParser.TAG_MSISDN);
-//				String userPhone = user.getPhoneNumber();
-//				if (value.endsWith(userPhone.substring(userPhone.length() - 6, userPhone.length()))) {
-				if (value.trim().length() == 0) {
-					// invoice info
-			    	setText(v, R.id.tv_invoice_num, map.get(GLBInvoiceXMLParser.TAG_INVNUM));
-			    	
-		    		Calendar calendar = Calendar.getInstance();
-		    		calendar.setTimeInMillis(Long.parseLong(map.get(GLBInvoiceXMLParser.TAG_DATE)));			    	
-			    	setText(v, R.id.tv_invoice_date, Defs.globalDateFormat.format(calendar.getTime()));
-			    	// costs
-			    	BigDecimal servicesCharge = new BigDecimal("0.00");
-			    	BigDecimal discounts = new BigDecimal("0.00");
-			    	try {
-			    		// solve discounts amount
-			    		BigDecimal discount = valOrZero(map.get(GLBInvoiceXMLParser.TAG_DISCOUNT));
-			    		BigDecimal discountPackage = valOrZero(map.get(GLBInvoiceXMLParser.TAG_DISCOUNT_PACKAGE));
-			    		BigDecimal discountLoyality = valOrZero(map.get(GLBInvoiceXMLParser.TAG_DISCOUNT_LOYALITY));
-			    		BigDecimal discountUBB = valOrZero(map.get(GLBInvoiceXMLParser.TAG_DISCOUNT_GLOBUL_UBB));
-			    		discounts = discounts
-			    				.add(discount)
-			    				.add(discountPackage)
-			    				.add(discountLoyality)
-			    				.add(discountUBB);
-			    		
-			    		// solve services costs
-			    		BigDecimal fixedCharge = valOrZero(map.get(GLBInvoiceXMLParser.TAG_FIXED_CHARGE));
-//			    		BigDecimal discounts = new BigDecimal(map.get(GLBInvoiceXMLParser.TAG_DISCOUNT));
-			    		BigDecimal totalNoVAT = valOrZero(map.get(GLBInvoiceXMLParser.TAG_TOTAL_NO_VAT));
-			    		servicesCharge = totalNoVAT
-			    				.subtract(discounts)
-			    				.subtract(fixedCharge);
-			    		
-			    	} catch (Exception e) {
-			    		Log.e(Defs.LOG_TAG, "Failed to get decimal prices info!", e);
-			    		/*
-			    		 * XXX
-			    		 * It would be better to throw exception at this point!
-			    		 */
-			    		discounts = new BigDecimal(map.get(GLBInvoiceXMLParser.TAG_DISCOUNT));
-			    	}
-			    	setText(v, R.id.tv_invoice_services, servicesCharge.toPlainString());
-			    	setText(v, R.id.tv_invoice_fixed_charge, map.get(GLBInvoiceXMLParser.TAG_FIXED_CHARGE));
-			    	setText(v, R.id.tv_invoice_discount, discounts.toPlainString());
-			    	// totals
-			    	setText(v, R.id.tv_invoice_tot_no_vat, map.get(GLBInvoiceXMLParser.TAG_TOTAL_NO_VAT));
-			    	setText(v, R.id.tv_invoice_vat, map.get(GLBInvoiceXMLParser.TAG_VAT));
-			    	setText(v, R.id.tv_invoice_totvat, map.get(GLBInvoiceXMLParser.TAG_TOTALVAT));
-			    	// amount dues
-			    	setText(v, R.id.tv_invoice_prev_amountdue, map.get(GLBInvoiceXMLParser.TAG_PREV_AMOUNTDUE));
-			    	setText(v, R.id.tv_invoice_paied_amountdue, map.get(GLBInvoiceXMLParser.TAG_PAID_AMOUNTDUE));
-			    	setText(v, R.id.tv_invoice_total_dueamount, map.get(GLBInvoiceXMLParser.TAG_TOTAL_DUEAMOUNT));		
-			    
-			    	found = true;
-			    	break;
-				}
-			}
-		}
+    	if (results != null) {
+    		String status = Utils.emptyIfNull(results.get(Defs.INV_KEY_STATUS));
+    		if (status.equals("1")) {
+    			status = getResString(R.string.text_invoice_status_paid);
+    		} else if (status.equals("0")) {
+    			status = getResString(R.string.text_invoice_status_notpaid);
+    		}
+    		
+	    	setText(v, R.id.tv_invoice_num, Utils.emptyIfNull(results.get(Defs.INV_KEY_NO)));
+	    	setText(v, R.id.tv_invoice_date, Utils.emptyIfNull(results.get(Defs.INV_KEY_DATEISSUED)));
+	    	setText(v, R.id.tv_invoice_dateref, Utils.emptyIfNull(results.get(Defs.INV_KEY_DATEREF)));
+	    	setText(v, R.id.tv_invoice_status, status);
+	    	setText(v, R.id.tv_invoice_totvat, Utils.emptyIfNull(results.get(Defs.INV_KEY_AMOUNT_TOTAL)));
+	    	setText(v, R.id.tv_invoice_prev_amountdue, Utils.emptyIfNull(results.get(Defs.INV_KEY_AMOUNT_PREVBALANCE)));
+	    	setText(v, R.id.tv_invoice_total_dueamount, Utils.emptyIfNull(results.get(Defs.INV_KEY_AMOUNT_TOPAY)));
+	    	setText(v, R.id.tv_invoice_duedate, Utils.emptyIfNull(results.get(Defs.INV_KEY_DATE_DUE)));
+	    	found = true;
+    	}
     	
     	if (!found) {
     		// empty MSISDN was not found!
@@ -208,10 +249,10 @@ public class InvoiceFragment extends BaseFragment {
         	TableLayout table_invoice = (TableLayout) v.findViewById(R.id.table_invoice);
     		table_invoice.setVisibility(View.VISIBLE);    		
     	}
-
+    	
     	setUpdated(true);
     }
-	
+    
     @SuppressWarnings("unchecked")
 	public void update() {
 		if (Defs.LOG_ENABLED)
@@ -233,15 +274,16 @@ public class InvoiceFragment extends BaseFragment {
 						final User user = UsersManager.getInstance().getUserByPhoneNumber(
 								GlobalSettings.getInstance().getLastSelectedPhoneNumber());
 						
-						final ActionResult actionResult = new InvoiceUpdateAction(activity, user)
-								.execute();
+//						final ActionResult actionResult = new InvoiceUpdateAction(activity, user).execute();
+						final ActionResult actionResult = new InvoiceSummaryUpdateAction(activity, user).execute();
 						
 						// update text field
 						activity.runOnUiThread(new Runnable() {
 
 							@Override
 							public void run() {
-								updateInvoiceView(user, (List<Map<String, String>>)actionResult.getListResult());
+//								updateInvoiceView(user, (List<Map<String, String>>)actionResult.getListResult());
+								updateInvoiceView(user, (Map<String, String>)actionResult.getMapResult());
 								// notify listeners that invoice was updated
 								for(IFragmentEvents listener : listeners) {
 									listener.onFEvent_InvoiceUpdated(user);									

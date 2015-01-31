@@ -19,33 +19,32 @@
  */
 package net.vexelon.mobileops;
 
-/**
- * Client interface
- * 
- * @author p.petrov
- *
- */
+import java.util.Map;
+
 public interface IClient {
 
-	public void login()
+	void login()
 		throws HttpClientException, InvalidCredentialsException, SecureCodeRequiredException;
 	
-	public void logout()
+	void logout()
 		throws HttpClientException;
 	
 	/**
 	 * Get count of downloaded bytes up to this moment
 	 * @return
 	 */
-	public long getDownloadedBytesCount();
+	long getDownloadedBytesCount();
 	
-	public String getCurrentBalance() 
+	String getCurrentBalance() 
 		throws HttpClientException;
 	
-	public byte[] getInvoiceData()
+	byte[] getInvoiceData()
 			throws HttpClientException, InvoiceException;
 	
-	public long getInvoiceDateTime();
+	long getInvoiceDateTime();
 	
-	public void close();
+	Map<String, String> getInvoiceSummary()
+			throws HttpClientException, InvoiceException;	
+	
+	void close();
 }

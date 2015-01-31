@@ -55,7 +55,11 @@ public class Utils {
 	
 	private static Random _random = null;
 	
-	public static String scaleNumber(BigDecimal number, int n ) {
+	public static String emptyIfNull(String value) {
+		return value == null ? "" : value;
+	}
+	
+	public static String scaleNumber(BigDecimal number, int n) {
 		return number.setScale(n, BigDecimal.ROUND_HALF_UP).toPlainString();
 	}
 	

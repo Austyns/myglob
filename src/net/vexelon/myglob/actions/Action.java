@@ -22,11 +22,9 @@ package net.vexelon.myglob.actions;
 /**
  * Action - strategy pattern interface
  * 
- * @author p.petrov
- *
  */
 public interface Action {
 
-	public ActionResult execute() throws ActionExecuteException;
+	ActionResult execute() throws ActionExecuteException;
 	
 }

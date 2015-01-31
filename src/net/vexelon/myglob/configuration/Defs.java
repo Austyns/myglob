@@ -26,7 +26,7 @@ import net.vexelon.myglob.R;
 public class Defs {
 	
 	public final static String LOG_TAG = "net.vexelon.myglob";
-	public final static boolean LOG_ENABLED = false;
+	public final static boolean LOG_ENABLED = true;
 	
 	// Theming
 	public final static int THEME = R.style.Theme_Sherlock;
@@ -67,7 +67,16 @@ public class Defs {
 	public final static String INTENT_ACCOUNT_EDIT = "_ACCOUNT_EDIT";
 	public final static String INTENT_ACCOUNT_PHONENUMBER = "_ACCOUNT_PHONENUMBER";
 	
+	// Invoice
 	public final static String ISTORAGE_XML_FORMAT = "ivc_%s_%s";
+	public final static String INV_KEY_STATUS = "_invk_status";
+	public final static String INV_KEY_NO = "_invk_num";
+	public final static String INV_KEY_DATEISSUED = "_invk_dateissued";
+	public final static String INV_KEY_DATEREF = "_invk_dateref";
+	public final static String INV_KEY_AMOUNT_TOTAL = "_invk_totalamount";
+	public final static String INV_KEY_AMOUNT_PREVBALANCE = "_invk_prevbalance";
+	public final static String INV_KEY_AMOUNT_TOPAY = "_invk_amountopay";
+	public final static String INV_KEY_DATE_DUE = "_invk_duedate";
 	
 	// OBSOLETE
 	public final static int INTENT_SIGNIN_RQ = 100;
