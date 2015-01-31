@@ -12,6 +12,7 @@
 <string name="about_tagline">Check your mobile provider bill</string>
 <string name="about_version">Version: </string>
 <string name="about_author">by Petar Petrov</string>
+<string name="about_oss">MyGlob is an open source app under GNU GPL license. If you want to help with fixes and enhancements please drop me a line. Any kind of help is appreciated.</string>
 <string name="about_icons_info">Free icons from</string>
 <string name="dlg_error_msg_title">An error occurred! Check your Internet connection.</string>
 

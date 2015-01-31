@@ -12,6 +12,7 @@
 <string name="about_tagline">Проверете сметката си към мобилния оператор</string>
 <string name="about_version">Версия: </string>
 <string name="about_author">Автор - Petar Petrov</string>
+<string name="about_oss">MyGlob е приложение с отворен код под GNU GPL лиценз. Моля пишете ми, ако искате да се включите в разработката. Всякаква помощ е добре дошла.</string>
 <string name="about_icons_info">Безплатни икони от</string>
 <string name="dlg_error_msg_title">Възникна грешка! Проверете връзката към Интернет.</string>
 
