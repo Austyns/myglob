@@ -83,6 +83,12 @@ public class MTLClient implements IClient {
 	}
 	
 	@Override
+	public String getCreditLimit() throws HttpClientException {
+		// TODO Auto-generated method stub
+		return null;
+	}	
+	
+	@Override
 	public byte[] getInvoiceData()
 			throws HttpClientException, InvoiceException {
 		// TODO Auto-generated method stub

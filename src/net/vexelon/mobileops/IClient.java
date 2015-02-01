@@ -38,6 +38,9 @@ public interface IClient {
 	String getCurrentBalance() 
 		throws HttpClientException;
 	
+	String getCreditLimit()
+		throws HttpClientException;
+	
 	byte[] getInvoiceData()
 			throws HttpClientException, InvoiceException;
 	

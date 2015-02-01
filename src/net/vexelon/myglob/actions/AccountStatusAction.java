@@ -43,7 +43,6 @@ public class AccountStatusAction extends BaseAction {
 
 	@Override
 	public ActionResult execute() throws ActionExecuteException {
-		
 		String tmpResult = "";
 		
 		ActionResult result = new ActionResult();
@@ -66,10 +65,10 @@ public class AccountStatusAction extends BaseAction {
 //				tmpResult = client.getAvailableMinutes();
 //				tmpResult = Utils.stripHtml(tmpResult);
 //				break;
-//			case CHECK_CREDIT_LIMIT:
-//				tmpResult = client.getCreditLimit();
-//				tmpResult = Utils.stripHtml(tmpResult);
-//				break;
+			case CHECK_CREDIT_LIMIT:
+				tmpResult = client.getCreditLimit();
+				tmpResult = Utils.stripHtml(tmpResult);
+				break;
 //			case CHECK_AVAIL_DATA:
 //				tmpResult = client.getAvailableInternetBandwidth();
 //				tmpResult = Utils.stripHtml(tmpResult);
@@ -100,7 +99,7 @@ public class AccountStatusAction extends BaseAction {
 			}
 
 			// colorify important values
-			Pattern p = Pattern.compile("(-*\\d+((,|.)\\d+)*\\s*лв\\.*)|(\\d+:\\d+\\s*(ч\\.*|мин\\.*))", Pattern.CASE_INSENSITIVE);
+			Pattern p = Pattern.compile("(-*\\d+((,|.)\\d+)*\\s*лв\\.*)|(\\d+:\\d+\\s*(ч\\.*|мин\\.*))|(\\d+%)", Pattern.CASE_INSENSITIVE);
 			Matcher m = p.matcher(tmpResult);
 			StringBuffer sb = new StringBuffer(tmpResult.length() + tmpResult.length());
 			while (m.find()) {

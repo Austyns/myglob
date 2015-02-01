@@ -174,7 +174,6 @@ public class GLBClient implements IClient {
 		}
 		
 		StatusLine status = resp.getStatusLine();
-		
 		if (status.getStatusCode() != HttpStatus.SC_OK)
 			throw new HttpClientException(status.getReasonPhrase(), status.getStatusCode());
 
@@ -215,6 +214,54 @@ public class GLBClient implements IClient {
 			addDownloadedBytesCount(bytesCount);
 		}
 	}
+	
+	@Override
+	public String getCreditLimit() throws HttpClientException {
+		StringBuilder builder = new StringBuilder(100);
+		HttpResponse resp;
+		long bytesCount = 0;
+		try {
+			String url = HTTP_MYTELENOR + GLBRequestType.GET_CREDITLIMIT.getPath();
+			url += "?_=" + new Date().getTime();
+			
+			HttpGet httpGet = new HttpGet(url);
+			httpGet.setHeader("X-Requested-With", "XMLHttpRequest");
+			resp = httpClient.execute(httpGet, httpContext);
+		} catch (Exception e) {
+			throw new HttpClientException("Client protocol error!" + e.getMessage(), e);
+		}
+		
+		StatusLine status = resp.getStatusLine();
+		if (status.getStatusCode() != HttpStatus.SC_OK)
+			throw new HttpClientException(status.getReasonPhrase(), status.getStatusCode());
+
+		try {
+			HttpEntity entity = resp.getEntity();
+			// bytes downloaded
+			bytesCount = entity.getContentLength() > 0 ? entity.getContentLength() : 0;
+			
+			Document doc = Jsoup.parse(entity.getContent(), RESPONSE_ENCODING, "");
+			Elements elements;
+			
+			// credit limit
+			elements = doc.select("div.bar-box.green div.bar");
+			if (elements.size() > 0) {
+				Element div = elements.get(0);
+				if (div.text().contains("Кредитен лимит")) {
+					builder.append(div.text());
+				}
+			}
+			
+			return builder.toString();
+			
+		} catch (ClientProtocolException e) {
+			throw new HttpClientException("Client protocol error!" + e.getMessage(), e);
+		} catch (IOException e) {
+			throw new HttpClientException("Client error!" + e.getMessage(), e);
+		} finally {
+			addDownloadedBytesCount(bytesCount);
+		}
+	}	
 	
 	@Override
 	public byte[] getInvoiceData()

@@ -34,6 +34,7 @@ public enum GLBRequestType {
 	 */
 	PAGE_BILLCHECK("/mg/myglobul.bch", "action=billcheck"),
 	GET_BALANCE("/billing-payment", ""),
+	GET_CREDITLIMIT("/loadusagelines", ""),
 	/*
 	 * Invoice check
 	 */
