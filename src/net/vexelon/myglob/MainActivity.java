@@ -33,6 +33,7 @@ import net.vexelon.myglob.fragments.HomeFragment;
 import net.vexelon.myglob.fragments.InvoiceFragment;
 import net.vexelon.myglob.users.UsersManager;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -65,7 +66,7 @@ public class MainActivity extends SherlockFragmentActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-    	this.setTheme(Defs.THEME);
+//    	this.setTheme(Defs.THEME);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.view_pager);
         
@@ -103,13 +104,13 @@ public class MainActivity extends SherlockFragmentActivity {
 			@Override
 			public void onPageSelected(int arg0) {
 				_currentPage = arg0;
-				_activity.invalidateOptionsMenu();
-//				if (Build.VERSION.SDK_INT < 11) {
-//					MainActivity mainActivity = (MainActivity) _activity;
-//					mainActivity.invalidateOptionsMenu();
-//				} else {
-//					_activity.invalidateOptionsMenu();
-//				}	
+//				_activity.invalidateOptionsMenu();
+				if (Build.VERSION.SDK_INT < 11) {
+					MainActivity mainActivity = (MainActivity) _activity;
+					mainActivity.invalidateOptionsMenu();
+				} else {
+					_activity.invalidateOptionsMenu();
+				}	
 				
 				_actionBar.setSelectedNavigationItem(arg0);
 			}

@@ -29,7 +29,7 @@ public class Defs {
 	public final static boolean LOG_ENABLED = false;
 	
 	// Theming
-	public final static int THEME = R.style.Theme_Sherlock;
+//	public final static int THEME = R.style.Theme_Sherlock;
 	
 	public final static int CLR_BUTTON_UPDATE = 0xFFA6D060;
 	public final static String CLR_TEXT_HIGHLIGHT = "#FF7F00"; //0xFFFF7F00;
